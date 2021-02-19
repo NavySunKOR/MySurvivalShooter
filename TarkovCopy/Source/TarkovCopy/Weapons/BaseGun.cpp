@@ -9,10 +9,10 @@ ABaseGun::ABaseGun()
 {
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	root = CreateDefaultSubobject<USceneComponent>("Root");
+	/*root = CreateDefaultSubobject<USceneComponent>("Root");
 	SetRootComponent(root);
 	gunMesh = CreateDefaultSubobject<USkeletalMeshComponent>("GunMesh");
-	gunMesh->SetupAttachment(root);
+	gunMesh->SetupAttachment(root);*/
 }
 
 // Called when the game starts or when spawned

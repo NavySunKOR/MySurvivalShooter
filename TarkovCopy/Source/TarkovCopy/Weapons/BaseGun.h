@@ -11,11 +11,11 @@ class TARKOVCOPY_API ABaseGun : public APawn
 {
 	GENERATED_BODY()
 private:
-	UPROPERTY(VisibleAnywhere)
-	USceneComponent* root;
+	//UPROPERTY(VisibleAnywhere)
+	//USceneComponent* root;
 
-	UPROPERTY(VisibleAnywhere)
-	USkeletalMeshComponent* gunMesh;
+	//UPROPERTY(VisibleAnywhere)
+	//USkeletalMeshComponent* gunMesh;
 
 
 public:
