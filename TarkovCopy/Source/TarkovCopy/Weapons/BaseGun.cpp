@@ -27,7 +27,7 @@ void ABaseGun::FireWeapon(FVector start, FRotator dir)
 {
 	curMagRounds--;
 	isFiring = true;
-	UGameplayStatics::SpawnSoundAttached(fireSound, gunMesh, TEXT("socketMuzzle"));
+	//UGameplayStatics::SpawnSoundAttached(fireSound, gunMesh, TEXT("socketMuzzle"));
 }
 
 void ABaseGun::Reload(int pInsertMagazine)
