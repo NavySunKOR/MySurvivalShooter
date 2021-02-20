@@ -19,7 +19,8 @@ class TARKOVCOPY_API ATarkovCopyGameModeBase : public AGameModeBase
 
 public:
 	UPROPERTY(EditAnywhere)
-	TArray<TSubclassOf<ABaseGun>> allGunsInGame;
+	TArray<TSubclassOf<ABaseGun>> allPlayerGunsInGame;
+	TArray<TSubclassOf<ABaseGun>> allAIGunsInGame;
 
 	virtual void QuestCompleted(AInteractableObject* questItem);
 	virtual void TryExfil();

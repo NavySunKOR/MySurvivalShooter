@@ -17,13 +17,10 @@ void AAICharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	ATarkovCopyGameModeBase* gameMode = GetWorld()->GetAuthGameMode<ATarkovCopyGameModeBase>();
-	int totalCount = gameMode->allGunsInGame.Num();
-	currentActiveGun = GetWorld()->SpawnActor<ABaseGun>(gameMode->allGunsInGame[0]);
+	int selectedWeapon = FMath::RandRange(0, gameMode->allAIGunsInGame.Num() - 1);
+	currentActiveGun = GetWorld()->SpawnActor<ABaseGun>(gameMode->allAIGunsInGame[selectedWeapon]);
+	currentActiveGun->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, TEXT("Hand_R_Position"));
 	currentActiveGun->SetOwner(this);
-	//TODO:Ä³¸¯ÅÍ ¼Õ¿¡ Æ÷Áö¼Å´×
-	//currentActiveGun->AttachToComponent(armMesh, FAttachmentTransformRules::SnapToTargetIncludingScale, TEXT("weaponHolder"));
-	//currentActiveGun->SetOwner(this);
-
 	curHp = maxHp;
 	
 }
