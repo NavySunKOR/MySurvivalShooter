@@ -36,9 +36,9 @@ public:
 	int curMagRounds;
 	float damage;
 	float range;
-	FVector playerScale;
-	FVector playerPosition;
-	FRotator playerRotation;
+	FVector thirdPersonScale;
+	FVector thirdPersonPosition;
+	FRotator thirdPersonRotation;
 	
 	UPROPERTY(EditAnywhere)
 	float rpm;

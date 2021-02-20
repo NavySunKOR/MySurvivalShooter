@@ -55,23 +55,15 @@ void APlayerCharacter::BeginPlay()
 	if (m416Origin)
 	{
 		primaryWeapon = GetWorld()->SpawnActor<ABaseGun>(m416Origin);
-		primaryWeapon->AttachToComponent(armMesh, FAttachmentTransformRules::SnapToTargetIncludingScale, TEXT("weaponHolder"));
+		primaryWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale);
 		primaryWeapon->SetOwner(this);
-		primaryWeapon->SetActorRelativeLocation(primaryWeapon->playerPosition);
-		primaryWeapon->SetActorRelativeRotation(primaryWeapon->playerRotation);
-		primaryWeapon->SetActorRelativeScale3D(primaryWeapon->playerScale);
-		UE_LOG(LogTemp, Warning, TEXT("M416"));
 	}
 
 	if (m9Origin)
 	{
 		secondaryWeapon = GetWorld()->SpawnActor<ABaseGun>(m9Origin);
-		secondaryWeapon->AttachToComponent(armMesh, FAttachmentTransformRules::SnapToTargetIncludingScale, TEXT("weaponHolder"));
+		secondaryWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale);
 		secondaryWeapon->SetOwner(this);
-		secondaryWeapon->SetActorRelativeLocation(secondaryWeapon->playerPosition);
-		secondaryWeapon->SetActorRelativeRotation(secondaryWeapon->playerRotation);
-		secondaryWeapon->SetActorRelativeScale3D(secondaryWeapon->playerScale);
-		UE_LOG(LogTemp, Warning, TEXT("M9"));
 	}
 	EquipPrimary();
 	if (playerController != nullptr)

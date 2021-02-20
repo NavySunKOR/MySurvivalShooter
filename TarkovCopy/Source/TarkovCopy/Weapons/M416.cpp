@@ -14,9 +14,9 @@ void AM416::BeginPlay()
 	rpm = 750.f;
 	damage = 25.f;
 	range = 15000.f;
-	playerScale = FVector(1.25f,1.25f, 1.25f);
-	playerRotation = FRotator(3.f, 90.f, 15.f);
-	playerPosition = FVector(-5.6f, 4.0f, -3.2f);
+	thirdPersonScale = FVector(1.f, 1.f, 1.f);
+	thirdPersonRotation = FRotator(0.f, 0.f, 0.f);
+	thirdPersonPosition = FVector(2.f, 10.f, 20.f);
 	Super::BeginPlay();
 
 }

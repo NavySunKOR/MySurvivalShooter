@@ -19,8 +19,27 @@ void AAICharacter::BeginPlay()
 	ATarkovCopyGameModeBase* gameMode = GetWorld()->GetAuthGameMode<ATarkovCopyGameModeBase>();
 	int selectedWeapon = FMath::RandRange(0, gameMode->allAIGunsInGame.Num() - 1);
 	currentActiveGun = GetWorld()->SpawnActor<ABaseGun>(gameMode->allAIGunsInGame[selectedWeapon]);
-	currentActiveGun->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, TEXT("Hand_R_Position"));
-	currentActiveGun->SetOwner(this);
+	if (currentActiveGun != nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Comeon!"))
+
+		//TSoftClassPtr<UAnimInstance> thirdAnim = TSoftClassPtr<UAnimInstance>(FSoftObjectPath(*gameMode->allThirdPersonAnimInGame[selectedWeapon]));
+		GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
+		UE_LOG(LogTemp, Warning, TEXT("name : : %s"), *GetMesh()->GetName())
+		UE_LOG(LogTemp, Warning, TEXT("name : : %s"), *gameMode->allThirdPersonAnimInGame[selectedWeapon]->GetAnimBlueprintSkeletonClass()->GetName())
+			//GetMesh()->SetAnimClass(thirdAnim.LoadSynchronous());
+		GetMesh()->SetAnimInstanceClass(gameMode->allThirdPersonAnimInGame[selectedWeapon]->GetAnimBlueprintGeneratedClass());
+		currentActiveGun->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, TEXT("Hand_R_Position"));
+		currentActiveGun->SetActorRelativeLocation(currentActiveGun->thirdPersonPosition);
+		currentActiveGun->SetActorRotation(FRotator(0,0,0));
+		//currentActiveGun->SetActorRelativeRotation(GetMesh()->GetSocketRotation(TEXT("Hand_R_Position")) + currentActiveGun->thirdPersonRotation);
+		currentActiveGun->SetOwner(this);
+
+	}
+	else
+	{
+		UE_LOG(LogTemp,Warning,TEXT("HELP! HELP!"))
+	}
 	curHp = maxHp;
 	
 }

@@ -20,12 +20,22 @@ class TARKOVCOPY_API ATarkovCopyGameModeBase : public AGameModeBase
 public:
 	UPROPERTY(EditAnywhere)
 	TArray<TSubclassOf<ABaseGun>> allPlayerGunsInGame;
+	UPROPERTY(EditAnywhere)
 	TArray<TSubclassOf<ABaseGun>> allAIGunsInGame;
+	/*UPROPERTY(EditAnywhere)
+	TArray<FString> allThirdPersonAnimInGame;*/
+	UPROPERTY(EditAnywhere)
+	TArray<UAnimBlueprint*> allThirdPersonAnimInGame;
+
+
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf <UItemInfo> itemM416;
+	UPROPERTY(EditAnywhere)
+	TSubclassOf <UItemInfo> itemM9;
 
 	virtual void QuestCompleted(AInteractableObject* questItem);
 	virtual void TryExfil();
 	virtual void CancelExfil();
 
-	UPROPERTY(EditAnywhere)
-	UItemInfo* itemM416;
 };
