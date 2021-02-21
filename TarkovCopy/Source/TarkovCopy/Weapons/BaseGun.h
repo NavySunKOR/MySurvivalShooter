@@ -63,7 +63,10 @@ public:
 	virtual void Reload(int pInsertMagazine);
 	virtual void SetADS();
 	virtual void SetHipfire();
-	
+
+	virtual void SetParentMeshFPP(USkeletalMeshComponent* pMeshComp);
+	virtual void SetParentMeshTPP(USkeletalMeshComponent* pMeshComp);
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
@@ -78,6 +81,20 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	UParticleSystem* hitTerrain;
+
+	UPROPERTY(EditAnywhere)
+	UAnimBlueprint* fppAnimBlueprints;
+	UPROPERTY(EditAnywhere)
+	UAnimBlueprint* tppAnimBlueprints;
+
+
+	USkeletalMeshComponent* parentMesh;
+	USceneComponent* magazineComponents;
+	USceneComponent* attachmentComponents;
+	USceneComponent* scopeComponents;
+	USceneComponent* weaponComponents;
+	USceneComponent* sliderComponents;
+
 
 //TempValues
 protected:

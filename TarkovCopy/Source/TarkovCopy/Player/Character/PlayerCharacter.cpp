@@ -24,47 +24,46 @@ void APlayerCharacter::BeginPlay()
 	ownedSecondaryWeaponAmmo = 60;
 	curHp = maxHp;
 
-	springArm = FindComponentByClass<USpringArmComponent>();
-
 	//TODO:나중에 인벤토리 초기화 고칠것
 	inventory = inventoryOrigin.GetDefaultObject();
 	inventory->Init();
-
-	originalSpringArmPos = springArm->TargetOffset;
-	TArray <USceneComponent*> childs;
-	springArm->GetChildrenComponents(true, childs);
-	USceneComponent* arm = nullptr;
-	for (USceneComponent* comp : childs)
-	{
-		if (comp->GetName().Equals("FPArms"))
-		{
-			arm = comp;
-			break;
-		}
-	}
-	UE_LOG(LogTemp, Warning, TEXT("arm ? : %d"), arm);
-
-	USkeletalMeshComponent* armMesh = nullptr;
-	if (arm)
-		armMesh = Cast<USkeletalMeshComponent>(arm);
-	else
-		return;
-	UE_LOG(LogTemp, Warning, TEXT("ARM MESH? : %d"), armMesh);
-
+	UE_LOG(LogTemp, Warning, TEXT("ActorForward : %s "), *GetActorForwardVector().ToString());
 
 	if (m416Origin)
 	{
 		primaryWeapon = GetWorld()->SpawnActor<ABaseGun>(m416Origin);
-		primaryWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale);
-		primaryWeapon->SetOwner(this);
+		if (primaryWeapon != nullptr)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("no weapon"));
+			primaryWeapon->SetParentMeshFPP(GetMesh());
+			primaryWeapon->AttachToActor(this, FAttachmentTransformRules::SnapToTargetIncludingScale);
+			primaryWeapon->SetActorRelativeLocation(FVector(0.f, 0.f, 50.f));
+			primaryWeapon->SetActorRotation(FRotator());
+			primaryWeapon->SetOwner(this);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("no weapon"));
+		}
 	}
 
+	UE_LOG(LogTemp, Warning, TEXT("ActorForward : %s "), *GetActorForwardVector().ToString());
+	/*
 	if (m9Origin)
 	{
 		secondaryWeapon = GetWorld()->SpawnActor<ABaseGun>(m9Origin);
-		secondaryWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale);
-		secondaryWeapon->SetOwner(this);
-	}
+		if (primaryWeapon != nullptr)
+		{
+			secondaryWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform);
+			secondaryWeapon->SetActorLocation(FVector());
+			secondaryWeapon->SetActorRotation(FRotator());
+			secondaryWeapon->SetOwner(this);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("no handgun"));
+		}
+	}*/
 	EquipPrimary();
 	if (playerController != nullptr)
 		playerController->InitInvenotry();
@@ -230,14 +229,14 @@ void APlayerCharacter::EquipPrimary()
 	if (primaryWeapon)
 	{
 		primaryWeapon->SetActorHiddenInGame(false);
-		primaryWeapon->SetActorEnableCollision(true);
+		//primaryWeapon->SetActorEnableCollision(true);
 		primaryWeapon->SetActorTickEnabled(true);
 		currentActiveGun = primaryWeapon;
 	
 		if (secondaryWeapon)
 		{
 			secondaryWeapon->SetActorHiddenInGame(true);
-			secondaryWeapon->SetActorEnableCollision(false);
+			//secondaryWeapon->SetActorEnableCollision(false);
 			secondaryWeapon->SetActorTickEnabled(false);
 		}
 	}
@@ -252,13 +251,13 @@ void APlayerCharacter::EquipSecondary()
 	if (secondaryWeapon)
 	{
 		secondaryWeapon->SetActorHiddenInGame(false);
-		secondaryWeapon->SetActorEnableCollision(true);
+		//secondaryWeapon->SetActorEnableCollision(true);
 		secondaryWeapon->SetActorTickEnabled(true);
 		currentActiveGun = secondaryWeapon;
 		if (primaryWeapon)
 		{
 			primaryWeapon->SetActorHiddenInGame(true);
-			primaryWeapon->SetActorEnableCollision(false);
+			//primaryWeapon->SetActorEnableCollision(false);
 			primaryWeapon->SetActorTickEnabled(false);
 		}
 	}

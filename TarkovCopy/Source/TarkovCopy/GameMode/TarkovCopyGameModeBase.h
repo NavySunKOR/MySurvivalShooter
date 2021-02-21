@@ -22,12 +22,6 @@ public:
 	TArray<TSubclassOf<ABaseGun>> allPlayerGunsInGame;
 	UPROPERTY(EditAnywhere)
 	TArray<TSubclassOf<ABaseGun>> allAIGunsInGame;
-	/*UPROPERTY(EditAnywhere)
-	TArray<FString> allThirdPersonAnimInGame;*/
-	UPROPERTY(EditAnywhere)
-	TArray<UAnimBlueprint*> allThirdPersonAnimInGame;
-
-
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf <UItemInfo> itemM416;

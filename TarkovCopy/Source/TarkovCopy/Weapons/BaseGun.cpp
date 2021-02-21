@@ -46,6 +46,32 @@ void ABaseGun::SetHipfire()
 	isAds = false;
 }
 
+void ABaseGun::SetParentMeshFPP(USkeletalMeshComponent* pMeshComp)
+{
+	parentMesh = pMeshComp;
+	magazineComponents = Cast<USceneComponent>(GetDefaultSubobjectByName(TEXT("Magazine_Components")));
+	attachmentComponents = Cast<USceneComponent>(GetDefaultSubobjectByName(TEXT("Attachment_Components")));
+	scopeComponents = Cast<USceneComponent>(GetDefaultSubobjectByName(TEXT("Scope_Components")));
+	weaponComponents = Cast<USceneComponent>(GetDefaultSubobjectByName(TEXT("Weapon_Components")));
+	sliderComponents = Cast<USceneComponent>(GetDefaultSubobjectByName(TEXT("Slider_Components")));
+
+	magazineComponents->AttachToComponent(parentMesh,FAttachmentTransformRules::KeepRelativeTransform , TEXT("Mag_Position"));
+	attachmentComponents->AttachToComponent(parentMesh, FAttachmentTransformRules::KeepRelativeTransform,TEXT("Weapon_Position"));
+	scopeComponents->AttachToComponent(parentMesh, FAttachmentTransformRules::KeepRelativeTransform, TEXT("Weapon_Position"));
+	weaponComponents->AttachToComponent(parentMesh, FAttachmentTransformRules::KeepRelativeTransform, TEXT("Weapon_Position"));
+	sliderComponents->AttachToComponent(parentMesh, FAttachmentTransformRules::KeepRelativeTransform, TEXT("Slider_Position"));
+
+	parentMesh->SetAnimInstanceClass(fppAnimBlueprints->GetAnimBlueprintGeneratedClass());
+
+}
+
+void ABaseGun::SetParentMeshTPP(USkeletalMeshComponent* pMeshComp)
+{
+	parentMesh = pMeshComp;
+	parentMesh->SetAnimInstanceClass(tppAnimBlueprints->GetAnimBlueprintGeneratedClass());
+
+}
+
 //오버라이드 가능성 : 샷건(한발씩 장전되는데 바로 쏴야하므로
 bool ABaseGun::CanFireWeapon()
 {

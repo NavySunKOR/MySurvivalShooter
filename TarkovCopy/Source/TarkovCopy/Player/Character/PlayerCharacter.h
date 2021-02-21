@@ -24,8 +24,6 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	float deltaTime = 0.f;
-	USpringArmComponent* springArm;
-	FVector originalSpringArmPos;
 	AFPPlayerController* playerController;
 	bool isSprinting = false;
 	bool isCrouch = false;

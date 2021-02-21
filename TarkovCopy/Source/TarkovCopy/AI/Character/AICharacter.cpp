@@ -22,13 +22,7 @@ void AAICharacter::BeginPlay()
 	if (currentActiveGun != nullptr)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Comeon!"))
-
-		//TSoftClassPtr<UAnimInstance> thirdAnim = TSoftClassPtr<UAnimInstance>(FSoftObjectPath(*gameMode->allThirdPersonAnimInGame[selectedWeapon]));
-		GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
-		UE_LOG(LogTemp, Warning, TEXT("name : : %s"), *GetMesh()->GetName())
-		UE_LOG(LogTemp, Warning, TEXT("name : : %s"), *gameMode->allThirdPersonAnimInGame[selectedWeapon]->GetAnimBlueprintSkeletonClass()->GetName())
-			//GetMesh()->SetAnimClass(thirdAnim.LoadSynchronous());
-		GetMesh()->SetAnimInstanceClass(gameMode->allThirdPersonAnimInGame[selectedWeapon]->GetAnimBlueprintGeneratedClass());
+		currentActiveGun->SetParentMeshTPP(GetMesh());
 		currentActiveGun->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, TEXT("Hand_R_Position"));
 		currentActiveGun->SetActorRelativeLocation(currentActiveGun->thirdPersonPosition);
 		currentActiveGun->SetActorRotation(FRotator(0,0,0));
