@@ -65,7 +65,7 @@ private:
 	void CloseAlert();
 	
 public:
-	bool isInventoryOpened;
+	bool isInventoryOpened= false;
 	void InitInvenotry();
 	void OpenCloseInventory();
 	void AddItem(UItemInfo* itemInfo,UInventory* pInvenRef);

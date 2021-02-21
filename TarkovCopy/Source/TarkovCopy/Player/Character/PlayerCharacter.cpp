@@ -34,11 +34,8 @@ void APlayerCharacter::BeginPlay()
 		primaryWeapon = GetWorld()->SpawnActor<ABaseGun>(m416Origin);
 		if (primaryWeapon != nullptr)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("no weapon"));
 			primaryWeapon->SetParentMeshFPP(GetMesh());
 			primaryWeapon->AttachToActor(this, FAttachmentTransformRules::SnapToTargetIncludingScale);
-			primaryWeapon->SetActorRelativeLocation(FVector(0.f, 0.f, 50.f));
-			primaryWeapon->SetActorRotation(FRotator());
 			primaryWeapon->SetOwner(this);
 		}
 		else
@@ -46,24 +43,21 @@ void APlayerCharacter::BeginPlay()
 			UE_LOG(LogTemp, Warning, TEXT("no weapon"));
 		}
 	}
-
-	UE_LOG(LogTemp, Warning, TEXT("ActorForward : %s "), *GetActorForwardVector().ToString());
-	/*
+	
 	if (m9Origin)
 	{
 		secondaryWeapon = GetWorld()->SpawnActor<ABaseGun>(m9Origin);
 		if (primaryWeapon != nullptr)
 		{
+			secondaryWeapon->SetParentMeshFPP(GetMesh());
 			secondaryWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform);
-			secondaryWeapon->SetActorLocation(FVector());
-			secondaryWeapon->SetActorRotation(FRotator());
 			secondaryWeapon->SetOwner(this);
 		}
 		else
 		{
 			UE_LOG(LogTemp, Warning, TEXT("no handgun"));
 		}
-	}*/
+	}
 	EquipPrimary();
 	if (playerController != nullptr)
 		playerController->InitInvenotry();
@@ -103,7 +97,6 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 void APlayerCharacter::TookDamage(float damage, FHitResult pHitParts)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Hag"));
 	curHp -= damage;
 	if (curHp <= 0)
 	{
@@ -229,14 +222,12 @@ void APlayerCharacter::EquipPrimary()
 	if (primaryWeapon)
 	{
 		primaryWeapon->SetActorHiddenInGame(false);
-		//primaryWeapon->SetActorEnableCollision(true);
 		primaryWeapon->SetActorTickEnabled(true);
 		currentActiveGun = primaryWeapon;
-	
+		currentActiveGun->EquipWeapon();
 		if (secondaryWeapon)
 		{
 			secondaryWeapon->SetActorHiddenInGame(true);
-			//secondaryWeapon->SetActorEnableCollision(false);
 			secondaryWeapon->SetActorTickEnabled(false);
 		}
 	}
@@ -251,13 +242,12 @@ void APlayerCharacter::EquipSecondary()
 	if (secondaryWeapon)
 	{
 		secondaryWeapon->SetActorHiddenInGame(false);
-		//secondaryWeapon->SetActorEnableCollision(true);
 		secondaryWeapon->SetActorTickEnabled(true);
 		currentActiveGun = secondaryWeapon;
+		currentActiveGun->EquipWeapon();
 		if (primaryWeapon)
 		{
 			primaryWeapon->SetActorHiddenInGame(true);
-			//primaryWeapon->SetActorEnableCollision(false);
 			primaryWeapon->SetActorTickEnabled(false);
 		}
 	}
@@ -273,7 +263,14 @@ void APlayerCharacter::FireWeapon()
 	{
 		FVector start;
 		FRotator dir;
-		GetController()->GetPlayerViewPoint(start, dir);
+		if(!IsAds())
+			GetController()->GetPlayerViewPoint(start, dir);
+		else 
+		{
+			start = currentActiveGun->muzzleStart;
+			dir = currentActiveGun->muzzleDir;
+		}
+
 		currentActiveGun->FireWeapon(start,dir);
 	}
 }
@@ -284,14 +281,20 @@ void APlayerCharacter::SetADSWeapon()
 	{
 		return;
 	}
-	if(currentActiveGun)
+	if (currentActiveGun)
+	{
 		currentActiveGun->SetADS();
+		UE_LOG(LogTemp, Warning, TEXT("Ads"))
+	}
 }
 
 void APlayerCharacter::SetHipfireWeapon()
 {
-	if(currentActiveGun)
+	if (currentActiveGun)
+	{
 		currentActiveGun->SetHipfire();
+		UE_LOG(LogTemp, Warning, TEXT("Hip"))
+	}
 }
 
 void APlayerCharacter::ReloadWeapon()

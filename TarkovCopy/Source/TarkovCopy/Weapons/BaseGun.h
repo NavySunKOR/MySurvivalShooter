@@ -6,6 +6,8 @@
 #include "GameFramework/Pawn.h"
 #include "BaseGun.generated.h"
 
+class UArrowComponent;
+
 UCLASS()
 class TARKOVCOPY_API ABaseGun : public APawn
 {
@@ -55,6 +57,8 @@ public:
 	UPROPERTY(EditAnywhere)
 	USoundBase* reloadSound;
 
+	FVector muzzleStart;
+	FRotator muzzleDir;
 
 
 
@@ -66,6 +70,7 @@ public:
 
 	virtual void SetParentMeshFPP(USkeletalMeshComponent* pMeshComp);
 	virtual void SetParentMeshTPP(USkeletalMeshComponent* pMeshComp);
+	virtual void EquipWeapon();
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -94,6 +99,8 @@ protected:
 	USceneComponent* scopeComponents;
 	USceneComponent* weaponComponents;
 	USceneComponent* sliderComponents;
+	USceneComponent* hammerComponents;
+	UArrowComponent* muzzleArrow;
 
 
 //TempValues

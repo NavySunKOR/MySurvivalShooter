@@ -2,6 +2,7 @@
 
 
 #include <Runtime/Engine/Classes/Kismet/GameplayStatics.h>
+#include <Runtime/Engine/Classes/Components/ArrowComponent.h>
 #include "BaseGun.h"
 
 // Sets default values
@@ -9,10 +10,6 @@ ABaseGun::ABaseGun()
 {
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	/*root = CreateDefaultSubobject<USceneComponent>("Root");
-	SetRootComponent(root);
-	gunMesh = CreateDefaultSubobject<USkeletalMeshComponent>("GunMesh");
-	gunMesh->SetupAttachment(root);*/
 }
 
 // Called when the game starts or when spawned
@@ -54,14 +51,45 @@ void ABaseGun::SetParentMeshFPP(USkeletalMeshComponent* pMeshComp)
 	scopeComponents = Cast<USceneComponent>(GetDefaultSubobjectByName(TEXT("Scope_Components")));
 	weaponComponents = Cast<USceneComponent>(GetDefaultSubobjectByName(TEXT("Weapon_Components")));
 	sliderComponents = Cast<USceneComponent>(GetDefaultSubobjectByName(TEXT("Slider_Components")));
+	hammerComponents = Cast<USceneComponent>(GetDefaultSubobjectByName(TEXT("Hammer_Components")));
+	muzzleArrow = Cast<UArrowComponent>(GetDefaultSubobjectByName(TEXT("Muzzle_Flash_Position")));
 
-	magazineComponents->AttachToComponent(parentMesh,FAttachmentTransformRules::KeepRelativeTransform , TEXT("Mag_Position"));
-	attachmentComponents->AttachToComponent(parentMesh, FAttachmentTransformRules::KeepRelativeTransform,TEXT("Weapon_Position"));
-	scopeComponents->AttachToComponent(parentMesh, FAttachmentTransformRules::KeepRelativeTransform, TEXT("Weapon_Position"));
-	weaponComponents->AttachToComponent(parentMesh, FAttachmentTransformRules::KeepRelativeTransform, TEXT("Weapon_Position"));
-	sliderComponents->AttachToComponent(parentMesh, FAttachmentTransformRules::KeepRelativeTransform, TEXT("Slider_Position"));
+	if (muzzleArrow)
+	{
+		muzzleStart = muzzleArrow->GetComponentLocation();
+		muzzleDir = muzzleArrow->GetForwardVector().Rotation();
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("muzzleArrow is null"))
+	}
 
-	parentMesh->SetAnimInstanceClass(fppAnimBlueprints->GetAnimBlueprintGeneratedClass());
+	
+	if (magazineComponents != nullptr)
+		magazineComponents->AttachToComponent(parentMesh,FAttachmentTransformRules::KeepRelativeTransform , TEXT("Mag_Position"));
+	else
+		UE_LOG(LogTemp, Warning, TEXT("magazineComponents is null"))
+
+	if (attachmentComponents != nullptr)
+		attachmentComponents->AttachToComponent(parentMesh, FAttachmentTransformRules::KeepRelativeTransform,TEXT("Weapon_Position"));
+	else
+		UE_LOG(LogTemp, Warning, TEXT("attachmentComponents is null"))
+	if (scopeComponents != nullptr)
+		scopeComponents->AttachToComponent(parentMesh, FAttachmentTransformRules::KeepRelativeTransform, TEXT("Weapon_Position"));
+	else
+		UE_LOG(LogTemp, Warning, TEXT("scopeComponents is null"))
+	if(weaponComponents != nullptr)
+		weaponComponents->AttachToComponent(parentMesh, FAttachmentTransformRules::KeepRelativeTransform, TEXT("Weapon_Position"));
+	else
+		UE_LOG(LogTemp,Warning,TEXT("weaponComponents is null"))
+	if (sliderComponents != nullptr)
+		sliderComponents->AttachToComponent(parentMesh, FAttachmentTransformRules::KeepRelativeTransform, TEXT("Slider_Position"));
+	else
+		UE_LOG(LogTemp, Warning, TEXT("sliderComponents is null"))
+	if (hammerComponents != nullptr)
+		hammerComponents->AttachToComponent(parentMesh, FAttachmentTransformRules::KeepRelativeTransform, TEXT("Hammer_Position"));
+	else
+		UE_LOG(LogTemp, Warning, TEXT("hammerComponents is null"))
 
 }
 
@@ -70,6 +98,11 @@ void ABaseGun::SetParentMeshTPP(USkeletalMeshComponent* pMeshComp)
 	parentMesh = pMeshComp;
 	parentMesh->SetAnimInstanceClass(tppAnimBlueprints->GetAnimBlueprintGeneratedClass());
 
+}
+
+void ABaseGun::EquipWeapon()
+{
+	parentMesh->SetAnimInstanceClass(fppAnimBlueprints->GetAnimBlueprintGeneratedClass());
 }
 
 //오버라이드 가능성 : 샷건(한발씩 장전되는데 바로 쏴야하므로
