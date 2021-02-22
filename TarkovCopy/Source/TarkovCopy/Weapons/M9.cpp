@@ -46,8 +46,18 @@ void AM9::FireWeapon(FVector start, FRotator dir)
 		else
 		{
 			//TODO: 나중에 지형에 코드를 삽입하고 해당 장소에 파편을 튀기는 방식으로 제작할것.
-			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), hitTerrain, hit.ImpactPoint, dir, true);
+			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), hitTerrainParticle, hit.ImpactPoint, dir, true);
+			UGameplayStatics::SpawnSoundAtLocation(GetWorld(), hitTerrainSound, hit.ImpactPoint, dir, true);
 		}
+	}
+
+	if (isAds)
+	{
+		weaponOwnerCharacter->PlayAnimMontage(aimFireAnim);
+	}
+	else
+	{
+		weaponOwnerCharacter->PlayAnimMontage(fireAnim);
 	}
 	Super::FireWeapon(start,dir);
 }
@@ -57,13 +67,15 @@ void AM9::Reload(int pInsertMagazine)
 	Super::Reload(pInsertMagazine);
 	if (curMagRounds == 0)
 	{
-		reloadInterval = emptyReload->GetPlayLength();
-		weaponOwnerCharacter->PlayAnimationMontage(emptyReload);
+		reloadInterval = emptyReloadAnim->GetPlayLength();
+		weaponOwnerCharacter->PlayAnimMontage(emptyReloadAnim);
+		UGameplayStatics::SpawnSoundAttached(emptyReloadSound,weaponComponents);
 	}
 	else
 	{
-		reloadInterval = tacticalReload->GetPlayLength();
-		weaponOwnerCharacter->PlayAnimationMontage(tacticalReload);
+		reloadInterval = emptyReloadAnim->GetPlayLength();
+		weaponOwnerCharacter->PlayAnimMontage(tacticalReloadAnim);
+		UGameplayStatics::SpawnSoundAttached(tacticalReloadSound, weaponComponents);
 	}
 
 }

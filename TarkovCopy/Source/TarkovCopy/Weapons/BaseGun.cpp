@@ -2,6 +2,7 @@
 
 
 #include <Runtime/Engine/Classes/Kismet/GameplayStatics.h>
+#include "TarkovCopy/Player/Character/PlayerCharacter.h"
 #include <Runtime/Engine/Classes/Components/ArrowComponent.h>
 #include "BaseGun.h"
 
@@ -24,7 +25,22 @@ void ABaseGun::FireWeapon(FVector start, FRotator dir)
 {
 	curMagRounds--;
 	isFiring = true;
-	//UGameplayStatics::SpawnSoundAttached(fireSound, gunMesh, TEXT("socketMuzzle"));
+	UGameplayStatics::SpawnSoundAttached(fireWeaponSound, weaponComponents);
+}
+
+void ABaseGun::EmptyFireWeapon()
+{
+	UGameplayStatics::SpawnSoundAttached(emptyFireWeaponSound, weaponComponents);
+	weaponOwnerCharacter->PlayAnimMontage(emptyFireAnim);
+
+	if (isAds)
+	{
+		weaponOwnerCharacter->PlayAnimMontage(aimEmptyFireAnim);
+	}
+	else
+	{
+		weaponOwnerCharacter->PlayAnimMontage(emptyFireAnim);
+	}
 }
 
 void ABaseGun::Reload(int pInsertMagazine)

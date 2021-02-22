@@ -117,11 +117,6 @@ bool APlayerCharacter::PickupItem(UItemInfo* pItemInfo)
 	return isItemAdded;
 }
 
-void APlayerCharacter::PlayAnimationMontage(UAnimMontage* pMontage)
-{
-	PlayAnimMontage(pMontage);
-}
-
 bool APlayerCharacter::IsWeaponEquiped()
 {
 	return (currentActiveGun != nullptr);
@@ -284,6 +279,10 @@ void APlayerCharacter::FireWeapon()
 		}
 
 		currentActiveGun->FireWeapon(start,dir);
+	}
+	else if (currentActiveGun && (!IsFiring()) && (!IsReloading()) && IsEmptyMagazine())
+	{
+		currentActiveGun->EmptyFireWeapon();
 	}
 }
 

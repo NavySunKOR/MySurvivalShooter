@@ -91,8 +91,6 @@ public:
 
 	bool PickupItem(UItemInfo* pItemInfo);
 
-	void PlayAnimationMontage(UAnimMontage* pMontage);
-
 //BlueprintPureOnly
 protected:
 	UFUNCTION(BlueprintPure)

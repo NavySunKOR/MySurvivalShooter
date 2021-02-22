@@ -38,17 +38,47 @@ protected:
 	USceneComponent* hammerComponents;
 	UArrowComponent* muzzleArrow;
 
-	UPROPERTY(EditAnywhere)
-	UParticleSystem* hitTerrain;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere,Category="EditableStatus")
+	float rpm;
+
+	UPROPERTY(EditAnywhere, Category = "Particles")
+	UParticleSystem* hitTerrainParticle;
+	UPROPERTY(EditAnywhere, Category = "Particles")
+	UParticleSystem* hitEnemyParticle;
+
+	UPROPERTY(EditAnywhere, Category = "Animations")
 	UAnimBlueprint* fppAnimBlueprints;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Animations")
 	UAnimBlueprint* tppAnimBlueprints;
 
-	UPROPERTY(EditAnywhere)
-	UAnimMontage* emptyReload;
-	UPROPERTY(EditAnywhere)
-	UAnimMontage* tacticalReload;
+	UPROPERTY(EditAnywhere, Category = "Animations")
+	UAnimMontage* fireAnim;
+	UPROPERTY(EditAnywhere, Category = "Animations")
+	UAnimMontage* emptyFireAnim;
+	UPROPERTY(EditAnywhere, Category = "Animations")
+	UAnimMontage* aimFireAnim;
+	UPROPERTY(EditAnywhere, Category = "Animations")
+	UAnimMontage* aimEmptyFireAnim;
+	UPROPERTY(EditAnywhere, Category = "Animations")
+	UAnimMontage* emptyReloadAnim;
+	UPROPERTY(EditAnywhere, Category = "Animations")
+	UAnimMontage* tacticalReloadAnim;
+	UPROPERTY(EditAnywhere, Category = "Animations")
+	UAnimMontage* inspectWeaponAnim;
+
+
+	UPROPERTY(EditAnywhere,Category="Sound")
+	USoundBase* fireWeaponSound;
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	USoundBase* emptyFireWeaponSound;
+	UPROPERTY(EditAnywhere,Category="Sound")
+	USoundBase* hitTerrainSound;
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	USoundBase* hitEnemySound;
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	USoundBase* emptyReloadSound;
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	USoundBase* tacticalReloadSound;
 
 public:	
 	int itemCode;
@@ -73,17 +103,10 @@ public:
 
 	APlayerCharacter* weaponOwnerCharacter;
 	
-	UPROPERTY(EditAnywhere)
-	float rpm;
-
-	UPROPERTY(EditAnywhere)
-	USoundBase* fireSound;
-
-	UPROPERTY(EditAnywhere)
-	USoundBase* reloadSound;
 
 	virtual bool CanFireWeapon();
 	virtual void FireWeapon(FVector start, FRotator dir);
+	virtual void EmptyFireWeapon();
 	virtual void Reload(int pInsertMagazine);
 	virtual void SetADS();
 	virtual void SetHipfire();
@@ -100,9 +123,9 @@ public:
 //BlueprintPures
 protected: 
 	UFUNCTION(BlueprintPure)
-		bool IsReloading();
+	bool IsReloading();
 	UFUNCTION(BlueprintPure)
-		bool IsFiring();
+	bool IsFiring();
 //TempValues
 protected:
 	int tempInsertMag;
