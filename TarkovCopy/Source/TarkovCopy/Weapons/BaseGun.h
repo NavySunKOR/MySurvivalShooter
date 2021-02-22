@@ -7,6 +7,7 @@
 #include "BaseGun.generated.h"
 
 class UArrowComponent;
+class APlayerCharacter;
 
 UCLASS()
 class TARKOVCOPY_API ABaseGun : public APawn
@@ -28,6 +29,27 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	USkeletalMeshComponent* parentMesh;
+	USceneComponent* magazineComponents;
+	USceneComponent* attachmentComponents;
+	USceneComponent* scopeComponents;
+	USceneComponent* weaponComponents;
+	USceneComponent* sliderComponents;
+	USceneComponent* hammerComponents;
+	UArrowComponent* muzzleArrow;
+
+	UPROPERTY(EditAnywhere)
+	UParticleSystem* hitTerrain;
+	UPROPERTY(EditAnywhere)
+	UAnimBlueprint* fppAnimBlueprints;
+	UPROPERTY(EditAnywhere)
+	UAnimBlueprint* tppAnimBlueprints;
+
+	UPROPERTY(EditAnywhere)
+	UAnimMontage* emptyReload;
+	UPROPERTY(EditAnywhere)
+	UAnimMontage* tacticalReload;
+
 public:	
 	int itemCode;
 	int reloadState; //use for shotgun
@@ -38,29 +60,27 @@ public:
 	int curMagRounds;
 	float damage;
 	float range;
+	float fireInterval;
+	float fireTimer = 0.f;
+	float reloadInterval;
+	float reloadTimer = 0.f;
+
 	FVector thirdPersonScale;
 	FVector thirdPersonPosition;
+	FVector muzzleStart;
 	FRotator thirdPersonRotation;
+	FRotator muzzleDir;
+
+	APlayerCharacter* weaponOwnerCharacter;
 	
 	UPROPERTY(EditAnywhere)
 	float rpm;
-	
-	float fireInterval;
-	float fireTimer = 0.f;
-
-	float reloadInterval;
-	float reloadTimer = 0.f;
 
 	UPROPERTY(EditAnywhere)
 	USoundBase* fireSound;
 
 	UPROPERTY(EditAnywhere)
 	USoundBase* reloadSound;
-
-	FVector muzzleStart;
-	FRotator muzzleDir;
-
-
 
 	virtual bool CanFireWeapon();
 	virtual void FireWeapon(FVector start, FRotator dir);
@@ -80,29 +100,9 @@ public:
 //BlueprintPures
 protected: 
 	UFUNCTION(BlueprintPure)
-	bool IsReloading();
+		bool IsReloading();
 	UFUNCTION(BlueprintPure)
-	bool IsFiring();
-
-	UPROPERTY(EditAnywhere)
-	UParticleSystem* hitTerrain;
-
-	UPROPERTY(EditAnywhere)
-	UAnimBlueprint* fppAnimBlueprints;
-	UPROPERTY(EditAnywhere)
-	UAnimBlueprint* tppAnimBlueprints;
-
-
-	USkeletalMeshComponent* parentMesh;
-	USceneComponent* magazineComponents;
-	USceneComponent* attachmentComponents;
-	USceneComponent* scopeComponents;
-	USceneComponent* weaponComponents;
-	USceneComponent* sliderComponents;
-	USceneComponent* hammerComponents;
-	UArrowComponent* muzzleArrow;
-
-
+		bool IsFiring();
 //TempValues
 protected:
 	int tempInsertMag;

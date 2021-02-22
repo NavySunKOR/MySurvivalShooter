@@ -37,6 +37,7 @@ void APlayerCharacter::BeginPlay()
 			primaryWeapon->SetParentMeshFPP(GetMesh());
 			primaryWeapon->AttachToActor(this, FAttachmentTransformRules::SnapToTargetIncludingScale);
 			primaryWeapon->SetOwner(this);
+			primaryWeapon->weaponOwnerCharacter = this;
 		}
 		else
 		{
@@ -50,8 +51,9 @@ void APlayerCharacter::BeginPlay()
 		if (primaryWeapon != nullptr)
 		{
 			secondaryWeapon->SetParentMeshFPP(GetMesh());
-			secondaryWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform);
+			secondaryWeapon->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
 			secondaryWeapon->SetOwner(this);
+			secondaryWeapon->weaponOwnerCharacter = this;
 		}
 		else
 		{
@@ -115,6 +117,11 @@ bool APlayerCharacter::PickupItem(UItemInfo* pItemInfo)
 	return isItemAdded;
 }
 
+void APlayerCharacter::PlayAnimationMontage(UAnimMontage* pMontage)
+{
+	PlayAnimMontage(pMontage);
+}
+
 bool APlayerCharacter::IsWeaponEquiped()
 {
 	return (currentActiveGun != nullptr);
@@ -133,6 +140,11 @@ bool APlayerCharacter::IsWalking()
 int APlayerCharacter::GetWeaponCode()
 {
 	return (currentActiveGun)?currentActiveGun->itemCode:-1;
+}
+
+bool APlayerCharacter::IsEmptyMagazine()
+{
+	return (currentActiveGun->curMagRounds <= 0);
 }
 
 bool APlayerCharacter::IsShotgun()

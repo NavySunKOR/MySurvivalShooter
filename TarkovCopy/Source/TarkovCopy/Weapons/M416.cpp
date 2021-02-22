@@ -10,7 +10,7 @@ void AM416::BeginPlay()
 {
 	itemCode = 4;
 	maximumMagRounds = 30;
-	reloadInterval = 5.f;
+	reloadInterval = 0.f;
 	rpm = 750.f;
 	damage = 25.f;
 	range = 15000.f;
@@ -70,6 +70,16 @@ void AM416::FireWeapon(FVector start,FRotator dir)
 void AM416::Reload(int pInsertMagazine)
 {
 	Super::Reload(pInsertMagazine);
+	if (curMagRounds == 0)
+	{
+		reloadInterval = emptyReload->GetPlayLength();
+		weaponOwnerCharacter->PlayAnimationMontage(emptyReload);
+	}
+	else
+	{
+		reloadInterval = tacticalReload->GetPlayLength();
+		weaponOwnerCharacter->PlayAnimationMontage(tacticalReload);
+	}
 }
 
 void AM416::SetADS()

@@ -91,6 +91,8 @@ public:
 
 	bool PickupItem(UItemInfo* pItemInfo);
 
+	void PlayAnimationMontage(UAnimMontage* pMontage);
+
 //BlueprintPureOnly
 protected:
 	UFUNCTION(BlueprintPure)
@@ -107,6 +109,8 @@ protected:
 	bool IsWalking();
 	UFUNCTION(BlueprintPure)
 	int GetWeaponCode();
+	UFUNCTION(BlueprintPure)
+	bool IsEmptyMagazine();
 
 	//Shotgun only
 	UFUNCTION(BlueprintPure)

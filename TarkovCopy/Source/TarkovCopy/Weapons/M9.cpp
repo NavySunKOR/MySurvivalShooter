@@ -3,14 +3,15 @@
 
 #include <Kismet/GameplayStatics.h>
 #include "TarkovCopy/AI/Character/AICharacter.h"
+#include "TarkovCopy/Player/Character/PlayerCharacter.h"
 #include "M9.h"
 
 void AM9::BeginPlay()
 {
 	itemCode = 0;
-	maximumMagRounds = 15;
+	maximumMagRounds = 6;
 	reloadInterval = 3.f;
-	rpm = 55.f;
+	rpm = 100.f;
 	damage = 15.f;
 	range = 15000.f;
 	thirdPersonScale = FVector(1.f, 1.f, 1.f);
@@ -54,6 +55,17 @@ void AM9::FireWeapon(FVector start, FRotator dir)
 void AM9::Reload(int pInsertMagazine)
 {
 	Super::Reload(pInsertMagazine);
+	if (curMagRounds == 0)
+	{
+		reloadInterval = emptyReload->GetPlayLength();
+		weaponOwnerCharacter->PlayAnimationMontage(emptyReload);
+	}
+	else
+	{
+		reloadInterval = tacticalReload->GetPlayLength();
+		weaponOwnerCharacter->PlayAnimationMontage(tacticalReload);
+	}
+
 }
 
 void AM9::SetADS()

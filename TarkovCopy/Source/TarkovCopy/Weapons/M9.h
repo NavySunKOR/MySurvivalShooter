@@ -9,6 +9,7 @@
 /**
  * 
  */
+class APlayerCharacter;
 UCLASS()
 class TARKOVCOPY_API AM9 : public ABaseGun
 {
