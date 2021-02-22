@@ -109,7 +109,6 @@ protected:
 	int GetWeaponCode();
 	UFUNCTION(BlueprintPure)
 	bool IsEmptyMagazine();
-
 	//Shotgun only
 	UFUNCTION(BlueprintPure)
 	bool IsShotgun();

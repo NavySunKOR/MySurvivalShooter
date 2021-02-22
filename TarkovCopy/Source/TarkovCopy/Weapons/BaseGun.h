@@ -14,12 +14,6 @@ class TARKOVCOPY_API ABaseGun : public APawn
 {
 	GENERATED_BODY()
 private:
-	//UPROPERTY(VisibleAnywhere)
-	//USceneComponent* root;
-
-	//UPROPERTY(VisibleAnywhere)
-	//USkeletalMeshComponent* gunMesh;
-
 
 public:
 	// Sets default values for this pawn's properties
@@ -65,6 +59,8 @@ protected:
 	UAnimMontage* tacticalReloadAnim;
 	UPROPERTY(EditAnywhere, Category = "Animations")
 	UAnimMontage* inspectWeaponAnim;
+	UPROPERTY(EditAnywhere, Category = "Animations")
+	UAnimMontage* equipWeaponAnim;
 
 
 	UPROPERTY(EditAnywhere,Category="Sound")
@@ -120,12 +116,12 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
 //BlueprintPures
 protected: 
-	UFUNCTION(BlueprintPure)
 	bool IsReloading();
-	UFUNCTION(BlueprintPure)
 	bool IsFiring();
+
 //TempValues
 protected:
 	int tempInsertMag;
