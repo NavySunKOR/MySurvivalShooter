@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "ItemInfo.generated.h"
 
+class APickableItem;
+
 /**
  * 
  */
@@ -32,7 +34,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	UTexture2D* spriteToUse;
 	UPROPERTY(EditAnywhere)
-	USkeletalMesh* meshToDrop;
+	TSubclassOf<APickableItem> meshToDrop;
 
 
 	FSlateRect rect;

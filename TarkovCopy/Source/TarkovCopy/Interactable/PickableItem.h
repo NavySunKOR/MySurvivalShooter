@@ -15,7 +15,6 @@ class TARKOVCOPY_API APickableItem : public AInteractableObject
 	GENERATED_BODY()
 protected:
 	// Called when the game starts
-	APickableItem();
 	virtual void BeginPlay() override;
 private:
 	UPROPERTY(EditAnywhere)
