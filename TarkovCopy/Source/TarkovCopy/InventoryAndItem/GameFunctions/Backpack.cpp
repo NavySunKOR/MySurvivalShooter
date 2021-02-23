@@ -163,13 +163,22 @@ std::tuple<bool, int, int> UBackpack::HasEmptySpaceHeightAxis(UItemInfo* pItemIn
 
 void UBackpack::UpdateInvenVisualize(UItemInfo* pItemInfo)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Update Visualize - top : %d , height : %d"), pItemInfo->top, pItemInfo->top + pItemInfo->height);
-	UE_LOG(LogTemp, Warning, TEXT("Update Visualize - left : %d , width : %d"), pItemInfo->left, pItemInfo->left + pItemInfo->width);
 	for (int y = pItemInfo->top; y < pItemInfo->top + pItemInfo->height; y++)
 	{
 		for (int x = pItemInfo->left; x < pItemInfo->left + pItemInfo->width; x++)
 		{
 			invenVisualize[x][y] = true;
+		}
+	}
+}
+
+void UBackpack::RemoveInvenVisualize(UItemInfo* pItemInfo)
+{
+	for (int y = pItemInfo->top; y < pItemInfo->top + pItemInfo->height; y++)
+	{
+		for (int x = pItemInfo->left; x < pItemInfo->left + pItemInfo->width; x++)
+		{
+			invenVisualize[x][y] = false;
 		}
 	}
 
@@ -203,7 +212,7 @@ bool UBackpack::IsIntersected(UItemInfo* pItemInfo)
 	return false;
 }
 
-bool UBackpack::AddItem(UItemInfo* pItemInfo)
+bool UBackpack::AddItem(UItemInfo* pItemInfo,UInventory* pInventory)
 {
 	//TODO: 아이템 빈자리 찾아서 추가 
 	std::tuple<bool, int, int> results = HasEmptySpace(pItemInfo); //자리 여부 , 해당 아이템의 left,top
@@ -212,6 +221,7 @@ bool UBackpack::AddItem(UItemInfo* pItemInfo)
 	{
 		pItemInfo->InitRect(std::get<1>(results), std::get<2>(results));
 		UpdateInvenVisualize(pItemInfo);
+		pItemInfo->refInventory = pInventory;
 		itemContainers.Add(pItemInfo);
 		return true;
 	}
@@ -219,6 +229,25 @@ bool UBackpack::AddItem(UItemInfo* pItemInfo)
 	{
 		return false;
 	}
+}
+
+bool UBackpack::CanRemoveItem(UItemInfo* pItemInfo)
+{
+	bool isItemContains = (GetItemReference(pItemInfo) != nullptr);
+	if (isItemContains)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+void UBackpack::ActualRemoveItem(UItemInfo* pItemInfo)
+{
+	RemoveInvenVisualize(pItemInfo);
+	itemContainers.Remove(pItemInfo);
 }
 
 UItemInfo* UBackpack::GetItemReference(UItemInfo* pItemPtr)

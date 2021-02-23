@@ -19,11 +19,12 @@ public:
 	ABaseGun* primaryWeapon;
 	ABaseGun* secondaryWeapon;
 
+	APlayerCharacter* inventoryOwner;
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UBackpack> backpackType;
 	UBackpack* backpack;
 
-	void Init();
+	void Init(APlayerCharacter* pPlayer);
 	bool AddItemToInventory(UItemInfo* item);
 	bool UseItem(UItemInfo* pItem);
 	bool DropItem(UItemInfo* pItem);

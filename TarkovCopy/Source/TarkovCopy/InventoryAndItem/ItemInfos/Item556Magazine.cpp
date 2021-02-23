@@ -7,7 +7,3 @@ bool UItem556Magazine::Use()
 {
 	return false;
 }
-bool UItem556Magazine::DropItem()
-{
-	return false;
-}

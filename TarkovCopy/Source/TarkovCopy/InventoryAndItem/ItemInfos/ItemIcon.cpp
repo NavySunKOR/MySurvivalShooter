@@ -48,28 +48,8 @@ void UItemIcon::DropItem()
 	bool isEmpty = invenRef->DropItem(itemInfo);
 	if (isEmpty)
 	{
+		itemInfo->DropItem(controllerRef);
+		itemInfo->refInventory = nullptr;
 		RemoveFromParent();
 	}
 }
-
-//FEventReply UItemIcon::OnMouseButtonDown(FGeometry MyGeometry, const FPointerEvent& MouseEvent)
-//{
-//	Super::OnMouseButtonDown(MyGeometry, MouseEvent);
-//	UE_LOG(LogTemp, Warning, TEXT("Clicked! !! "));
-//	if (MouseEvent.IsMouseButtonDown(EKeys::RightMouseButton))
-//	{
-//		DropItem();
-//	}
-//	else if (MouseEvent.IsMouseButtonDown(EKeys::LeftMouseButton))
-//	{
-//		UseItem();
-//	}
-//
-//	return FEventReply(true);
-//}
-//
-//void UItemIcon::OnMouseEnter(FGeometry MyGeometry, const FPointerEvent& MouseEvent)
-//{
-//	Super::OnMouseEnter(MyGeometry, MouseEvent);
-//	UE_LOG(LogTemp, Warning, TEXT("Backaw34er"));
-//}

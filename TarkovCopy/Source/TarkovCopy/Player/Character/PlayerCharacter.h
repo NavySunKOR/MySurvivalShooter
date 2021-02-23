@@ -91,6 +91,9 @@ public:
 
 	bool PickupItem(UItemInfo* pItemInfo);
 
+	void RemovePrimary();
+	void RemoveSecondary();
+
 //BlueprintPureOnly
 protected:
 	UFUNCTION(BlueprintPure)

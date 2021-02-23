@@ -85,7 +85,7 @@ void AFPPlayerController::InitInvenotry()
 
 void AFPPlayerController::OpenCloseInventory()
 {
-	if (inventory->IsInViewport())
+	if (inventory->IsVisible())
 	{
 		bShowMouseCursor = false;
 		bEnableClickEvents = false;
@@ -93,7 +93,7 @@ void AFPPlayerController::OpenCloseInventory()
 		SetIgnoreLookInput(false);
 		SetIgnoreMoveInput(false);
 		isInventoryOpened = false;
-		inventory->RemoveFromViewport();
+		inventory->SetVisibility(ESlateVisibility::Hidden);
 	}
 	else
 	{
@@ -103,7 +103,7 @@ void AFPPlayerController::OpenCloseInventory()
 		isInventoryOpened = true;
 		SetIgnoreLookInput(true);
 		SetIgnoreMoveInput(true);
-		inventory->AddToViewport();
+		inventory->SetVisibility(ESlateVisibility::Visible);
 	}
 }
 
@@ -119,6 +119,24 @@ void AFPPlayerController::AddItem(UItemInfo* itemInfo, UInventory* pInvenRef)
 	UE_LOG(LogTemp, Warning, TEXT("Successfully added"));
 	items.Add(uiItem);
 	UE_LOG(LogTemp, Warning, TEXT("Destructable damned"));
+}
+
+void AFPPlayerController::RemovePrimary()
+{
+	APlayerCharacter* character = Cast<APlayerCharacter>(GetPawn());
+	if (character != nullptr)
+	{
+		character->RemovePrimary();
+	}
+}
+
+void AFPPlayerController::RemoveSecondary()
+{
+	APlayerCharacter* character = Cast<APlayerCharacter>(GetPawn());
+	if (character != nullptr)
+	{
+		character->RemoveSecondary();
+	}
 }
 
 void AFPPlayerController::ShowQuestInfo(FString itemName, float distance)

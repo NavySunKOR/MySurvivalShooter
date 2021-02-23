@@ -6,6 +6,8 @@
 #include "ItemInfo.generated.h"
 
 class APickableItem;
+class UInventory;
+class AFPPlayerController;
 
 /**
  * 
@@ -36,12 +38,13 @@ public:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<APickableItem> meshToDrop;
 
+	UInventory* refInventory;
 
 	FSlateRect rect;
 
 	virtual bool Use();
-	virtual bool DropItem();
+	virtual void DropItem(AFPPlayerController* pPlayerCon);
 	virtual void InitRect(float pLeft, float pTop);
-
+	UItemInfo operator=(UItemInfo &other);
 
 };

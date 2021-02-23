@@ -70,6 +70,8 @@ public:
 	void OpenCloseInventory();
 	void AddItem(UItemInfo* itemInfo,UInventory* pInvenRef);
 
+	void RemovePrimary();
+	void RemoveSecondary();
 
 
 	void ShowQuestInfo(FString itemName, float distance);

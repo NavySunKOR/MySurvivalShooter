@@ -7,6 +7,7 @@
 #include "TarkovCopy/InventoryAndItem/ItemInfos/ItemInfo.h"
 #include "Backpack.generated.h"
 
+class UInventory;
 /**
  * 
  */
@@ -20,6 +21,7 @@ private:
 	std::tuple<bool, int, int> HasEmptySpaceWidthAxis(UItemInfo* pItemInfo);
 	std::tuple<bool, int, int> HasEmptySpaceHeightAxis(UItemInfo* pItemInfo);
 	void UpdateInvenVisualize(UItemInfo* pItemInfo);
+	void RemoveInvenVisualize(UItemInfo* pItemInfo);
 
 public:
 	UPROPERTY(EditAnywhere)
@@ -30,7 +32,9 @@ public:
 	void Init();
 	std::tuple<bool, int, int> HasEmptySpace(UItemInfo* pItemInfo);
 	bool IsIntersected(UItemInfo* pItemInfo);
-	bool AddItem(UItemInfo* pItemInfo);
+	bool AddItem(UItemInfo* pItemInfo,UInventory* pInventory);
+	bool CanRemoveItem(UItemInfo* pItemInfo);
+	void ActualRemoveItem(UItemInfo* pItemInfo);
 	UItemInfo* GetItemReference(UItemInfo* pItemPtr);
 	FVector2D GetBackpackSize();
 };

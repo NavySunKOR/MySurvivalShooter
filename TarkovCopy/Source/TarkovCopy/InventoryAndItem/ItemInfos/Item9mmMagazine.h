@@ -15,5 +15,4 @@ class TARKOVCOPY_API UItem9mmMagazine : public UItemInfo
 	GENERATED_BODY()
 public:
 	virtual bool Use() override;
-	virtual bool DropItem() override;
 };

@@ -26,7 +26,7 @@ void APlayerCharacter::BeginPlay()
 
 	//TODO:나중에 인벤토리 초기화 고칠것
 	inventory = inventoryOrigin.GetDefaultObject();
-	inventory->Init();
+	inventory->Init(this);
 	UE_LOG(LogTemp, Warning, TEXT("ActorForward : %s "), *GetActorForwardVector().ToString());
 
 	if (m416Origin)
@@ -115,6 +115,36 @@ bool APlayerCharacter::PickupItem(UItemInfo* pItemInfo)
 		playerController->AddItem(pItemInfo,inventory);
 	}
 	return isItemAdded;
+}
+
+void APlayerCharacter::RemovePrimary()
+{
+	if (currentActiveGun == primaryWeapon)
+	{
+		currentActiveGun->Destroy();
+		currentActiveGun = nullptr;
+		primaryWeapon = nullptr;
+
+		if (secondaryWeapon)
+		{
+			EquipSecondary();
+		}
+	}
+}
+
+void APlayerCharacter::RemoveSecondary()
+{
+	if (currentActiveGun == secondaryWeapon)
+	{
+		currentActiveGun->Destroy();
+		currentActiveGun = nullptr;
+		secondaryWeapon = nullptr;
+
+		if (primaryWeapon)
+		{
+			EquipPrimary();
+		}
+	}
 }
 
 bool APlayerCharacter::IsWeaponEquiped()

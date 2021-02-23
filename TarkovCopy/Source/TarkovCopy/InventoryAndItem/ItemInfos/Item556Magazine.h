@@ -16,5 +16,4 @@ class TARKOVCOPY_API UItem556Magazine : public UItemInfo
 
 public:
 	virtual bool Use() override;
-	virtual bool DropItem() override;
 };

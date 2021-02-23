@@ -9,11 +9,12 @@
 /**
  * 
  */
+class AFPPlayerController;
 UCLASS()
 class TARKOVCOPY_API UItemM416 : public UItemInfo
 {
 	GENERATED_BODY()
 public:
 	virtual bool Use() override;
-	virtual bool DropItem() override;
+	virtual void DropItem(AFPPlayerController* pPlayerCon) override;
 };
