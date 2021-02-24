@@ -64,6 +64,7 @@ void AFPPlayerController::InitInvenotry()
 {
 	APlayerCharacter* character = Cast<APlayerCharacter>(GetPawn());
 	inventory = CreateWidget<UUserWidget>(this, inventoryWidget);
+
 	UE_LOG(LogTemp, Warning, TEXT("Grande : %s"), *character->inventory->backpack->GetBackpackSize().ToString());
 
 	itemContainer = Cast<UCanvasPanel>(inventory->GetWidgetFromName(TEXT("ItemContainer")));
@@ -81,11 +82,13 @@ void AFPPlayerController::InitInvenotry()
 	}
 	else
 		UE_LOG(LogTemp, Warning, TEXT("Canvas is null!"));
+
 }
 
 void AFPPlayerController::OpenCloseInventory()
 {
-	if (inventory->IsVisible())
+	UE_LOG(LogTemp,Warning,TEXT("OpenClose"))
+	if (inventory->IsInViewport())
 	{
 		bShowMouseCursor = false;
 		bEnableClickEvents = false;
@@ -93,7 +96,9 @@ void AFPPlayerController::OpenCloseInventory()
 		SetIgnoreLookInput(false);
 		SetIgnoreMoveInput(false);
 		isInventoryOpened = false;
-		inventory->SetVisibility(ESlateVisibility::Hidden);
+		inventory->RemoveFromViewport();
+
+		UE_LOG(LogTemp, Warning, TEXT("close"))
 	}
 	else
 	{
@@ -103,7 +108,9 @@ void AFPPlayerController::OpenCloseInventory()
 		isInventoryOpened = true;
 		SetIgnoreLookInput(true);
 		SetIgnoreMoveInput(true);
-		inventory->SetVisibility(ESlateVisibility::Visible);
+		inventory->AddToViewport();
+
+		UE_LOG(LogTemp, Warning, TEXT("open"))
 	}
 }
 
