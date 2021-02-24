@@ -16,9 +16,6 @@ class TARKOVCOPY_API UItemM9 : public UItemInfo
 {
 	GENERATED_BODY()
 public:
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<ABaseGun> weaponSubclass;
-
 	virtual void Use(AFPPlayerController* pPlayerCon) override; // Return : isConsumable
 	virtual void DropItem(AFPPlayerController* pPlayerCon) override;
 };

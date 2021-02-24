@@ -23,11 +23,6 @@ public:
 	UPROPERTY(EditAnywhere)
 	TArray<TSubclassOf<ABaseGun>> allAIGunsInGame;
 
-	UPROPERTY(EditAnywhere)
-	TSubclassOf <UItemInfo> itemM416;
-	UPROPERTY(EditAnywhere)
-	TSubclassOf <UItemInfo> itemM9;
-
 	virtual void QuestCompleted(AInteractableObject* questItem);
 	virtual void TryExfil();
 	virtual void CancelExfil();

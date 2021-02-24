@@ -8,6 +8,7 @@
 class APickableItem;
 class UInventory;
 class AFPPlayerController;
+class ABaseGun;
 
 /**
  * 
@@ -42,6 +43,11 @@ public:
 	UTexture2D* spriteToUse;
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<APickableItem> meshToDrop;
+
+	//무기면 해당 서브타입을 지정해줄것(무기의 종류)
+	UPROPERTY(EditAnywhere) 
+	TSubclassOf<ABaseGun> weaponSubclass;
+
 
 	UInventory* refInventory;
 

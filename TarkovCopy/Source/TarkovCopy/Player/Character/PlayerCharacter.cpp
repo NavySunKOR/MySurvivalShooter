@@ -29,38 +29,38 @@ void APlayerCharacter::BeginPlay()
 	inventory->Init(this);
 	UE_LOG(LogTemp, Warning, TEXT("ActorForward : %s "), *GetActorForwardVector().ToString());
 
-	if (m416Origin)
-	{
-		primaryWeapon = GetWorld()->SpawnActor<ABaseGun>(m416Origin);
-		if (primaryWeapon != nullptr)
-		{
-			primaryWeapon->SetParentMeshFPP(GetMesh());
-			primaryWeapon->AttachToActor(this, FAttachmentTransformRules::SnapToTargetIncludingScale);
-			primaryWeapon->SetOwner(this);
-			primaryWeapon->weaponOwnerCharacter = this;
-		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("no weapon"));
-		}
-	}
-	
-	if (m9Origin)
-	{
-		secondaryWeapon = GetWorld()->SpawnActor<ABaseGun>(m9Origin);
-		if (secondaryWeapon != nullptr)
-		{
-			secondaryWeapon->SetParentMeshFPP(GetMesh());
-			secondaryWeapon->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
-			secondaryWeapon->SetOwner(this);
-			secondaryWeapon->weaponOwnerCharacter = this;
-		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("no handgun"));
-		}
-	}
-	EquipPrimary();
+	//if (m416Origin)
+	//{
+	//	primaryWeapon = GetWorld()->SpawnActor<ABaseGun>(m416Origin);
+	//	if (primaryWeapon != nullptr)
+	//	{
+	//		primaryWeapon->SetParentMeshFPP(GetMesh());
+	//		primaryWeapon->AttachToActor(this, FAttachmentTransformRules::SnapToTargetIncludingScale);
+	//		primaryWeapon->SetOwner(this);
+	//		primaryWeapon->weaponOwnerCharacter = this;
+	//	}
+	//	else
+	//	{
+	//		UE_LOG(LogTemp, Warning, TEXT("no weapon"));
+	//	}
+	//}
+	//
+	//if (m9Origin)
+	//{
+	//	secondaryWeapon = GetWorld()->SpawnActor<ABaseGun>(m9Origin);
+	//	if (secondaryWeapon != nullptr)
+	//	{
+	//		secondaryWeapon->SetParentMeshFPP(GetMesh());
+	//		secondaryWeapon->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
+	//		secondaryWeapon->SetOwner(this);
+	//		secondaryWeapon->weaponOwnerCharacter = this;
+	//	}
+	//	else
+	//	{
+	//		UE_LOG(LogTemp, Warning, TEXT("no handgun"));
+	//	}
+	//}
+	//EquipPrimary();
 	if (playerController != nullptr)
 		playerController->InitInvenotry();
 }
@@ -120,26 +120,30 @@ bool APlayerCharacter::PickupItem(UItemInfo* pItemInfo)
 void APlayerCharacter::AddPrimary(TSubclassOf<ABaseGun> pWeaponOrigin)
 {
 	primaryWeapon = GetWorld()->SpawnActor<ABaseGun>(pWeaponOrigin);
+	UE_LOG(LogTemp,Warning,TEXT("Warn!"))
 	if (primaryWeapon != nullptr)
 	{
 		primaryWeapon->SetParentMeshFPP(GetMesh());
 		primaryWeapon->AttachToActor(this, FAttachmentTransformRules::SnapToTargetIncludingScale);
 		primaryWeapon->SetOwner(this);
 		primaryWeapon->weaponOwnerCharacter = this;
+		UE_LOG(LogTemp, Warning, TEXT("SetWeapon!"))
 	}
-
 	EquipPrimary();
 }
 
 void APlayerCharacter::AddSecondary(TSubclassOf<ABaseGun> pWeaponOrigin)
 {
 	secondaryWeapon = GetWorld()->SpawnActor<ABaseGun>(m9Origin);
+	UE_LOG(LogTemp, Warning, TEXT("Warn!2"))
 	if (secondaryWeapon != nullptr)
 	{
 		secondaryWeapon->SetParentMeshFPP(GetMesh());
 		secondaryWeapon->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
 		secondaryWeapon->SetOwner(this);
 		secondaryWeapon->weaponOwnerCharacter = this;
+
+		UE_LOG(LogTemp, Warning, TEXT("SetWeapon!2"))
 	}
 
 	EquipSecondary();
@@ -149,6 +153,7 @@ void APlayerCharacter::RemovePrimary()
 {
 	if (currentActiveGun == primaryWeapon)
 	{
+		primaryWeapon->Destroy();
 		currentActiveGun->Destroy();
 		currentActiveGun = nullptr;
 		primaryWeapon = nullptr;
@@ -164,6 +169,7 @@ void APlayerCharacter::RemoveSecondary()
 {
 	if (currentActiveGun == secondaryWeapon)
 	{
+		secondaryWeapon->Destroy();
 		currentActiveGun->Destroy();
 		currentActiveGun = nullptr;
 		secondaryWeapon = nullptr;
@@ -197,7 +203,7 @@ int APlayerCharacter::GetWeaponCode()
 
 bool APlayerCharacter::IsEmptyMagazine()
 {
-	return (currentActiveGun->curMagRounds <= 0);
+	return (currentActiveGun && currentActiveGun->curMagRounds <= 0);
 }
 
 bool APlayerCharacter::IsShotgun()
@@ -280,10 +286,6 @@ void APlayerCharacter::SetStanding()
 
 void APlayerCharacter::EquipPrimary()
 {
-	if(playerController->isInventoryOpened)
-	{
-		return;
-	}
 	if (primaryWeapon)
 	{
 		primaryWeapon->SetActorHiddenInGame(false);
@@ -300,10 +302,6 @@ void APlayerCharacter::EquipPrimary()
 
 void APlayerCharacter::EquipSecondary()
 {
-	if (playerController->isInventoryOpened)
-	{
-		return;
-	}
 	if (secondaryWeapon)
 	{
 		secondaryWeapon->SetActorHiddenInGame(false);

@@ -6,9 +6,12 @@
 
 void UItemM9::Use(AFPPlayerController* pPlayerCon)
 {
+	UE_LOG(LogTemp, Warning, TEXT("EquipSecondaryWeapon"))
 	pPlayerCon->AddSecondary(weaponSubclass);
+	Super::Use(pPlayerCon);
 }
 void UItemM9::DropItem(AFPPlayerController* pPlayerCon)
 {
 	pPlayerCon->RemoveSecondary();
+	Super::DropItem(pPlayerCon);
 }

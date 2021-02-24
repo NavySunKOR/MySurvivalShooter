@@ -116,7 +116,7 @@ void AFPPlayerController::OpenCloseInventory()
 
 void AFPPlayerController::AddItem(UItemInfo* itemInfo, UInventory* pInvenRef)
 {
-	UItemIcon* uiItem = inventory->WidgetTree->ConstructWidget<UItemIcon>(iconWidget);
+	UItemIcon* uiItem = inventory->WidgetTree->ConstructWidget<UItemIcon>(iconWidget); //TODO:WidgetTree가 계속 널이 되는 경우가 있는데 이 문제를 해결해야됨.
 	UCanvasPanelSlot* panelSlotForItem = Cast<UCanvasPanelSlot>(itemContainer->AddChild(uiItem));
 
 	uiItem->Slot = panelSlotForItem;
@@ -129,7 +129,7 @@ void AFPPlayerController::AddPrimary(TSubclassOf<ABaseGun> pWeaponClass)
 	APlayerCharacter* character = Cast<APlayerCharacter>(GetPawn());
 	if (character != nullptr)
 	{
-
+		character->AddPrimary(pWeaponClass);
 	}
 }
 
@@ -138,7 +138,7 @@ void AFPPlayerController::AddSecondary(TSubclassOf<ABaseGun> pWeaponClass)
 	APlayerCharacter* character = Cast<APlayerCharacter>(GetPawn());
 	if (character != nullptr)
 	{
-
+		character->AddSecondary(pWeaponClass);
 	}
 }
 
