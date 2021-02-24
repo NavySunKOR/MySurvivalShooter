@@ -30,6 +30,11 @@ public:
 	int top;
 
 	UPROPERTY(EditAnywhere)
+	bool isConsumable;
+	
+	int consumeAmount = 0;
+
+	UPROPERTY(EditAnywhere)
 	int maxCapacity;
 	UPROPERTY(EditAnywhere)
 	int currentCapacity;
@@ -42,7 +47,7 @@ public:
 
 	FSlateRect rect;
 
-	virtual bool Use();
+	virtual void Use(AFPPlayerController* pPlayerCon); // Return : isEmpty
 	virtual void DropItem(AFPPlayerController* pPlayerCon);
 	virtual void InitRect(float pLeft, float pTop);
 	UItemInfo operator=(UItemInfo &other);

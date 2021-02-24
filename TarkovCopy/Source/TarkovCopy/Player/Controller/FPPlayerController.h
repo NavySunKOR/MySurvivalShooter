@@ -70,6 +70,9 @@ public:
 	void OpenCloseInventory();
 	void AddItem(UItemInfo* itemInfo,UInventory* pInvenRef);
 
+	void AddPrimary(TSubclassOf<ABaseGun> pWeaponClass);
+	void AddSecondary(TSubclassOf<ABaseGun> pWeaponClass);
+
 	void RemovePrimary();
 	void RemoveSecondary();
 

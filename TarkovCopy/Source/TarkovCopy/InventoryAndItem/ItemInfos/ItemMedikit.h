@@ -6,6 +6,7 @@
 #include "TarkovCopy/InventoryAndItem/ItemInfos/ItemInfo.h"
 #include "ItemMedikit.generated.h"
 
+class AFPPlayerController;
 /**
  * 
  */
@@ -14,5 +15,5 @@ class TARKOVCOPY_API UItemMedikit : public UItemInfo
 {
 	GENERATED_BODY()
 public:
-	virtual bool Use() override;
+	virtual void Use(AFPPlayerController* pPlayerCon) override;
 };

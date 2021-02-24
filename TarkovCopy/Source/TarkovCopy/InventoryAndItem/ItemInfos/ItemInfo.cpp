@@ -47,9 +47,9 @@ UItemInfo UItemInfo::operator=(UItemInfo& other)
 
 	return items;
 }
-bool UItemInfo::Use()
+void UItemInfo::Use(AFPPlayerController* pPlayerCon)
 {
-	return false;
+
 }
 
 void UItemInfo::DropItem(AFPPlayerController* pPlayerCon)

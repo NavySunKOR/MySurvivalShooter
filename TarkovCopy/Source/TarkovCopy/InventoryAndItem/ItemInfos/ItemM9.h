@@ -7,6 +7,7 @@
 #include "ItemM9.generated.h"
 
 class AFPPlayerController;
+class ABaseGun;
 /**
  * 
  */
@@ -15,6 +16,9 @@ class TARKOVCOPY_API UItemM9 : public UItemInfo
 {
 	GENERATED_BODY()
 public:
-	virtual bool Use() override;
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<ABaseGun> weaponSubclass;
+
+	virtual void Use(AFPPlayerController* pPlayerCon) override; // Return : isConsumable
 	virtual void DropItem(AFPPlayerController* pPlayerCon) override;
 };

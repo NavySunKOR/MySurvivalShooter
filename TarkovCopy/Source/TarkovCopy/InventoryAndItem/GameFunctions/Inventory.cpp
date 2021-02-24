@@ -19,13 +19,26 @@ bool UInventory::AddItemToInventory(UItemInfo* item)
 
 bool UInventory::UseItem(UItemInfo* pItem)
 {
-	UItemInfo* foundItem = backpack->GetItemReference(pItem);
-	return foundItem->Use();
+	if (backpack->HasItem(pItem))
+	{
+		if (pItem->isConsumable)
+		{
+			if (backpack->UseItem(pItem))
+				return true;
+			else 
+				return false;
+		}
+		return false;
+	}
+	else
+	{
+		return true;
+	}
 }
 
 bool UInventory::DropItem(UItemInfo* pItem)
 {
-	if (backpack->CanRemoveItem(pItem))
+	if (backpack->HasItem(pItem))
 	{
 		APickableItem* picks = inventoryOwner->GetWorld()->SpawnActor<APickableItem>(pItem->meshToDrop);
 		picks->SetActorLocation(inventoryOwner->GetActorLocation() + inventoryOwner->GetActorUpVector() * 50.f + inventoryOwner->GetActorForwardVector() * 50.f);
@@ -37,6 +50,16 @@ bool UInventory::DropItem(UItemInfo* pItem)
 	{
 		return false;
 	}
+}
+
+void UInventory::RemoveItem(UItemInfo* pItem)
+{
+	backpack->ActualRemoveItem(pItem);
+}
+
+bool UInventory::HasItem(UItemInfo* pItem)
+{
+	return backpack->HasItem(pItem);
 }
 
 UBackpack* UInventory::GetBackpack()

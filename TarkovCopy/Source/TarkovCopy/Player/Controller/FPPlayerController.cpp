@@ -116,16 +116,30 @@ void AFPPlayerController::OpenCloseInventory()
 
 void AFPPlayerController::AddItem(UItemInfo* itemInfo, UInventory* pInvenRef)
 {
-
 	UItemIcon* uiItem = inventory->WidgetTree->ConstructWidget<UItemIcon>(iconWidget);
-
 	UCanvasPanelSlot* panelSlotForItem = Cast<UCanvasPanelSlot>(itemContainer->AddChild(uiItem));
-	uiItem->Slot = panelSlotForItem;
 
+	uiItem->Slot = panelSlotForItem;
 	uiItem->Init(itemInfo, pInvenRef, this);
-	UE_LOG(LogTemp, Warning, TEXT("Successfully added"));
 	items.Add(uiItem);
-	UE_LOG(LogTemp, Warning, TEXT("Destructable damned"));
+}
+
+void AFPPlayerController::AddPrimary(TSubclassOf<ABaseGun> pWeaponClass)
+{
+	APlayerCharacter* character = Cast<APlayerCharacter>(GetPawn());
+	if (character != nullptr)
+	{
+
+	}
+}
+
+void AFPPlayerController::AddSecondary(TSubclassOf<ABaseGun> pWeaponClass)
+{
+	APlayerCharacter* character = Cast<APlayerCharacter>(GetPawn());
+	if (character != nullptr)
+	{
+
+	}
 }
 
 void AFPPlayerController::RemovePrimary()

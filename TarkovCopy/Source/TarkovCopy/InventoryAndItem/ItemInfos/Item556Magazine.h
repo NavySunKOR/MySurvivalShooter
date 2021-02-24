@@ -15,5 +15,5 @@ class TARKOVCOPY_API UItem556Magazine : public UItemInfo
 	GENERATED_BODY()
 
 public:
-	virtual bool Use() override;
+	virtual void Use(AFPPlayerController* pPlayerCon) override;
 };

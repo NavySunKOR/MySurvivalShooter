@@ -2,11 +2,12 @@
 
 
 #include "TarkovCopy/Player/Controller/FPPlayerController.h"
+#include "TarkovCopy/Weapons/BaseGun.h"
 #include "ItemM416.h"
 
-bool UItemM416::Use()
+void UItemM416::Use(AFPPlayerController* pPlayerCon)
 {
-	return false;
+	pPlayerCon->AddPrimary(weaponSubclass);
 }
 void UItemM416::DropItem(AFPPlayerController* pPlayerCon)
 {

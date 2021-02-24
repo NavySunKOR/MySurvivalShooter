@@ -91,6 +91,8 @@ public:
 
 	bool PickupItem(UItemInfo* pItemInfo);
 
+	void AddPrimary(TSubclassOf<ABaseGun> pWeaponOrigin);
+	void AddSecondary(TSubclassOf<ABaseGun> pWeaponOrigin);
 	void RemovePrimary();
 	void RemoveSecondary();
 

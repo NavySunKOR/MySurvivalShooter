@@ -9,10 +9,12 @@
 /**
  * 
  */
+
+class AFPPlayerController;
 UCLASS()
 class TARKOVCOPY_API UItem9mmMagazine : public UItemInfo
 {
 	GENERATED_BODY()
 public:
-	virtual bool Use() override;
+	virtual void Use(AFPPlayerController* pPlayerCon) override;
 };

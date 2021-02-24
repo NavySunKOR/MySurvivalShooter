@@ -32,8 +32,9 @@ public:
 	void Init();
 	std::tuple<bool, int, int> HasEmptySpace(UItemInfo* pItemInfo);
 	bool IsIntersected(UItemInfo* pItemInfo);
+	bool UseItem(UItemInfo* pItemInfo);//return : isEmpty;
 	bool AddItem(UItemInfo* pItemInfo,UInventory* pInventory);
-	bool CanRemoveItem(UItemInfo* pItemInfo);
+	bool HasItem(UItemInfo* pItemInfo);
 	void ActualRemoveItem(UItemInfo* pItemInfo);
 	UItemInfo* GetItemReference(UItemInfo* pItemPtr);
 	FVector2D GetBackpackSize();

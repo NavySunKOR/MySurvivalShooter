@@ -212,6 +212,16 @@ bool UBackpack::IsIntersected(UItemInfo* pItemInfo)
 	return false;
 }
 
+bool UBackpack::UseItem(UItemInfo* pItemInfo)
+{
+	UItemInfo* itemRef = GetItemReference(pItemInfo);
+	itemRef->currentCapacity -= pItemInfo->consumeAmount;
+	if (itemRef->currentCapacity <= 0)
+		return true;
+	else
+		return false;
+}
+
 bool UBackpack::AddItem(UItemInfo* pItemInfo,UInventory* pInventory)
 {
 	//TODO: 아이템 빈자리 찾아서 추가 
@@ -231,7 +241,7 @@ bool UBackpack::AddItem(UItemInfo* pItemInfo,UInventory* pInventory)
 	}
 }
 
-bool UBackpack::CanRemoveItem(UItemInfo* pItemInfo)
+bool UBackpack::HasItem(UItemInfo* pItemInfo)
 {
 	bool isItemContains = (GetItemReference(pItemInfo) != nullptr);
 	if (isItemContains)

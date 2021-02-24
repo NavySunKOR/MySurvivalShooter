@@ -1,9 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+#include "TarkovCopy/Player/Controller/FPPlayerController.h"
 #include "Item9mmMagazine.h"
 
 
-bool UItem9mmMagazine::Use()
+void UItem9mmMagazine::Use(AFPPlayerController* pPlayerCon)
 {
-	return false;
+
 }

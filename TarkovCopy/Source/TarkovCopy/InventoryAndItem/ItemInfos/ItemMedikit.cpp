@@ -3,7 +3,7 @@
 
 #include "ItemMedikit.h"
 
-bool UItemMedikit::Use()
+void UItemMedikit::Use(AFPPlayerController* pPlayerCon)
 {
-	return false;
+
 }

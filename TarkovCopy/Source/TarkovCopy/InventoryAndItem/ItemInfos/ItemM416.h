@@ -9,12 +9,15 @@
 /**
  * 
  */
+class ABaseGun;
 class AFPPlayerController;
 UCLASS()
 class TARKOVCOPY_API UItemM416 : public UItemInfo
 {
 	GENERATED_BODY()
 public:
-	virtual bool Use() override;
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<ABaseGun> weaponSubclass;
+	virtual void Use(AFPPlayerController* pPlayerCon) override; // Return : isConsumable
 	virtual void DropItem(AFPPlayerController* pPlayerCon) override;
 };

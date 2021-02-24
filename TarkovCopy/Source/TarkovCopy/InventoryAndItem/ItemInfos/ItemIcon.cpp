@@ -34,12 +34,19 @@ void UItemIcon::Init(UItemInfo* pItemInfo, UInventory* pInven, AFPPlayerControll
 
 void UItemIcon::UseItem()
 {
-	UE_LOG(LogTemp,Warning,TEXT("UsingItem"))
-	bool isEmpty = invenRef->UseItem(itemInfo);
-	if (isEmpty)
-	{
-		RemoveFromParent();
-	}
+		UE_LOG(LogTemp,Warning,TEXT("UsingItem"))
+		if (invenRef->HasItem(itemInfo))
+		{
+			itemInfo->Use(controllerRef); // 여기서 consumable인지 아닌지 결정해줌.
+			bool isEmpty = invenRef->UseItem(itemInfo);
+
+			if (isEmpty)
+			{
+				itemInfo->refInventory = nullptr;
+				invenRef->RemoveItem(itemInfo);
+				RemoveFromParent();
+			}
+		}
 }
 
 void UItemIcon::DropItem()

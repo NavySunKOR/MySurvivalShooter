@@ -48,7 +48,7 @@ void APlayerCharacter::BeginPlay()
 	if (m9Origin)
 	{
 		secondaryWeapon = GetWorld()->SpawnActor<ABaseGun>(m9Origin);
-		if (primaryWeapon != nullptr)
+		if (secondaryWeapon != nullptr)
 		{
 			secondaryWeapon->SetParentMeshFPP(GetMesh());
 			secondaryWeapon->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
@@ -115,6 +115,34 @@ bool APlayerCharacter::PickupItem(UItemInfo* pItemInfo)
 		playerController->AddItem(pItemInfo,inventory);
 	}
 	return isItemAdded;
+}
+
+void APlayerCharacter::AddPrimary(TSubclassOf<ABaseGun> pWeaponOrigin)
+{
+	primaryWeapon = GetWorld()->SpawnActor<ABaseGun>(pWeaponOrigin);
+	if (primaryWeapon != nullptr)
+	{
+		primaryWeapon->SetParentMeshFPP(GetMesh());
+		primaryWeapon->AttachToActor(this, FAttachmentTransformRules::SnapToTargetIncludingScale);
+		primaryWeapon->SetOwner(this);
+		primaryWeapon->weaponOwnerCharacter = this;
+	}
+
+	EquipPrimary();
+}
+
+void APlayerCharacter::AddSecondary(TSubclassOf<ABaseGun> pWeaponOrigin)
+{
+	secondaryWeapon = GetWorld()->SpawnActor<ABaseGun>(m9Origin);
+	if (secondaryWeapon != nullptr)
+	{
+		secondaryWeapon->SetParentMeshFPP(GetMesh());
+		secondaryWeapon->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
+		secondaryWeapon->SetOwner(this);
+		secondaryWeapon->weaponOwnerCharacter = this;
+	}
+
+	EquipSecondary();
 }
 
 void APlayerCharacter::RemovePrimary()
