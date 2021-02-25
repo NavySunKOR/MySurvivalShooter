@@ -6,5 +6,5 @@
 
 void UItem9mmMagazine::Use(AFPPlayerController* pPlayerCon)
 {
-
+	consumeAmount = pPlayerCon->ReloadSecondary(weaponSubclass);
 }
