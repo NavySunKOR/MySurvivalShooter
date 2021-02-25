@@ -73,9 +73,6 @@ public:
 	void AddPrimary(TSubclassOf<ABaseGun> pWeaponClass);
 	void AddSecondary(TSubclassOf<ABaseGun> pWeaponClass);
 
-	int ReloadPrimary(TSubclassOf<ABaseGun> pWeaponClass);
-	int ReloadSecondary(TSubclassOf<ABaseGun> pWeaponClass);
-
 	void RemovePrimary();
 	void RemoveSecondary();
 

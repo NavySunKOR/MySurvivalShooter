@@ -7,6 +7,7 @@
 #include "BaseGun.generated.h"
 
 class UArrowComponent;
+class UItemInfo;
 class APlayerCharacter;
 
 UCLASS()
@@ -31,7 +32,7 @@ protected:
 	USceneComponent* sliderComponents;
 	USceneComponent* hammerComponents;
 	UArrowComponent* muzzleArrow;
-
+	
 	UPROPERTY(EditAnywhere,Category="EditableStatus")
 	float rpm;
 
@@ -77,6 +78,7 @@ protected:
 	USoundBase* tacticalReloadSound;
 
 public:	
+
 	int itemCode;
 	int reloadState; //use for shotgun
 	bool isAds = false;

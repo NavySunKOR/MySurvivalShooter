@@ -142,14 +142,6 @@ void AFPPlayerController::AddSecondary(TSubclassOf<ABaseGun> pWeaponClass)
 	}
 }
 
-int AFPPlayerController::ReloadPrimary(TSubclassOf<ABaseGun> pWeaponClass)
-{
-
-}
-
-int AFPPlayerController::ReloadSecondary(TSubclassOf<ABaseGun> pWeaponClass)
-{
-}
 
 void AFPPlayerController::RemovePrimary()
 {

@@ -68,11 +68,6 @@ protected:
 	UPROPERTY(EditAnywhere)
 	float walkingSpeed;
 
-	//TODO: 임시. 인벤토리 기능 추가시 변경 될 예정
-	int ownedPrimaryWeaponAmmo; 
-	int ownedSecondaryWeaponAmmo;
-
-
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UInventory> inventoryOrigin;
 

@@ -260,6 +260,34 @@ void UBackpack::ActualRemoveItem(UItemInfo* pItemInfo)
 	itemContainers.Remove(pItemInfo);
 }
 
+int UBackpack::GetAllPrimaryWeaponAmmo(FString pWeaponName)
+{
+	int sum = 0;
+	for (int i = 0; i < itemContainers.Num(); i++)
+	{
+		if (itemContainers[i]->itemType == ItemType::MAGAZINE && itemContainers[i]->weaponSubclass->GetName().Equals(pWeaponName))
+		{
+			sum += itemContainers[i]->currentCapacity;
+		}
+	}
+
+	return sum;
+}
+
+int UBackpack::GetAllSecondaryWeaponAmmo(FString pWeaponName)
+{
+	int sum = 0;
+	for (int i = 0; i < itemContainers.Num(); i++)
+	{
+		if (itemContainers[i]->itemType == ItemType::MAGAZINE && itemContainers[i]->weaponSubclass->GetName().Equals(pWeaponName))
+		{
+			sum += itemContainers[i]->currentCapacity;
+		}
+	}
+
+	return sum;
+}
+
 UItemInfo* UBackpack::GetItemReference(UItemInfo* pItemPtr)
 {
 	for (int i = 0; i < itemContainers.Num(); i++)

@@ -31,6 +31,11 @@ public:
 	void RemoveItem(UItemInfo* pItem);
 	bool HasItem(UItemInfo* pItem);
 
+	//AboutWeapons
+
+	int GetAllPrimaryWeaponAmmo(FString pWeaponClassName);
+	int GetAllSecondaryWeaponAmmo(FString pWeaponClassName);
+
 	UFUNCTION(BlueprintPure)
 	UBackpack* GetBackpack();
 

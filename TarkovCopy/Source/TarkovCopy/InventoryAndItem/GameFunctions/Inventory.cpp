@@ -62,6 +62,16 @@ bool UInventory::HasItem(UItemInfo* pItem)
 	return backpack->HasItem(pItem);
 }
 
+int UInventory::GetAllPrimaryWeaponAmmo(FString pWeaponClassName)
+{
+	return 0;
+}
+
+int UInventory::GetAllSecondaryWeaponAmmo(FString pWeaponClassName)
+{
+	return 0;
+}
+
 UBackpack* UInventory::GetBackpack()
 {
 	return backpack;

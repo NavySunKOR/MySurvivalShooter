@@ -36,6 +36,8 @@ public:
 	bool AddItem(UItemInfo* pItemInfo,UInventory* pInventory);
 	bool HasItem(UItemInfo* pItemInfo);
 	void ActualRemoveItem(UItemInfo* pItemInfo);
+	int GetAllPrimaryWeaponAmmo(FString pWeaponClassName);
+	int GetAllSecondaryWeaponAmmo(FString pWeaponClassName);
 	UItemInfo* GetItemReference(UItemInfo* pItemPtr);
 	FVector2D GetBackpackSize();
 };
