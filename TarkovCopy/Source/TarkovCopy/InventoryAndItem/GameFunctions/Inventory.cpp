@@ -64,12 +64,28 @@ bool UInventory::HasItem(UItemInfo* pItem)
 
 int UInventory::GetAllPrimaryWeaponAmmo(FString pWeaponClassName)
 {
-	return 0;
+	return backpack->GetAllPrimaryWeaponAmmo(pWeaponClassName);
 }
 
 int UInventory::GetAllSecondaryWeaponAmmo(FString pWeaponClassName)
 {
-	return 0;
+	return backpack->GetAllSecondaryWeaponAmmo(pWeaponClassName);
+}
+
+void UInventory::UsePrimaryWeaponAmmo(int pUseAmmo, FString pWeaponClassName)
+{
+	backpack->UsePrimaryWeaponAmmo(pUseAmmo, pWeaponClassName);
+	
+}
+
+void UInventory::UseSecondaryWeaponAmmo(int pUseAmmo, FString pWeaponClassName)
+{
+	backpack->UseSecondaryWeaponAmmo(pUseAmmo, pWeaponClassName);
+}
+
+void UInventory::UpdateAndCleanupBackpack()
+{
+
 }
 
 UBackpack* UInventory::GetBackpack()

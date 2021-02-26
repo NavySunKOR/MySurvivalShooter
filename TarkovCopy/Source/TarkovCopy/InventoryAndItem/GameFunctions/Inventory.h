@@ -36,6 +36,11 @@ public:
 	int GetAllPrimaryWeaponAmmo(FString pWeaponClassName);
 	int GetAllSecondaryWeaponAmmo(FString pWeaponClassName);
 
+	void UsePrimaryWeaponAmmo(int pUseAmmo, FString pWeaponClassName);
+	void UseSecondaryWeaponAmmo(int pUseAmmo, FString pWeaponClassName);
+
+	void UpdateAndCleanupBackpack();
+
 	UFUNCTION(BlueprintPure)
 	UBackpack* GetBackpack();
 

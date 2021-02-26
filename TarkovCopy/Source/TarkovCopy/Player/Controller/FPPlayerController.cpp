@@ -161,6 +161,11 @@ void AFPPlayerController::RemoveSecondary()
 	}
 }
 
+void AFPPlayerController::UpdateInventoryUI()
+{
+
+}
+
 void AFPPlayerController::ShowQuestInfo(FString itemName, float distance)
 {
 	alertHud->SetVisibility(ESlateVisibility::Visible);

@@ -288,6 +288,53 @@ int UBackpack::GetAllSecondaryWeaponAmmo(FString pWeaponName)
 	return sum;
 }
 
+//TODO: 만약에 이게 성능에 문제가 될 경우, 스타트 인덱스를 파라미터로 넘겨줄것.
+
+void UBackpack::UsePrimaryWeaponAmmo(int pUseAmmo, FString pWeaponClassName)
+{
+	for (int i = 0; i < itemContainers.Num(); i++)
+	{
+		if (itemContainers[i]->itemType == ItemType::MAGAZINE && itemContainers[i]->weaponSubclass->GetName().Equals(pWeaponClassName) && itemContainers[i]->currentCapacity > 0)
+		{
+			if (itemContainers[i]->currentCapacity >= pUseAmmo)
+			{
+				itemContainers[i]->currentCapacity -= pUseAmmo;
+			}
+			else
+			{
+				
+				int left = pUseAmmo - itemContainers[i]->currentCapacity;
+				itemContainers[i]->currentCapacity = 0;
+				UsePrimaryWeaponAmmo(left, pWeaponClassName);
+			}
+		}
+	}
+}
+
+//TODO: 만약에 이게 성능에 문제가 될 경우, 스타트 인덱스를 파라미터로 넘겨줄것.
+
+void UBackpack::UseSecondaryWeaponAmmo(int pUseAmmo, FString pWeaponClassName)
+{
+	for (int i = 0; i < itemContainers.Num(); i++)
+	{
+		if (itemContainers[i]->itemType == ItemType::MAGAZINE 
+			&& itemContainers[i]->weaponSubclass->GetName().Equals(pWeaponClassName) 
+			&& itemContainers[i]->currentCapacity > 0)
+		{
+			if (itemContainers[i]->currentCapacity >= pUseAmmo)
+			{
+				itemContainers[i]->currentCapacity -= pUseAmmo;
+			}
+			else
+			{
+				int left = pUseAmmo - itemContainers[i]->currentCapacity;
+				itemContainers[i]->currentCapacity = 0;
+				UseSecondaryWeaponAmmo(left, pWeaponClassName);
+			}
+		}
+	}
+}
+
 UItemInfo* UBackpack::GetItemReference(UItemInfo* pItemPtr)
 {
 	for (int i = 0; i < itemContainers.Num(); i++)

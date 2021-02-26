@@ -38,6 +38,8 @@ public:
 	void ActualRemoveItem(UItemInfo* pItemInfo);
 	int GetAllPrimaryWeaponAmmo(FString pWeaponClassName);
 	int GetAllSecondaryWeaponAmmo(FString pWeaponClassName);
+	void UsePrimaryWeaponAmmo(int pUseAmmo, FString pWeaponClassName);
+	void UseSecondaryWeaponAmmo(int pUseAmmo, FString pWeaponClassName);
 	UItemInfo* GetItemReference(UItemInfo* pItemPtr);
 	FVector2D GetBackpackSize();
 };

@@ -27,38 +27,6 @@ void APlayerCharacter::BeginPlay()
 	inventory->Init(this);
 	UE_LOG(LogTemp, Warning, TEXT("ActorForward : %s "), *GetActorForwardVector().ToString());
 
-	//if (m416Origin)
-	//{
-	//	primaryWeapon = GetWorld()->SpawnActor<ABaseGun>(m416Origin);
-	//	if (primaryWeapon != nullptr)
-	//	{
-	//		primaryWeapon->SetParentMeshFPP(GetMesh());
-	//		primaryWeapon->AttachToActor(this, FAttachmentTransformRules::SnapToTargetIncludingScale);
-	//		primaryWeapon->SetOwner(this);
-	//		primaryWeapon->weaponOwnerCharacter = this;
-	//	}
-	//	else
-	//	{
-	//		UE_LOG(LogTemp, Warning, TEXT("no weapon"));
-	//	}
-	//}
-	//
-	//if (m9Origin)
-	//{
-	//	secondaryWeapon = GetWorld()->SpawnActor<ABaseGun>(m9Origin);
-	//	if (secondaryWeapon != nullptr)
-	//	{
-	//		secondaryWeapon->SetParentMeshFPP(GetMesh());
-	//		secondaryWeapon->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
-	//		secondaryWeapon->SetOwner(this);
-	//		secondaryWeapon->weaponOwnerCharacter = this;
-	//	}
-	//	else
-	//	{
-	//		UE_LOG(LogTemp, Warning, TEXT("no handgun"));
-	//	}
-	//}
-	//EquipPrimary();
 	if (playerController != nullptr)
 		playerController->InitInvenotry();
 }
@@ -364,10 +332,6 @@ void APlayerCharacter::SetHipfireWeapon()
 
 void APlayerCharacter::ReloadWeapon()
 {
-	if (playerController->isInventoryOpened)
-	{
-		return;
-	}
 	if (currentActiveGun)
 	{
 		int needAmmo = currentActiveGun->maximumMagRounds - currentActiveGun->curMagRounds;
@@ -394,12 +358,14 @@ void APlayerCharacter::ReloadWeapon()
 			currentActiveGun->Reload(needAmmo);
 			if (currentActiveGun == primaryWeapon)
 			{
-				//inventory->UsePrimaryAmmo(needAmmo);
+				inventory->UsePrimaryWeaponAmmo(needAmmo,currentActiveGun->GetClass()->GetName());
 			}
 			else
 			{
-				//inventory->UseSecondaryAmmo(needAmmo);
+				inventory->UseSecondaryWeaponAmmo(needAmmo, currentActiveGun->GetClass()->GetName());
 			}
+
+			playerController->UpdateInventoryUI();
 		}
 	}
 }

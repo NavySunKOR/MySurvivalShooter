@@ -76,6 +76,8 @@ public:
 	void RemovePrimary();
 	void RemoveSecondary();
 
+	void UpdateInventoryUI();
+
 
 	void ShowQuestInfo(FString itemName, float distance);
 	void ShowExfilPoints(FString exfilPointsName, float distance);
