@@ -16,13 +16,14 @@ class TARKOVCOPY_API UInventory : public UObject
 {
 	GENERATED_BODY()
 public:
-	ABaseGun* primaryWeapon;
-	ABaseGun* secondaryWeapon;
+	ABaseGun* primaryWeapon = nullptr;
+	ABaseGun* secondaryWeapon = nullptr;
 
-	APlayerCharacter* inventoryOwner;
+	APlayerCharacter* inventoryOwner = nullptr;
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UBackpack> backpackType;
-	UBackpack* backpack;
+	UPROPERTY()
+	UBackpack* backpack = nullptr;
 
 	void Init(APlayerCharacter* pPlayer);
 	bool AddItemToInventory(UItemInfo* item);
@@ -43,5 +44,4 @@ public:
 
 	UFUNCTION(BlueprintPure)
 	UBackpack* GetBackpack();
-
 };

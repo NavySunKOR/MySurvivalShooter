@@ -15,6 +15,7 @@ UCLASS(Blueprintable, BlueprintType)
 class TARKOVCOPY_API UBackpack : public UObject
 {
 	GENERATED_BODY()
+	~UBackpack();
 private:
 	bool** invenVisualize;
 	TArray<UItemInfo*> itemContainers;
@@ -22,8 +23,11 @@ private:
 	std::tuple<bool, int, int> HasEmptySpaceHeightAxis(UItemInfo* pItemInfo);
 	void UpdateInvenVisualize(UItemInfo* pItemInfo);
 	void RemoveInvenVisualize(UItemInfo* pItemInfo);
+	void CleanupBackpack();
+
 
 public:
+
 	UPROPERTY(EditAnywhere)
 	int capacityWidth;
 	UPROPERTY(EditAnywhere)
@@ -36,10 +40,13 @@ public:
 	bool AddItem(UItemInfo* pItemInfo,UInventory* pInventory);
 	bool HasItem(UItemInfo* pItemInfo);
 	void ActualRemoveItem(UItemInfo* pItemInfo);
+	void UpdateAndCleanupBackpack();
+
 	int GetAllPrimaryWeaponAmmo(FString pWeaponClassName);
 	int GetAllSecondaryWeaponAmmo(FString pWeaponClassName);
 	void UsePrimaryWeaponAmmo(int pUseAmmo, FString pWeaponClassName);
 	void UseSecondaryWeaponAmmo(int pUseAmmo, FString pWeaponClassName);
+
 	UItemInfo* GetItemReference(UItemInfo* pItemPtr);
 	FVector2D GetBackpackSize();
 };

@@ -10,7 +10,6 @@ EBTNodeResult::Type UBTTask_SearchEnemy::ExecuteTask(UBehaviorTreeComponent& Own
 	AAICharacter* owner = Cast<AAICharacter>(OwnerComp.GetAIOwner()->GetPawn());
 	if (owner == nullptr)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Failed to cast"));
 		return EBTNodeResult::Failed;
 	}
 	UBlackboardComponent* blackboard = OwnerComp.GetBlackboardComponent();

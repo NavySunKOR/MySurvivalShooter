@@ -14,6 +14,7 @@ APlayerCharacter::APlayerCharacter()
 
 }
 
+
 // Called when the game starts or when spawned
 void APlayerCharacter::BeginPlay()
 {
@@ -23,9 +24,9 @@ void APlayerCharacter::BeginPlay()
 	curHp = maxHp;
 
 	//TODO:나중에 인벤토리 초기화 고칠것
+
 	inventory = inventoryOrigin.GetDefaultObject();
 	inventory->Init(this);
-	UE_LOG(LogTemp, Warning, TEXT("ActorForward : %s "), *GetActorForwardVector().ToString());
 
 	if (playerController != nullptr)
 		playerController->InitInvenotry();
@@ -63,12 +64,23 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAxis(TEXT("RotateVertical"), this, &APlayerCharacter::RotateVertical);
 }
 
+//void APlayerCharacter::BeginDestroy()
+//{
+//	//if (playerController)
+//	//	playerController->ConditionalBeginDestroy();
+//	//if (currentActiveGun)
+//	//	currentActiveGun->ConditionalBeginDestroy();
+//	//if (primaryWeapon)
+//	//	primaryWeapon->ConditionalBeginDestroy();
+//	//if (secondaryWeapon)
+//	//	secondaryWeapon->ConditionalBeginDestroy();
+//}
+
 void APlayerCharacter::TookDamage(float damage, FHitResult pHitParts)
 {
 	curHp -= damage;
 	if (curHp <= 0)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Dead"));
 		curHp = 0.f;
 	}
 }
@@ -86,14 +98,12 @@ bool APlayerCharacter::PickupItem(UItemInfo* pItemInfo)
 void APlayerCharacter::AddPrimary(TSubclassOf<ABaseGun> pWeaponOrigin)
 {
 	primaryWeapon = GetWorld()->SpawnActor<ABaseGun>(pWeaponOrigin);
-	UE_LOG(LogTemp,Warning,TEXT("Warn!"))
 	if (primaryWeapon != nullptr)
 	{
 		primaryWeapon->SetParentMeshFPP(GetMesh());
 		primaryWeapon->AttachToActor(this, FAttachmentTransformRules::SnapToTargetIncludingScale);
 		primaryWeapon->SetOwner(this);
 		primaryWeapon->weaponOwnerCharacter = this;
-		UE_LOG(LogTemp, Warning, TEXT("SetWeapon!"))
 	}
 	EquipPrimary();
 }
@@ -101,15 +111,12 @@ void APlayerCharacter::AddPrimary(TSubclassOf<ABaseGun> pWeaponOrigin)
 void APlayerCharacter::AddSecondary(TSubclassOf<ABaseGun> pWeaponOrigin)
 {
 	secondaryWeapon = GetWorld()->SpawnActor<ABaseGun>(m9Origin);
-	UE_LOG(LogTemp, Warning, TEXT("Warn!2"))
 	if (secondaryWeapon != nullptr)
 	{
 		secondaryWeapon->SetParentMeshFPP(GetMesh());
 		secondaryWeapon->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
 		secondaryWeapon->SetOwner(this);
 		secondaryWeapon->weaponOwnerCharacter = this;
-
-		UE_LOG(LogTemp, Warning, TEXT("SetWeapon!2"))
 	}
 
 	EquipSecondary();
@@ -317,7 +324,6 @@ void APlayerCharacter::SetADSWeapon()
 	if (currentActiveGun)
 	{
 		currentActiveGun->SetADS();
-		UE_LOG(LogTemp, Warning, TEXT("Ads"))
 	}
 }
 
@@ -326,13 +332,12 @@ void APlayerCharacter::SetHipfireWeapon()
 	if (currentActiveGun)
 	{
 		currentActiveGun->SetHipfire();
-		UE_LOG(LogTemp, Warning, TEXT("Hip"))
 	}
 }
 
 void APlayerCharacter::ReloadWeapon()
 {
-	if (currentActiveGun)
+	if (currentActiveGun && !currentActiveGun->isReloading)
 	{
 		int needAmmo = currentActiveGun->maximumMagRounds - currentActiveGun->curMagRounds;
 		int ownedAmmo = 0 ;
@@ -351,10 +356,13 @@ void APlayerCharacter::ReloadWeapon()
 
 		//TODO: 체크 로직은 인벤토리가 추가되면 바로 바뀔 것
 		//needAmmo가 현재 보유 수보다 같거나 적고 현재 발사가 가능한 상태이면서 재장전 중이 아니면 재장전 아니면 빠꾸
-		UE_LOG(LogTemp, Warning, TEXT("Reload"));
-		if (needAmmo > 0 && needAmmo <= ownedAmmo && !currentActiveGun->isReloading)
+		if (needAmmo > 0)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Reload Actual"));
+			if (needAmmo > ownedAmmo)
+			{
+				needAmmo = ownedAmmo;
+			}
+
 			currentActiveGun->Reload(needAmmo);
 			if (currentActiveGun == primaryWeapon)
 			{
@@ -365,6 +373,7 @@ void APlayerCharacter::ReloadWeapon()
 				inventory->UseSecondaryWeaponAmmo(needAmmo, currentActiveGun->GetClass()->GetName());
 			}
 
+			inventory->UpdateAndCleanupBackpack();
 			playerController->UpdateInventoryUI();
 		}
 	}
@@ -389,12 +398,9 @@ void APlayerCharacter::Interact()
 
 	if (GetWorld()->LineTraceSingleByChannel(hit, start, start + dir.Vector() * 800.f, ECollisionChannel::ECC_Pawn, param))
 	{
-
-		UE_LOG(LogTemp, Warning, TEXT("Tesst : %s"), *hit.Actor->GetName());
 		AInteractableObject* inter = Cast<AInteractableObject>(hit.GetActor());
 		if (inter != nullptr)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Interacting"));
 			inter->Interact();
 		}
 	}

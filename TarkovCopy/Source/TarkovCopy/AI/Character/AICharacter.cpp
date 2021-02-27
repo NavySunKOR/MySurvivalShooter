@@ -21,7 +21,6 @@ void AAICharacter::BeginPlay()
 	currentActiveGun = GetWorld()->SpawnActor<ABaseGun>(gameMode->allAIGunsInGame[selectedWeapon]);
 	if (currentActiveGun != nullptr)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Comeon!"))
 		currentActiveGun->SetParentMeshTPP(GetMesh());
 		currentActiveGun->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, TEXT("Hand_R_Position"));
 		currentActiveGun->SetActorRelativeLocation(currentActiveGun->thirdPersonPosition);
@@ -64,16 +63,13 @@ void AAICharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
 void AAICharacter::NotifyActorBeginOverlap(AActor* Other)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Copying!"));
 	if (Other->ActorHasTag(FName("Player")))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Player!"));
 		FVector targetDir = (Other->GetActorLocation() - GetOwner()->GetActorLocation());
 		targetDir.Normalize();
 		float angleCos = FVector::DotProduct(GetOwner()->GetActorForwardVector(), targetDir) / GetOwner()->GetActorForwardVector().Size() * targetDir.Size();
 		float toAngle = FMath::RadiansToDegrees(FMath::Acos(angleCos));
 
-		UE_LOG(LogTemp, Warning, TEXT("Angle! : %f"), toAngle);
 
 		if (toAngle < 90.f)
 		{
@@ -94,6 +90,5 @@ void AAICharacter::FireWeapon()
 {
 	FVector start = GetActorLocation();
 	FVector dir = (targetActor->GetActorLocation() - GetActorLocation());
-	UE_LOG(LogTemp, Warning, TEXT("Firing"));
 	currentActiveGun->FireWeapon(GetActorLocation(), dir.Rotation());
 }

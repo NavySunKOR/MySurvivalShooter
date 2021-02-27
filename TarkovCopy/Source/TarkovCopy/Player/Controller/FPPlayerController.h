@@ -44,7 +44,9 @@ private:
 	TSubclassOf<UUserWidget> inventoryWidget;
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UItemIcon> iconWidget;
+	UPROPERTY()
 	UUserWidget* inventory;
+	UPROPERTY()
 	UCanvasPanel* itemContainer;
 	TArray<UItemIcon*> items;
 

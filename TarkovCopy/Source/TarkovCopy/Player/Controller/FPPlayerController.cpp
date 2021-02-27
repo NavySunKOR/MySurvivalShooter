@@ -22,8 +22,6 @@ void AFPPlayerController::BeginPlay()
 	exfilAlert = CreateWidget<UUserWidget>(this, exfilAlertWidget);
 	exfilAlert->AddToViewport();
 
-	UE_LOG(LogTemp, Warning, TEXT("PlayerUIInit"));
-
 	alertHud->SetVisibility(ESlateVisibility::Hidden);
 	exfilAlert->SetVisibility(ESlateVisibility::Hidden);
 
@@ -63,9 +61,11 @@ void AFPPlayerController::PlayerTick(float DeltaTime)
 void AFPPlayerController::InitInvenotry()
 {
 	APlayerCharacter* character = Cast<APlayerCharacter>(GetPawn());
-	inventory = CreateWidget<UUserWidget>(this, inventoryWidget);
 
-	UE_LOG(LogTemp, Warning, TEXT("Grande : %s"), *character->inventory->backpack->GetBackpackSize().ToString());
+	if (inventory)
+		inventory->RemoveFromViewport();
+
+	inventory = CreateWidget<UUserWidget>(this, inventoryWidget);
 
 	itemContainer = Cast<UCanvasPanel>(inventory->GetWidgetFromName(TEXT("ItemContainer")));
 	if (itemContainer == nullptr)
@@ -87,7 +87,6 @@ void AFPPlayerController::InitInvenotry()
 
 void AFPPlayerController::OpenCloseInventory()
 {
-	UE_LOG(LogTemp,Warning,TEXT("OpenClose"))
 	if (inventory->IsInViewport())
 	{
 		bShowMouseCursor = false;
@@ -116,6 +115,23 @@ void AFPPlayerController::OpenCloseInventory()
 
 void AFPPlayerController::AddItem(UItemInfo* itemInfo, UInventory* pInvenRef)
 {
+	if (inventory == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Fucking inven"))
+			return;
+	}
+	if (inventory->WidgetTree == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Fucking WidgetTree"))
+			return;
+	}
+
+	if (iconWidget == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Fucking iconWidget"))
+		return;
+	}
+
 	UItemIcon* uiItem = inventory->WidgetTree->ConstructWidget<UItemIcon>(iconWidget); //TODO:WidgetTree가 계속 널이 되는 경우가 있는데 이 문제를 해결해야됨.
 	UCanvasPanelSlot* panelSlotForItem = Cast<UCanvasPanelSlot>(itemContainer->AddChild(uiItem));
 
@@ -163,7 +179,22 @@ void AFPPlayerController::RemoveSecondary()
 
 void AFPPlayerController::UpdateInventoryUI()
 {
+	bool isRemoved = false;
+	for (int i = 0; i < items.Num(); i++)
+	{
+		if (items[i]->itemInfo->currentCapacity == 0)
+		{
+			items[i]->RemoveFromParent();
+			items.RemoveAt(i);
+			isRemoved = true;
+			break;
+		}
+	}
 
+	if (isRemoved)
+	{
+		UpdateInventoryUI();
+	}
 }
 
 void AFPPlayerController::ShowQuestInfo(FString itemName, float distance)

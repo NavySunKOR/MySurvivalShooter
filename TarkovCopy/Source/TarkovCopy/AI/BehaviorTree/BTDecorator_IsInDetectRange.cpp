@@ -12,7 +12,6 @@ bool UBTDecorator_IsInDetectRange::CalculateRawConditionValue(UBehaviorTreeCompo
 	AAICharacter* owner = Cast<AAICharacter>(OwnerComp.GetAIOwner()->GetPawn());
 	if (owner == nullptr)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Failed to cast in detect range"));
 		return false;
 	}
 
@@ -20,12 +19,10 @@ bool UBTDecorator_IsInDetectRange::CalculateRawConditionValue(UBehaviorTreeCompo
 
 	if (!owner->outIsPlayerDetected)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("detect range returns false"));
 		return false;
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("detect range returns true"));
 		return true;
 	}
 }

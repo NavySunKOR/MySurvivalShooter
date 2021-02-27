@@ -11,7 +11,6 @@ void AEscapeGameMode::SelectQuestItems()
 	TActorRange<AQuestItem> items = TActorRange<AQuestItem>(GetWorld());
 	for (AQuestItem* item : items)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Item found : %s"), *item->GetName());
 		item->SetActorHiddenInGame(true);
 		allQuestItems.Add(item);
 	}
@@ -22,11 +21,9 @@ void AEscapeGameMode::SelectQuestItems()
 	activeQuestItem->SetActorHiddenInGame(false);
 
 
-	UE_LOG(LogTemp, Warning, TEXT("Quest pos"));
 	playerCon = Cast<AFPPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 	if (playerCon != nullptr)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Quest"));
 		playerCon->ShowQuestInfo(activeQuestItem->GetName(), (activeQuestItem->GetActorLocation() - playerCon->GetPawn()->GetActorLocation()).Size());
 	}
 
@@ -40,7 +37,6 @@ void AEscapeGameMode::SelectExfilPoint()
 		{
 			exfil->SetActorHiddenInGame(true);
 			allExfilPoints.Add(exfil);
-			UE_LOG(LogTemp, Warning, TEXT("Exfil point name : %s"), exfil);
 		}
 	}
 
@@ -49,10 +45,8 @@ void AEscapeGameMode::SelectExfilPoint()
 	activeExfilPoint = allExfilPoints[num];
 	activeExfilPoint->SetActorHiddenInGame(false);
 
-	UE_LOG(LogTemp, Warning, TEXT("Exfil pos"));
 	if (playerCon != nullptr)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Exfil"));
 		playerCon->ShowExfilPoints(activeExfilPoint->GetName(), (activeExfilPoint->GetActorLocation() - playerCon->GetPawn()->GetActorLocation()).Size());
 	}
 }

@@ -18,11 +18,9 @@ void UItemIcon::Init(UItemInfo* pItemInfo, UInventory* pInven, AFPPlayerControll
 	iconImage->SetBrushFromTexture(pItemInfo->spriteToUse);
 	WidgetTree->RootWidget = iconImage;
 
-	UE_LOG(LogTemp, Warning, TEXT("WTF is this? : %d"), Slot);
 	UCanvasPanelSlot* canvas = Cast<UCanvasPanelSlot>(Slot);
 	if(canvas != nullptr)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Setting size! pos x : %d , y : %d"), itemInfo->left, itemInfo->top);
 		canvas->SetSize(FVector2D(itemInfo->width * UMGPublicProperites::BASIC_INVENTORY_GRID_WIDTH, itemInfo->height * UMGPublicProperites::BASIC_INVENTORY_GRID_HEIGHT));
 		canvas->SetPosition(FVector2D(itemInfo->left * UMGPublicProperites::BASIC_INVENTORY_GRID_WIDTH, itemInfo->top * UMGPublicProperites::BASIC_INVENTORY_GRID_HEIGHT));
 	}
@@ -52,7 +50,6 @@ void UItemIcon::UseItem()
 
 void UItemIcon::DropItem()
 {
-	UE_LOG(LogTemp, Warning, TEXT("DropItem"))
 	bool isEmpty = invenRef->DropItem(itemInfo);
 	if (isEmpty)
 	{

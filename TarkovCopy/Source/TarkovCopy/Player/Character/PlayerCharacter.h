@@ -19,7 +19,6 @@ class TARKOVCOPY_API APlayerCharacter : public ACharacter
 public:
 	// Sets default values for this character's properties
 	APlayerCharacter();
-
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -73,7 +72,7 @@ protected:
 
 
 public:	
-
+	UPROPERTY()
 	UInventory* inventory;
 
 	// Called every frame
@@ -81,6 +80,8 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	//virtual void BeginDestroy();
 
 	void TookDamage(float damage, FHitResult pHitParts);
 

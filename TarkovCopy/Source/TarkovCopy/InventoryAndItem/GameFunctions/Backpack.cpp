@@ -3,6 +3,7 @@
 #include <Layout/SlateRect.h>
 #include "Backpack.h"
 
+
 void UBackpack::Init()
 {
 	invenVisualize = new bool* [capacityWidth];
@@ -17,8 +18,26 @@ void UBackpack::Init()
 		{
 			invenVisualize[i][j] = false;
 
-			UE_LOG(LogTemp, Warning, TEXT("inven x : %d , y : %d , val : %d"), i, j, invenVisualize[i][j])
 		}
+	}
+
+	//백팩에서 begin destroy를 정의하고 시도해보았으나, UObject isValid 관련 assertion 에러만 나서 제거 하고 다음과 같이 작성하였다.
+
+	for (UItemInfo* item : itemContainers)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Die!"));
+		itemContainers.Remove(item);
+		item->ConditionalBeginDestroy();
+	}
+}
+
+UBackpack::~UBackpack()
+{
+	for (UItemInfo* item : itemContainers)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Die!"));
+		itemContainers.Remove(item);
+		item->ConditionalBeginDestroy();
 	}
 }
 
@@ -36,7 +55,6 @@ std::tuple<bool, int, int> UBackpack::HasEmptySpaceWidthAxis(UItemInfo* pItemInf
 			xIncrease = 1;
 
 			//해당칸이 비었다면
-			UE_LOG(LogTemp, Warning, TEXT("Positions x : %d ,  y : %d  "), x, y)
 				if (invenVisualize[x][y] == false)
 				{
 					//그 근처를 아이템의 width, height 만큼 탐색
@@ -73,7 +91,6 @@ std::tuple<bool, int, int> UBackpack::HasEmptySpaceWidthAxis(UItemInfo* pItemInf
 						}
 					}
 
-					UE_LOG(LogTemp, Warning, TEXT("Total spaceXCount :%d , spaceYCount : %d"), spaceXCount, spaceYCount);
 					//해당 공간이 사용할 수 있는 공간이면 그자리에서 끝내고 아니면 계속 탐색
 					if (spaceXCount >= pItemInfo->width && spaceYCount >= pItemInfo->height)
 					{
@@ -97,10 +114,10 @@ std::tuple<bool, int, int> UBackpack::HasEmptySpaceHeightAxis(UItemInfo* pItemIn
 {
 	int spaceXCount = 0;
 	int spaceYCount = 0;
+	int yIncrease = 1;
 
 	for (int x = 0; x < capacityWidth; x++)
 	{
-		int yIncrease = 1;
 		for (int y = 0; y < capacityHeight; y += yIncrease)
 		{
 			//한번 height 만큼 건너 뛰었으면 다시 리셋 시킨다.
@@ -110,9 +127,9 @@ std::tuple<bool, int, int> UBackpack::HasEmptySpaceHeightAxis(UItemInfo* pItemIn
 			if (invenVisualize[x][y] == false)
 			{
 				//그 근처를 아이템의 width, height 만큼 탐색
-				for (int startY = y; startY < y + pItemInfo->height; startY++)
+				for (int startX = x; startX < x + pItemInfo->width; startX++)
 				{
-					for (int startX = x; startX < x + pItemInfo->width; startX++)
+					for (int startY = y; startY < y + pItemInfo->height; startY++)
 					{
 
 						if (startY >= capacityHeight)
@@ -124,7 +141,7 @@ std::tuple<bool, int, int> UBackpack::HasEmptySpaceHeightAxis(UItemInfo* pItemIn
 						//해당 인벤에 만약에 빈칸이 하나라도 통째로 무쓸모.
 						if (invenVisualize[startX][startY] == false)
 						{
-							spaceXCount++;
+							spaceYCount++;
 						}
 						else
 						{
@@ -132,14 +149,14 @@ std::tuple<bool, int, int> UBackpack::HasEmptySpaceHeightAxis(UItemInfo* pItemIn
 							break;
 						}
 					}
-					if (spaceXCount == 0)
+					if (spaceYCount == 0)
 					{
-						spaceYCount = 0;
+						spaceXCount = 0;
 						break;
 					}
 					else
 					{
-						spaceYCount++;
+						spaceXCount++;
 					}
 				}
 
@@ -184,16 +201,26 @@ void UBackpack::RemoveInvenVisualize(UItemInfo* pItemInfo)
 
 }
 
+void UBackpack::CleanupBackpack()
+{
+	for (UItemInfo* item : itemContainers)
+	{
+		if (item->currentCapacity <= 0)
+		{
+			RemoveInvenVisualize(item);
+			itemContainers.Remove(item);
+		}
+	}
+}
+
 std::tuple<bool, int, int> UBackpack::HasEmptySpace(UItemInfo* pItemInfo)
 {
 	if (pItemInfo->width >= pItemInfo->height)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Width!!"))
 			return HasEmptySpaceWidthAxis(pItemInfo);
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Height!!"))
 			return HasEmptySpaceHeightAxis(pItemInfo);
 	}
 
@@ -226,7 +253,6 @@ bool UBackpack::AddItem(UItemInfo* pItemInfo,UInventory* pInventory)
 {
 	//TODO: 아이템 빈자리 찾아서 추가 
 	std::tuple<bool, int, int> results = HasEmptySpace(pItemInfo); //자리 여부 , 해당 아이템의 left,top
-	UE_LOG(LogTemp, Warning, TEXT("results : %d"), std::get<0>(results));
 	if (std::get<0>(results))
 	{
 		pItemInfo->InitRect(std::get<1>(results), std::get<2>(results));
@@ -260,11 +286,19 @@ void UBackpack::ActualRemoveItem(UItemInfo* pItemInfo)
 	itemContainers.Remove(pItemInfo);
 }
 
+void UBackpack::UpdateAndCleanupBackpack()
+{
+	CleanupBackpack();
+}
+
 int UBackpack::GetAllPrimaryWeaponAmmo(FString pWeaponName)
 {
 	int sum = 0;
 	for (int i = 0; i < itemContainers.Num(); i++)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Item type : %d, item weapon class : %s , item weapon param class : %s"), itemContainers[i]->itemType,
+			*itemContainers[i]->weaponSubclass->GetName(),
+			*pWeaponName);
 		if (itemContainers[i]->itemType == ItemType::MAGAZINE && itemContainers[i]->weaponSubclass->GetName().Equals(pWeaponName))
 		{
 			sum += itemContainers[i]->currentCapacity;
@@ -279,6 +313,9 @@ int UBackpack::GetAllSecondaryWeaponAmmo(FString pWeaponName)
 	int sum = 0;
 	for (int i = 0; i < itemContainers.Num(); i++)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Item type : %d, item weapon class : %s , item weapon param class : %s"), itemContainers[i]->itemType,
+			*itemContainers[i]->weaponSubclass->GetName(),
+			*pWeaponName);
 		if (itemContainers[i]->itemType == ItemType::MAGAZINE && itemContainers[i]->weaponSubclass->GetName().Equals(pWeaponName))
 		{
 			sum += itemContainers[i]->currentCapacity;
@@ -295,7 +332,10 @@ void UBackpack::UsePrimaryWeaponAmmo(int pUseAmmo, FString pWeaponClassName)
 	for (int i = 0; i < itemContainers.Num(); i++)
 	{
 		if (itemContainers[i]->itemType == ItemType::MAGAZINE && itemContainers[i]->weaponSubclass->GetName().Equals(pWeaponClassName) && itemContainers[i]->currentCapacity > 0)
-		{
+		{/*
+			UE_LOG(LogTemp, Warning, TEXT("Item type : %d, item weapon class : %s , item weapon param class : %s"), itemContainers[i]->itemType,
+				*itemContainers[i]->weaponSubclass->GetName(),
+				*pWeaponClassName);*/
 			if (itemContainers[i]->currentCapacity >= pUseAmmo)
 			{
 				itemContainers[i]->currentCapacity -= pUseAmmo;

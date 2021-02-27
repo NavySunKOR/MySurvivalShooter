@@ -12,7 +12,6 @@ bool UBTDecorator_IsInRange::CalculateRawConditionValue(UBehaviorTreeComponent& 
 	AAICharacter* owner = Cast<AAICharacter>(OwnerComp.GetAIOwner()->GetPawn());
 	if (owner == nullptr)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Failed to cast"));
 		return false;
 	}
 
@@ -30,20 +29,17 @@ bool UBTDecorator_IsInRange::CalculateRawConditionValue(UBehaviorTreeComponent& 
 		{
 			if (hit.Actor->ActorHasTag(TEXT("Player")))
 			{
-				UE_LOG(LogTemp, Warning, TEXT("in range returns true"));
 				owner->targetActor = hit.Actor.Get();
 				return true;
 			}
 			else
 			{
-				UE_LOG(LogTemp, Warning, TEXT("in range returns false"));
 				owner->targetActor = nullptr;
 				return false;
 			}
 		}
 		else
 		{
-			//UE_LOG(LogTemp, Warning, TEXT("in range returns doesn't hit"));
 			owner->targetActor = nullptr;
 			return false;
 		}

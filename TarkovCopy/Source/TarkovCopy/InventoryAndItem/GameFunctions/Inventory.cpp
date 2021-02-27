@@ -7,9 +7,22 @@
 
 void UInventory::Init(APlayerCharacter* pPlayer)
 {
+	GetWorld()->ForceGarbageCollection(true);
 	inventoryOwner = pPlayer;
-	backpack = backpackType.GetDefaultObject();
-	backpack->Init();
+	if (backpack)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Huh????? %d"), backpack)
+		backpack->ConditionalBeginDestroy();
+		backpack = nullptr;
+		GetWorld()->ForceGarbageCollection(true);
+		backpack = backpackType->GetDefaultObject<UBackpack>();
+		backpack->Init();
+	}
+	else
+	{
+		backpack = backpackType->GetDefaultObject<UBackpack>();
+		backpack->Init();
+	}
 }
 
 bool UInventory::AddItemToInventory(UItemInfo* item)
@@ -85,7 +98,7 @@ void UInventory::UseSecondaryWeaponAmmo(int pUseAmmo, FString pWeaponClassName)
 
 void UInventory::UpdateAndCleanupBackpack()
 {
-
+	backpack->UpdateAndCleanupBackpack();
 }
 
 UBackpack* UInventory::GetBackpack()
