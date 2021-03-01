@@ -16,10 +16,15 @@ class TARKOVCOPY_API AUserCreatedAIController : public AAIController
 
 
 protected:
+	APawn* playerPawn;
 	virtual void BeginPlay() override;
+	/*virtual void Tick(float DeltaTime) override;*/
+
 public:
 	UPROPERTY(EditAnywhere)
 	UBehaviorTree* blackboardTree;
+
+
 
 
 };

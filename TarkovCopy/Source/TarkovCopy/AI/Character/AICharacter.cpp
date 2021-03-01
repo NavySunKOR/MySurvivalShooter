@@ -1,8 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include <Components/SphereComponent.h>
-#include <TarkovCopy/Player/Character/PlayerCharacter.h>
-#include <TarkovCopy/GameMode/TarkovCopyGameModeBase.h>
+#include "TarkovCopy/AI/Controller/UserCreatedAIController.h"
+#include "TarkovCopy/Player/Character/PlayerCharacter.h"
+#include "TarkovCopy/GameMode/TarkovCopyGameModeBase.h"
 #include "AICharacter.h"
 
 // Sets default values
@@ -19,6 +20,8 @@ void AAICharacter::BeginPlay()
 	ATarkovCopyGameModeBase* gameMode = GetWorld()->GetAuthGameMode<ATarkovCopyGameModeBase>();
 	int selectedWeapon = FMath::RandRange(0, gameMode->allAIGunsInGame.Num() - 1);
 	currentActiveGun = GetWorld()->SpawnActor<ABaseGun>(gameMode->allAIGunsInGame[selectedWeapon]);
+	aiController = Cast<AUserCreatedAIController>(GetController());
+
 	if (currentActiveGun != nullptr)
 	{
 		currentActiveGun->SetParentMeshTPP(GetMesh());
@@ -76,6 +79,7 @@ void AAICharacter::NotifyActorBeginOverlap(AActor* Other)
 		{
 			outPlayerLocation = Other->GetActorLocation();
 			outIsPlayerDetected = true;
+			aiController->SetFocus(Other);
 		}
 	}
 }
@@ -84,6 +88,7 @@ void AAICharacter::NotifyActorEndOverlap(AActor* Other)
 	if (Other->ActorHasTag(FName("Player")))
 	{
 		outIsPlayerDetected = false;
+		aiController->ClearFocus(EAIFocusPriority::Gameplay);
 	}
 }
 

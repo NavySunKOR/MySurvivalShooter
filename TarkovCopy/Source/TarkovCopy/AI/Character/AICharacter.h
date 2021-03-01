@@ -8,6 +8,7 @@
 #include <TarkovCopy/Weapons/BaseGun.h>
 #include "AICharacter.generated.h"
 
+class AUserCreatedAIController;
 UCLASS()
 class TARKOVCOPY_API AAICharacter : public ACharacter
 {
@@ -34,6 +35,7 @@ private:
 
 	USphereComponent* detectTrigger;
 	ABaseGun* currentActiveGun;
+	AUserCreatedAIController* aiController;
 
 	virtual void NotifyActorBeginOverlap(AActor* Other) override;
 	virtual void NotifyActorEndOverlap(AActor* Other) override;
