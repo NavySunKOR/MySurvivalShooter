@@ -60,6 +60,7 @@ void AAICharacter::TookDamage(float pDamageAmount, FHitResult pHitParts)
 	{
 		//TODO:PawnKilled ³ÖÀ»°Í.
 		curHp = 0;
+		Dead();
 	}
 }
 
@@ -99,9 +100,20 @@ void AAICharacter::NotifyActorEndOverlap(AActor* Other)
 	}
 }
 
+void AAICharacter::Dead()
+{
+	GetMesh()->SetAnimInstanceClass(nullptr);
+	GetMesh()->SetCollisionProfileName(TEXT("Ragdoll"));
+	GetMesh()->SetSimulatePhysics(true);
+	DetachFromControllerPendingDestroy();
+}
+
 void AAICharacter::FireWeapon()
 {
 	FVector start = GetActorLocation();
 	FVector dir = (targetActor->GetActorLocation() - GetActorLocation());
-	currentActiveGun->FireWeapon(GetActorLocation(), dir.Rotation());
+	if (currentActiveGun->curMagRounds > 0 && !currentActiveGun->isReloading)
+		currentActiveGun->FireWeapon(GetActorLocation(), dir.Rotation());
+	else if(!currentActiveGun->isReloading)
+		currentActiveGun->Reload(currentActiveGun->maximumMagRounds - currentActiveGun->curMagRounds);
 }

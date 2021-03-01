@@ -84,7 +84,7 @@ void AM9::Reload(int pInsertMagazine)
 	Super::Reload(pInsertMagazine);
 	if (curMagRounds == 0)
 	{
-		reloadInterval = emptyReloadAnim->GetPlayLength();
+		reloadInterval = emptyReloadAnim->GetPlayLength() * 0.9f;
 
 		if (weaponOwnerCharacter)
 			weaponOwnerCharacter->PlayAnimMontage(emptyReloadAnim);
@@ -94,7 +94,7 @@ void AM9::Reload(int pInsertMagazine)
 	}
 	else
 	{
-		reloadInterval = emptyReloadAnim->GetPlayLength();
+		reloadInterval = tacticalReloadAnim->GetPlayLength() * 0.9f;
 
 		if (weaponOwnerCharacter)
 			weaponOwnerCharacter->PlayAnimMontage(tacticalReloadAnim);
