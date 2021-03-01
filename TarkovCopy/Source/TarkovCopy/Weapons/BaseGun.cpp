@@ -124,7 +124,18 @@ void ABaseGun::SetParentMeshTPP(USkeletalMeshComponent* pMeshComp)
 {
 	parentMesh = pMeshComp;
 	parentMesh->SetAnimInstanceClass(tppAnimBlueprints->GetAnimBlueprintGeneratedClass());
+	weaponComponents = Cast<USceneComponent>(GetDefaultSubobjectByName(TEXT("Weapon_Root")));
+	muzzleArrow = Cast<UArrowComponent>(GetDefaultSubobjectByName(TEXT("Muzzle_Arrow")));
 
+	if (muzzleArrow)
+	{
+		muzzleStart = muzzleArrow->GetComponentLocation();
+		muzzleDir = muzzleArrow->GetForwardVector().Rotation();
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("muzzleArrow is null"))
+	}
 }
 
 void ABaseGun::EquipWeapon()
