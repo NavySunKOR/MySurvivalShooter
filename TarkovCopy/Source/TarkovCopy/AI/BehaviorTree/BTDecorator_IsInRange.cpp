@@ -15,28 +15,14 @@ bool UBTDecorator_IsInRange::CalculateRawConditionValue(UBehaviorTreeComponent& 
 		return false;
 	}
 
-	FVector startPos = owner->GetActorLocation();
-	FVector dir = owner->outPlayerLocation -  owner->GetActorLocation();
-	FHitResult hit;
-	FCollisionQueryParams CollisionParams;
-	CollisionParams.AddIgnoredActor(owner);
-
 	if (!owner->outIsPlayerDetected)
 		return false;
 	else
 	{
-		if (GetWorld()->LineTraceSingleByChannel(hit, startPos, dir * 500.f, ECollisionChannel::ECC_Pawn, CollisionParams))
+		if (OwnerComp.GetAIOwner()->LineOfSightTo(owner->trackingTarget))
 		{
-			if (hit.Actor->ActorHasTag(TEXT("Player")))
-			{
-				owner->targetActor = hit.Actor.Get();
-				return true;
-			}
-			else
-			{
-				owner->targetActor = nullptr;
-				return false;
-			}
+			owner->targetActor = owner->trackingTarget;
+			return true;
 		}
 		else
 		{
