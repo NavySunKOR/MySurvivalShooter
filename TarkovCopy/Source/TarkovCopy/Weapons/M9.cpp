@@ -4,6 +4,7 @@
 #include <Kismet/GameplayStatics.h>
 #include "TarkovCopy/AI/Character/AICharacter.h"
 #include "TarkovCopy/Player/Character/PlayerCharacter.h"
+#include "TarkovCopy/AI/Character/AICharacter.h"
 #include "M9.h"
 
 void AM9::BeginPlay()
@@ -38,26 +39,42 @@ void AM9::FireWeapon(FVector start, FRotator dir)
 	{
 		//맞은 hit가 캐릭터면
 		AAICharacter* aiCharacter = Cast<AAICharacter>(hit.GetActor());
+		APlayerCharacter* playerCharacter = Cast<APlayerCharacter>(hit.GetActor());
 		if (aiCharacter != nullptr)
 		{
 			aiCharacter->TookDamage(damage, hit);
+		}
+		else if (playerCharacter != nullptr)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Hit player"));
+			playerCharacter->TookDamage(damage, hit);
 		}
 		//아니면 지형처리.
 		else
 		{
 			//TODO: 나중에 지형에 코드를 삽입하고 해당 장소에 파편을 튀기는 방식으로 제작할것.
+			UE_LOG(LogTemp, Warning, TEXT("Terrain~!"));
 			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), hitTerrainParticle, hit.ImpactPoint, dir, true);
 			UGameplayStatics::SpawnSoundAtLocation(GetWorld(), hitTerrainSound, hit.ImpactPoint, dir, true);
 		}
+		
+		UE_LOG(LogTemp, Warning, TEXT("Done!"));
 	}
 
 	if (isAds)
 	{
-		weaponOwnerCharacter->PlayAnimMontage(aimFireAnim);
+		if(weaponOwnerCharacter)
+			weaponOwnerCharacter->PlayAnimMontage(aimFireAnim);
+		else
+			weaponOwnerAICharacter->PlayAnimMontage(aimFireAnim);
 	}
 	else
 	{
-		weaponOwnerCharacter->PlayAnimMontage(fireAnim);
+
+		if (weaponOwnerCharacter)
+			weaponOwnerCharacter->PlayAnimMontage(fireAnim);
+		else
+			weaponOwnerAICharacter->PlayAnimMontage(fireAnim);
 	}
 	Super::FireWeapon(start,dir);
 }
@@ -68,13 +85,21 @@ void AM9::Reload(int pInsertMagazine)
 	if (curMagRounds == 0)
 	{
 		reloadInterval = emptyReloadAnim->GetPlayLength();
-		weaponOwnerCharacter->PlayAnimMontage(emptyReloadAnim);
+
+		if (weaponOwnerCharacter)
+			weaponOwnerCharacter->PlayAnimMontage(emptyReloadAnim);
+		else
+			weaponOwnerAICharacter->PlayAnimMontage(emptyReloadAnim);
 		UGameplayStatics::SpawnSoundAttached(emptyReloadSound,weaponComponents);
 	}
 	else
 	{
 		reloadInterval = emptyReloadAnim->GetPlayLength();
-		weaponOwnerCharacter->PlayAnimMontage(tacticalReloadAnim);
+
+		if (weaponOwnerCharacter)
+			weaponOwnerCharacter->PlayAnimMontage(tacticalReloadAnim);
+		else
+			weaponOwnerAICharacter->PlayAnimMontage(tacticalReloadAnim);
 		UGameplayStatics::SpawnSoundAttached(tacticalReloadSound, weaponComponents);
 	}
 

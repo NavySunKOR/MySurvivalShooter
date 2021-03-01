@@ -3,6 +3,7 @@
 
 #include <Runtime/Engine/Classes/Kismet/GameplayStatics.h>
 #include "TarkovCopy/Player/Character/PlayerCharacter.h"
+#include "TarkovCopy/AI/Character/AICharacter.h"
 #include <Runtime/Engine/Classes/Components/ArrowComponent.h>
 #include "BaseGun.h"
 
@@ -31,15 +32,24 @@ void ABaseGun::FireWeapon(FVector start, FRotator dir)
 void ABaseGun::EmptyFireWeapon()
 {
 	UGameplayStatics::SpawnSoundAttached(emptyFireWeaponSound, weaponComponents);
-	weaponOwnerCharacter->PlayAnimMontage(emptyFireAnim);
+	if(weaponOwnerCharacter)
+		weaponOwnerCharacter->PlayAnimMontage(emptyFireAnim);
+	else
+		weaponOwnerAICharacter->PlayAnimMontage(emptyFireAnim);
 
 	if (isAds)
 	{
-		weaponOwnerCharacter->PlayAnimMontage(aimEmptyFireAnim);
+		if (weaponOwnerCharacter)
+			weaponOwnerCharacter->PlayAnimMontage(aimEmptyFireAnim);
+		else
+			weaponOwnerAICharacter->PlayAnimMontage(aimEmptyFireAnim);
 	}
 	else
 	{
-		weaponOwnerCharacter->PlayAnimMontage(emptyFireAnim);
+		if (weaponOwnerCharacter)
+			weaponOwnerCharacter->PlayAnimMontage(emptyFireAnim);
+		else
+			weaponOwnerAICharacter->PlayAnimMontage(aimEmptyFireAnim);
 	}
 }
 

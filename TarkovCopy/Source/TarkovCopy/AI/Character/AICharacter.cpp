@@ -25,6 +25,7 @@ void AAICharacter::BeginPlay()
 		currentActiveGun->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, TEXT("Hand_R_Position"));
 		currentActiveGun->SetActorRelativeLocation(currentActiveGun->thirdPersonPosition);
 		currentActiveGun->SetActorRotation(FRotator(0,0,0));
+		currentActiveGun->weaponOwnerAICharacter = this;
 		//currentActiveGun->SetActorRelativeRotation(GetMesh()->GetSocketRotation(TEXT("Hand_R_Position")) + currentActiveGun->thirdPersonRotation);
 		currentActiveGun->SetOwner(this);
 

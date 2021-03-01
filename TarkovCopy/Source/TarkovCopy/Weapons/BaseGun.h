@@ -9,6 +9,7 @@
 class UArrowComponent;
 class UItemInfo;
 class APlayerCharacter;
+class AAICharacter;
 
 UCLASS()
 class TARKOVCOPY_API ABaseGun : public APawn
@@ -100,6 +101,7 @@ public:
 	FRotator muzzleDir;
 
 	APlayerCharacter* weaponOwnerCharacter;
+	AAICharacter* weaponOwnerAICharacter;
 	
 
 	virtual bool CanFireWeapon();
