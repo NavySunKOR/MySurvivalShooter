@@ -27,6 +27,11 @@ protected:
 	bool isSprinting = false;
 	bool isCrouch = false;
 
+	float checkCloseToWallTimer = 0.f;
+	float checkCloseToWallInterval = 1.f;
+
+	bool isCloseToWall = false;
+
 	void MoveVertical(float pValue);
 	void MoveHorizontal(float pValue);
 	void RotateHorizontal(float pValue);
@@ -35,6 +40,8 @@ protected:
 	void SetWalking();
 	void SetCrouch();
 	void SetStanding();
+	void CheckCloseToWall();
+
 	void EquipPrimary();
 	void EquipSecondary();
 	void FireWeapon();
@@ -43,6 +50,7 @@ protected:
 	void ReloadWeapon();
 
 	void Interact();
+	void InspectWeapon();
 	void Inventory();
 
 
@@ -110,6 +118,8 @@ protected:
 	int GetWeaponCode();
 	UFUNCTION(BlueprintPure)
 	bool IsEmptyMagazine();
+	UFUNCTION(BlueprintPure)
+	bool IsCloseToWall();
 	//Shotgun only
 	UFUNCTION(BlueprintPure)
 	bool IsShotgun();

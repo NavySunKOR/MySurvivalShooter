@@ -112,6 +112,7 @@ public:
 	virtual void SetParentMeshFPP(USkeletalMeshComponent* pMeshComp);
 	virtual void SetParentMeshTPP(USkeletalMeshComponent* pMeshComp);
 	virtual void EquipWeapon();
+	virtual void InspectWeapon();
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

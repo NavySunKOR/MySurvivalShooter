@@ -38,6 +38,12 @@ void APlayerCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	deltaTime = DeltaTime;
 
+	checkCloseToWallTimer += DeltaTime;
+	if (checkCloseToWallTimer > checkCloseToWallInterval)
+	{
+		checkCloseToWallTimer = 0.f;
+		CheckCloseToWall();
+	}
 }
 
 // Called to bind functionality to input
@@ -57,11 +63,35 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAction(TEXT("Crouch"), EInputEvent::IE_Released, this, &APlayerCharacter::SetStanding);
 	PlayerInputComponent->BindAction(TEXT("Interact"), EInputEvent::IE_Pressed, this, &APlayerCharacter::Interact);
 	PlayerInputComponent->BindAction(TEXT("Inventory"), EInputEvent::IE_Pressed, this, &APlayerCharacter::Inventory);
+	PlayerInputComponent->BindAction(TEXT("InspectWeapon"), EInputEvent::IE_Pressed, this, &APlayerCharacter::InspectWeapon);
 
 	PlayerInputComponent->BindAxis(TEXT("MoveVertical"), this, &APlayerCharacter::MoveVertical);
 	PlayerInputComponent->BindAxis(TEXT("MoveHorizontal"), this, &APlayerCharacter::MoveHorizontal);
 	PlayerInputComponent->BindAxis(TEXT("RotateHorizontal"), this, &APlayerCharacter::RotateHorizontal);
 	PlayerInputComponent->BindAxis(TEXT("RotateVertical"), this, &APlayerCharacter::RotateVertical);
+}
+
+void APlayerCharacter::CheckCloseToWall()
+{
+	FVector startPos;
+	FVector dir;
+	FHitResult hit;
+	startPos = GetActorLocation();
+	dir = GetActorForwardVector();
+	FCollisionQueryParams paramCol;
+	paramCol.AddIgnoredActor(this);
+	if (currentActiveGun)
+		paramCol.AddIgnoredActor(currentActiveGun);
+
+	if (GetWorld()->LineTraceSingleByChannel(hit, startPos, startPos + dir * 50.f, ECollisionChannel::ECC_Pawn, paramCol))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("name : %s"), *hit.Actor->GetName());
+		isCloseToWall = true;
+	}
+	else
+	{
+		isCloseToWall = false;
+	}
 }
 
 //void APlayerCharacter::BeginDestroy()
@@ -179,6 +209,11 @@ bool APlayerCharacter::IsEmptyMagazine()
 	return (currentActiveGun && currentActiveGun->curMagRounds <= 0);
 }
 
+bool APlayerCharacter::IsCloseToWall()
+{
+	return isCloseToWall;
+}
+
 bool APlayerCharacter::IsShotgun()
 {
 	return (currentActiveGun && currentActiveGun->itemCode == 3);
@@ -256,6 +291,7 @@ void APlayerCharacter::SetStanding()
 	//springArm->TargetOffset = originalSpringArmPos;
 	isCrouch = false;
 }
+
 
 void APlayerCharacter::EquipPrimary()
 {
@@ -403,6 +439,14 @@ void APlayerCharacter::Interact()
 		{
 			inter->Interact();
 		}
+	}
+}
+
+void APlayerCharacter::InspectWeapon()
+{
+	if (currentActiveGun && !IsReloading() && !IsSprinting() && !IsAds() && !IsFiring())
+	{
+		currentActiveGun->InspectWeapon();
 	}
 }
 

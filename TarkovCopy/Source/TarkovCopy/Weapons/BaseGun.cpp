@@ -122,6 +122,11 @@ void ABaseGun::EquipWeapon()
 	parentMesh->SetAnimInstanceClass(fppAnimBlueprints->GetAnimBlueprintGeneratedClass());
 }
 
+void ABaseGun::InspectWeapon()
+{
+	weaponOwnerCharacter->PlayAnimMontage(inspectWeaponAnim);
+}
+
 //오버라이드 가능성 : 샷건(한발씩 장전되는데 바로 쏴야하므로
 bool ABaseGun::CanFireWeapon()
 {
