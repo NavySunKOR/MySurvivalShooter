@@ -83,7 +83,7 @@ void APlayerCharacter::CheckCloseToWall()
 	if (currentActiveGun)
 		paramCol.AddIgnoredActor(currentActiveGun);
 
-	if (GetWorld()->LineTraceSingleByChannel(hit, startPos, startPos + dir * 50.f, ECollisionChannel::ECC_Pawn, paramCol))
+	if (GetWorld()->LineTraceSingleByChannel(hit, startPos, startPos + dir * 150.f, ECollisionChannel::ECC_Pawn, paramCol))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("name : %s"), *hit.Actor->GetName());
 		isCloseToWall = true;
@@ -331,7 +331,7 @@ void APlayerCharacter::FireWeapon()
 	{
 		return;
 	}
-	if (currentActiveGun && currentActiveGun->CanFireWeapon())
+	if (currentActiveGun && currentActiveGun->CanFireWeapon() && !IsCloseToWall())
 	{
 		FVector start;
 		FRotator dir;
@@ -345,7 +345,7 @@ void APlayerCharacter::FireWeapon()
 
 		currentActiveGun->FireWeapon(start,dir);
 	}
-	else if (currentActiveGun && (!IsFiring()) && (!IsReloading()) && IsEmptyMagazine())
+	else if (currentActiveGun && (!IsFiring()) && (!IsReloading()) && IsEmptyMagazine() && !IsCloseToWall())
 	{
 		currentActiveGun->EmptyFireWeapon();
 	}
@@ -357,7 +357,7 @@ void APlayerCharacter::SetADSWeapon()
 	{
 		return;
 	}
-	if (currentActiveGun)
+	if (currentActiveGun && !IsCloseToWall())
 	{
 		currentActiveGun->SetADS();
 	}
@@ -387,6 +387,7 @@ void APlayerCharacter::ReloadWeapon()
 			ownedAmmo = inventory->GetAllSecondaryWeaponAmmo(currentActiveGun->GetClass()->GetName());
 		}
 
+		UE_LOG(LogTemp, Warning, TEXT("Owned ammo : %d"), ownedAmmo);
 		if (ownedAmmo == 0)
 			return;
 
@@ -399,9 +400,11 @@ void APlayerCharacter::ReloadWeapon()
 				needAmmo = ownedAmmo;
 			}
 
+			UE_LOG(LogTemp, Warning, TEXT("Reload Start"));
 			currentActiveGun->Reload(needAmmo);
 			if (currentActiveGun == primaryWeapon)
 			{
+				UE_LOG(LogTemp, Warning, TEXT("Reloading"));
 				inventory->UsePrimaryWeaponAmmo(needAmmo,currentActiveGun->GetClass()->GetName());
 			}
 			else
