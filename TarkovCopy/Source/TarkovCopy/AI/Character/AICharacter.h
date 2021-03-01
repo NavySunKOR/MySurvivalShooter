@@ -37,6 +37,8 @@ private:
 	ABaseGun* currentActiveGun;
 	AUserCreatedAIController* aiController;
 
+	AActor* trackingTarget;
+
 	virtual void NotifyActorBeginOverlap(AActor* Other) override;
 	virtual void NotifyActorEndOverlap(AActor* Other) override;
 public:

@@ -25,7 +25,7 @@ bool UBTDecorator_IsInRange::CalculateRawConditionValue(UBehaviorTreeComponent& 
 		return false;
 	else
 	{
-		if (GetWorld()->LineTraceSingleByChannel(hit, startPos, dir * 1000.f, ECollisionChannel::ECC_Pawn, CollisionParams))
+		if (GetWorld()->LineTraceSingleByChannel(hit, startPos, dir * 500.f, ECollisionChannel::ECC_Pawn, CollisionParams))
 		{
 			if (hit.Actor->ActorHasTag(TEXT("Player")))
 			{

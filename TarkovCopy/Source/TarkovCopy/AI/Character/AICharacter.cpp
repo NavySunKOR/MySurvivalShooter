@@ -45,6 +45,11 @@ void AAICharacter::BeginPlay()
 void AAICharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (outIsPlayerDetected)
+	{
+		outPlayerLocation = trackingTarget->GetActorLocation();
+	}
 }
 
 void AAICharacter::TookDamage(float pDamageAmount, FHitResult pHitParts)
@@ -74,10 +79,11 @@ void AAICharacter::NotifyActorBeginOverlap(AActor* Other)
 		float angleCos = FVector::DotProduct(GetOwner()->GetActorForwardVector(), targetDir) / GetOwner()->GetActorForwardVector().Size() * targetDir.Size();
 		float toAngle = FMath::RadiansToDegrees(FMath::Acos(angleCos));
 
+		trackingTarget = Other;
 
 		if (toAngle < 90.f)
 		{
-			outPlayerLocation = Other->GetActorLocation();
+			outPlayerLocation = trackingTarget->GetActorLocation();
 			outIsPlayerDetected = true;
 			aiController->SetFocus(Other);
 		}
@@ -89,6 +95,7 @@ void AAICharacter::NotifyActorEndOverlap(AActor* Other)
 	{
 		outIsPlayerDetected = false;
 		aiController->ClearFocus(EAIFocusPriority::Gameplay);
+		trackingTarget = nullptr;
 	}
 }
 

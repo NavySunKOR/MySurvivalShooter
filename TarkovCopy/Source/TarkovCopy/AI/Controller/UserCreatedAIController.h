@@ -9,6 +9,8 @@
 /**
  * 
  */
+
+class AAICharacter;
 UCLASS()
 class TARKOVCOPY_API AUserCreatedAIController : public AAIController
 {
@@ -17,8 +19,9 @@ class TARKOVCOPY_API AUserCreatedAIController : public AAIController
 
 protected:
 	APawn* playerPawn;
+	AAICharacter* aiCharacter;
 	virtual void BeginPlay() override;
-	/*virtual void Tick(float DeltaTime) override;*/
+	virtual void Tick(float DeltaTime) override;
 
 public:
 	UPROPERTY(EditAnywhere)

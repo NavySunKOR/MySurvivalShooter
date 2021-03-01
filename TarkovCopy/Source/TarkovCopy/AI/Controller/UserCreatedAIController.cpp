@@ -5,6 +5,7 @@
 #include <Kismet/GameplayStatics.h>
 #include <BehaviorTree/BehaviorTree.h>
 #include <BehaviorTree/BlackboardComponent.h>
+#include "TarkovCopy/AI/Character/AICharacter.h"
 #include "UserCreatedAIController.h"
 
 
@@ -14,13 +15,14 @@ void AUserCreatedAIController::BeginPlay()
 	Super::BeginPlay();
 	RunBehaviorTree(blackboardTree);
 	playerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
-	UE_LOG(LogTemp, Warning, TEXT("Player : %s"), *playerPawn->GetActorLocation().ToCompactString());
-	
+	aiCharacter = Cast<AAICharacter>(GetPawn());
 }
 
-//void AUserCreatedAIController::Tick(float DeltaTime)
-//{
-//	Super::Tick(DeltaTime);
-//	UE_LOG(LogTemp, Warning, TEXT("Player : %s"), *playerPawn->GetActorLocation().ToCompactString());
-//	GetBlackboardComponent()->SetValueAsVector(TEXT("LastPlayerLocation"), playerPawn->GetActorLocation());
-//}
+void AUserCreatedAIController::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+	if (aiCharacter && aiCharacter->outIsPlayerDetected)
+	{
+		GetBlackboardComponent()->SetValueAsVector(TEXT("LastPlayerLocation"), aiCharacter->outPlayerLocation);
+	}
+}
