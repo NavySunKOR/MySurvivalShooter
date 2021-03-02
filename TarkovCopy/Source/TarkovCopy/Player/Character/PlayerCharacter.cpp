@@ -112,6 +112,7 @@ void APlayerCharacter::TookDamage(float damage, FHitResult pHitParts)
 	{
 		curHp = 0.f;
 	}
+	playerController->UpdateHealthHud(curHp);
 }
 
 bool APlayerCharacter::PickupItem(UItemInfo* pItemInfo)

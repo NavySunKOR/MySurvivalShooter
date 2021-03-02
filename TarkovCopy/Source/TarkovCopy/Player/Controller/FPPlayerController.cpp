@@ -13,6 +13,11 @@
 
 void AFPPlayerController::BeginPlay()
 {
+
+	healthHud = CreateWidget<UUserWidget>(this, healthHudWidget);
+	healthHud->AddToViewport(4);
+	healthHudBg = healthHud->GetWidgetFromName(TEXT("Splash"));
+
 	crosshair = CreateWidget<UUserWidget>(this, crosshairWidget);
 	crosshair->AddToViewport();
 	
@@ -175,6 +180,14 @@ void AFPPlayerController::RemoveSecondary()
 	{
 		character->RemoveSecondary();
 	}
+}
+
+void AFPPlayerController::UpdateHealthHud(float pCurHealth)
+{
+	float opacityAmount = 1.f - pCurHealth / 100.f;
+	if (opacityAmount < 0.2f)
+		opacityAmount = 0.2f;
+	healthHudBg->SetRenderOpacity(opacityAmount);
 }
 
 void AFPPlayerController::UpdateInventoryUI()

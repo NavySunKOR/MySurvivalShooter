@@ -27,6 +27,11 @@ public:
 //Created
 private:
 	UPROPERTY(EditAnywhere)
+	TSubclassOf<UUserWidget> healthHudWidget;
+	UUserWidget* healthHud;
+	UWidget* healthHudBg;
+
+	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUserWidget> crosshairWidget;
 	UUserWidget* crosshair;
 
@@ -77,6 +82,8 @@ public:
 
 	void RemovePrimary();
 	void RemoveSecondary();
+
+	void UpdateHealthHud(float pCurHealth);
 
 	void UpdateInventoryUI();
 
