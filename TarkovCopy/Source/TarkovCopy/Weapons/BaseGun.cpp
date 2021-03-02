@@ -27,6 +27,7 @@ void ABaseGun::FireWeapon(FVector start, FRotator dir)
 	curMagRounds--;
 	isFiring = true;
 	UGameplayStatics::SpawnSoundAttached(fireWeaponSound, weaponComponents);
+	UGameplayStatics::SpawnEmitterAttached(muzzleFireParticle, muzzleArrow);
 }
 
 void ABaseGun::EmptyFireWeapon()
@@ -73,6 +74,7 @@ void ABaseGun::SetHipfire()
 void ABaseGun::SetParentMeshFPP(USkeletalMeshComponent* pMeshComp)
 {
 	parentMesh = pMeshComp;
+	isFPP = true;
 	magazineComponents = Cast<USceneComponent>(GetDefaultSubobjectByName(TEXT("Magazine_Components")));
 	attachmentComponents = Cast<USceneComponent>(GetDefaultSubobjectByName(TEXT("Attachment_Components")));
 	scopeComponents = Cast<USceneComponent>(GetDefaultSubobjectByName(TEXT("Scope_Components")));

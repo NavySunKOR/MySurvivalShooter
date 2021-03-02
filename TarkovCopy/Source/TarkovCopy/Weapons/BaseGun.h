@@ -16,7 +16,7 @@ class TARKOVCOPY_API ABaseGun : public APawn
 {
 	GENERATED_BODY()
 private:
-
+	bool isFPP;
 public:
 	// Sets default values for this pawn's properties
 	ABaseGun();
@@ -34,6 +34,8 @@ protected:
 	USceneComponent* hammerComponents;
 	UArrowComponent* muzzleArrow;
 
+	UPROPERTY(EditAnywhere, Category = "Particles")
+	UParticleSystem* muzzleFireParticle;
 	UPROPERTY(EditAnywhere, Category = "Particles")
 	UParticleSystem* hitTerrainParticle;
 	UPROPERTY(EditAnywhere, Category = "Particles")
