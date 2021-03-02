@@ -33,9 +33,6 @@ protected:
 	USceneComponent* sliderComponents;
 	USceneComponent* hammerComponents;
 	UArrowComponent* muzzleArrow;
-	
-	UPROPERTY(EditAnywhere,Category="EditableStatus")
-	float rpm;
 
 	UPROPERTY(EditAnywhere, Category = "Particles")
 	UParticleSystem* hitTerrainParticle;
@@ -78,17 +75,23 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Sound")
 	USoundBase* tacticalReloadSound;
 
-public:	
-
+public:
+	UPROPERTY(EditAnywhere, Category = "EditableStatus")
+	float rpm;
+	UPROPERTY(EditAnywhere, Category = "EditableStatus")
+	int maximumMagRounds;
+	UPROPERTY(EditAnywhere, Category = "EditableStatus")
+	float damage;
+	UPROPERTY(EditAnywhere, Category = "EditableStatus")
+	float range;
+	UPROPERTY(EditAnywhere, Category = "EditableStatus")
 	int itemCode;
+
 	int reloadState; //use for shotgun
 	bool isAds = false;
 	bool isFiring = false;
 	bool isReloading = false;
-	int maximumMagRounds;
 	int curMagRounds;
-	float damage;
-	float range;
 	float fireInterval;
 	float fireTimer = 0.f;
 	float reloadInterval;

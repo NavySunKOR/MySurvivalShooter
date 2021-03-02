@@ -35,8 +35,8 @@ void UItemIcon::UseItem()
 	if (invenRef->HasItem(itemInfo))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("We gonna use %s"), *itemInfo->GetClass()->GetName());
-
 		itemInfo->Use(controllerRef); // 여기서 consumable인지 아닌지 결정해줌.
+
 		bool isEmpty = invenRef->UseItem(itemInfo);
 
 		if (isEmpty)

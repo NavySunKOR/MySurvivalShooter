@@ -74,9 +74,9 @@ void AAICharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
 void AAICharacter::NotifyActorBeginOverlap(AActor* Other)
 {
-	if (Other->ActorHasTag(FName("Player")))
+	if (!isDead && Other->ActorHasTag(FName("Player")))
 	{
-		FVector targetDir = (Other->GetActorLocation() - GetOwner()->GetActorLocation());
+		FVector targetDir = (Other->GetActorLocation() - GetActorLocation());
 		targetDir.Normalize();
 		float angleCos = FVector::DotProduct(GetOwner()->GetActorForwardVector(), targetDir) / GetOwner()->GetActorForwardVector().Size() * targetDir.Size();
 		float toAngle = FMath::RadiansToDegrees(FMath::Acos(angleCos));
@@ -93,7 +93,7 @@ void AAICharacter::NotifyActorBeginOverlap(AActor* Other)
 }
 void AAICharacter::NotifyActorEndOverlap(AActor* Other)
 {
-	if (Other->ActorHasTag(FName("Player")))
+	if (!isDead && Other->ActorHasTag(FName("Player")))
 	{
 		outIsPlayerDetected = false;
 		if(aiController)
@@ -109,6 +109,7 @@ void AAICharacter::Dead()
 	GetMesh()->SetCollisionProfileName(TEXT("Ragdoll"));
 	GetMesh()->SetSimulatePhysics(true);
 	DetachFromControllerPendingDestroy();
+	isDead = true;
 	aiController = nullptr;
 }
 

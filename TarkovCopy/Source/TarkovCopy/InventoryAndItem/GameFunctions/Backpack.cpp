@@ -23,12 +23,15 @@ void UBackpack::Init()
 
 	//백팩에서 begin destroy를 정의하고 시도해보았으나, UObject isValid 관련 assertion 에러만 나서 제거 하고 다음과 같이 작성하였다.
 
-	for (UItemInfo* item : itemContainers)
+	/*if (itemContainers.Num() > 0)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Die!"));
-		itemContainers.Remove(item);
-		item->ConditionalBeginDestroy();
-	}
+		for (UItemInfo* item : itemContainers)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Die!"));
+			itemContainers.Remove(item);
+			item->ConditionalBeginDestroy();
+		}
+	}*/
 }
 
 UBackpack::~UBackpack()
@@ -203,13 +206,20 @@ void UBackpack::RemoveInvenVisualize(UItemInfo* pItemInfo)
 
 void UBackpack::CleanupBackpack()
 {
-	for (UItemInfo* item : itemContainers)
+	bool isChanged = false;
+	for (int i = 0 ; i < itemContainers.Num() ; i++)
 	{
-		if (item->currentCapacity <= 0)
+		if (itemContainers[i]->currentCapacity <= 0)
 		{
-			RemoveInvenVisualize(item);
-			itemContainers.Remove(item);
+			RemoveInvenVisualize(itemContainers[i]);
+			itemContainers.RemoveAt(i);
+			isChanged = true;
+			break;
 		}
+	}
+	if (isChanged)
+	{
+		CleanupBackpack();
 	}
 }
 

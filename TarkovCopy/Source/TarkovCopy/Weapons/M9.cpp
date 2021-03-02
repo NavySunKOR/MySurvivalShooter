@@ -9,12 +9,6 @@
 
 void AM9::BeginPlay()
 {
-	itemCode = 0;
-	maximumMagRounds = 6;
-	reloadInterval = 3.f;
-	rpm = 100.f;
-	damage = 15.f;
-	range = 15000.f;
 	thirdPersonScale = FVector(1.f, 1.f, 1.f);
 	thirdPersonRotation = FRotator(0.f, 0.f, 0.f);
 	thirdPersonPosition = FVector(-2.391582f, 3.731291f, 12.247958f);
@@ -84,7 +78,7 @@ void AM9::Reload(int pInsertMagazine)
 	Super::Reload(pInsertMagazine);
 	if (curMagRounds == 0)
 	{
-		reloadInterval = emptyReloadAnim->GetPlayLength() * 0.9f;
+		reloadInterval = emptyReloadAnim->GetPlayLength() * 0.6f;
 
 		if (weaponOwnerCharacter)
 			weaponOwnerCharacter->PlayAnimMontage(emptyReloadAnim);

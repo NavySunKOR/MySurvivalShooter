@@ -120,6 +120,7 @@ bool APlayerCharacter::PickupItem(UItemInfo* pItemInfo)
 	{
 		playerController->AddItem(pItemInfo,inventory);
 	}
+
 	return isItemAdded;
 }
 
@@ -375,25 +376,26 @@ void APlayerCharacter::ReloadWeapon()
 	if (currentActiveGun && !currentActiveGun->isReloading)
 	{
 		int needAmmo = currentActiveGun->maximumMagRounds - currentActiveGun->curMagRounds;
-		int ownedAmmo = 0 ;
-		if (currentActiveGun == primaryWeapon)
-		{
-			//TODO: 실기능 구현
-			ownedAmmo = inventory->GetAllPrimaryWeaponAmmo(currentActiveGun->GetClass()->GetName());
-		}
-		else if(currentActiveGun == secondaryWeapon)
-		{
-			ownedAmmo = inventory->GetAllSecondaryWeaponAmmo(currentActiveGun->GetClass()->GetName());
-		}
-
-		UE_LOG(LogTemp, Warning, TEXT("Owned ammo : %d"), ownedAmmo);
-		if (ownedAmmo == 0)
-			return;
+		
 
 		//TODO: 체크 로직은 인벤토리가 추가되면 바로 바뀔 것
 		//needAmmo가 현재 보유 수보다 같거나 적고 현재 발사가 가능한 상태이면서 재장전 중이 아니면 재장전 아니면 빠꾸
 		if (needAmmo > 0)
 		{
+			int ownedAmmo = 0;
+			if (currentActiveGun == primaryWeapon)
+			{
+				//TODO: 실기능 구현
+				ownedAmmo = inventory->GetAllPrimaryWeaponAmmo(currentActiveGun->GetClass()->GetName());
+			}
+			else if (currentActiveGun == secondaryWeapon)
+			{
+				ownedAmmo = inventory->GetAllSecondaryWeaponAmmo(currentActiveGun->GetClass()->GetName());
+			}
+
+			if (ownedAmmo == 0)
+				return;
+
 			if (needAmmo > ownedAmmo)
 			{
 				needAmmo = ownedAmmo;
