@@ -23,7 +23,8 @@ void APlayerCharacter::BeginPlay()
 
 	//TODO:나중에 인벤토리 초기화 고칠것
 
-	inventory = inventoryOrigin.GetDefaultObject();
+	inventory = nullptr;
+	inventory = NewObject<UInventory>(this,inventoryOrigin);
 	inventory->Init(this);
 
 	if (playerController != nullptr)
@@ -373,7 +374,9 @@ void APlayerCharacter::SetHipfireWeapon()
 
 void APlayerCharacter::ReloadWeapon()
 {
-	if (currentActiveGun && !currentActiveGun->isReloading)
+	UE_LOG(LogTemp, Warning, TEXT("isUsingInventory : %d"), inventory->isUsingInventory);
+	
+	if (currentActiveGun && !currentActiveGun->isReloading && !inventory->isUsingInventory)
 	{
 		int needAmmo = currentActiveGun->maximumMagRounds - currentActiveGun->curMagRounds;
 		
@@ -383,6 +386,7 @@ void APlayerCharacter::ReloadWeapon()
 		if (needAmmo > 0)
 		{
 			int ownedAmmo = 0;
+			inventory->isUsingInventory = true;
 			if (currentActiveGun == primaryWeapon)
 			{
 				//TODO: 실기능 구현
@@ -394,7 +398,10 @@ void APlayerCharacter::ReloadWeapon()
 			}
 
 			if (ownedAmmo == 0)
+			{
+				inventory->isUsingInventory = false;
 				return;
+			}
 
 			if (needAmmo > ownedAmmo)
 			{
@@ -415,6 +422,8 @@ void APlayerCharacter::ReloadWeapon()
 
 			inventory->UpdateAndCleanupBackpack();
 			playerController->UpdateInventoryUI();
+
+			inventory->isUsingInventory = false;
 		}
 	}
 }

@@ -13,8 +13,9 @@ void APickableItem::BeginPlay()
 void APickableItem::Initalize(TSubclassOf<UItemInfo> pItemInfo)
 {
 	//itemInfo = pItemInfo.GetDefaultObject();
-	itemInfo = DuplicateObject(pItemInfo.GetDefaultObject(), this);
-	
+	itemInfo = NewObject<UItemInfo>(this, pItemInfo);
+
+	UE_LOG(LogTemp, Warning, TEXT("Create item : %d"),itemInfo);
 	
 	/*itemInfo = NewObject<UItemInfo>(this, pItemInfo);*/
 	//UItemInfo* origin = pItemInfo.GetDefaultObject();

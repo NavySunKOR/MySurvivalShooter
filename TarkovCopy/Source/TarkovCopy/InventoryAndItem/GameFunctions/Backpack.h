@@ -15,7 +15,6 @@ UCLASS(Blueprintable, BlueprintType)
 class TARKOVCOPY_API UBackpack : public UObject
 {
 	GENERATED_BODY()
-	~UBackpack();
 private:
 	bool** invenVisualize;
 	TArray<UItemInfo*> itemContainers;
