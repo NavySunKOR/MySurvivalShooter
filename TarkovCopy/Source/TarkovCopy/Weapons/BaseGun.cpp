@@ -81,17 +81,6 @@ void ABaseGun::SetParentMeshFPP(USkeletalMeshComponent* pMeshComp)
 	hammerComponents = Cast<USceneComponent>(GetDefaultSubobjectByName(TEXT("Hammer_Components")));
 	muzzleArrow = Cast<UArrowComponent>(GetDefaultSubobjectByName(TEXT("Muzzle_Flash_Position")));
 
-	if (muzzleArrow)
-	{
-		muzzleStart = muzzleArrow->GetComponentLocation();
-		muzzleDir = muzzleArrow->GetForwardVector().Rotation();
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("muzzleArrow is null"))
-	}
-
-	
 	if (magazineComponents != nullptr)
 		magazineComponents->AttachToComponent(parentMesh,FAttachmentTransformRules::KeepRelativeTransform , TEXT("Mag_Position"));
 	else
@@ -148,6 +137,15 @@ void ABaseGun::InspectWeapon()
 	weaponOwnerCharacter->PlayAnimMontage(inspectWeaponAnim);
 }
 
+void ABaseGun::UpdateMuzzleInfo()
+{
+	if (muzzleArrow)
+	{
+		muzzleStart = muzzleArrow->GetComponentLocation();
+		muzzleDir = muzzleArrow->GetForwardVector().Rotation();
+	}
+}
+
 //오버라이드 가능성 : 샷건(한발씩 장전되는데 바로 쏴야하므로
 bool ABaseGun::CanFireWeapon()
 {
@@ -158,7 +156,13 @@ bool ABaseGun::CanFireWeapon()
 void ABaseGun::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	
+
+	if (muzzleArrow)
+	{
+		muzzleStart = muzzleArrow->GetComponentLocation();
+		muzzleDir = muzzleArrow->GetForwardVector().Rotation();
+	}
+
 }
 
 // Called to bind functionality to input

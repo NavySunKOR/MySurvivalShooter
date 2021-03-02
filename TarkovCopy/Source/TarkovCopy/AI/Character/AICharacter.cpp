@@ -17,6 +17,7 @@ AAICharacter::AAICharacter()
 void AAICharacter::BeginPlay()
 {
 	Super::BeginPlay();
+	detectTrigger = Cast< USphereComponent>(GetDefaultSubobjectByName(TEXT("Sphere")));
 	ATarkovCopyGameModeBase* gameMode = GetWorld()->GetAuthGameMode<ATarkovCopyGameModeBase>();
 	int selectedWeapon = FMath::RandRange(0, gameMode->allAIGunsInGame.Num() - 1);
 	currentActiveGun = GetWorld()->SpawnActor<ABaseGun>(gameMode->allAIGunsInGame[selectedWeapon]);
@@ -95,17 +96,20 @@ void AAICharacter::NotifyActorEndOverlap(AActor* Other)
 	if (Other->ActorHasTag(FName("Player")))
 	{
 		outIsPlayerDetected = false;
-		aiController->ClearFocus(EAIFocusPriority::Gameplay);
+		if(aiController)
+			aiController->ClearFocus(EAIFocusPriority::Default);
 		trackingTarget = nullptr;
 	}
 }
 
 void AAICharacter::Dead()
 {
+	detectTrigger->SetActive(false);
 	GetMesh()->SetAnimInstanceClass(nullptr);
 	GetMesh()->SetCollisionProfileName(TEXT("Ragdoll"));
 	GetMesh()->SetSimulatePhysics(true);
 	DetachFromControllerPendingDestroy();
+	aiController = nullptr;
 }
 
 void AAICharacter::FireWeapon()

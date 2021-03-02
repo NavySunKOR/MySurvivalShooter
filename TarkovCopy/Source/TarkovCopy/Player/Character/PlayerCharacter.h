@@ -4,7 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include <GameFramework/CharacterMovementComponent.h>
+#include <Blueprint/UserWidget.h>
 #include <GameFramework/SpringArmComponent.h>
+#include <DrawDebugHelpers.h>
 #include "TarkovCopy/InventoryAndItem/ItemInfos/ItemInfo.h"
 #include "TarkovCopy/InventoryAndItem/GameFunctions/Inventory.h"
 #include "TarkovCopy/Player/Controller/FPPlayerController.h"

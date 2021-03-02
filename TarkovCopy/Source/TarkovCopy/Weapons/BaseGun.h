@@ -104,6 +104,7 @@ public:
 	AAICharacter* weaponOwnerAICharacter;
 	
 
+	virtual void UpdateMuzzleInfo();
 	virtual bool CanFireWeapon();
 	virtual void FireWeapon(FVector start, FRotator dir);
 	virtual void EmptyFireWeapon();

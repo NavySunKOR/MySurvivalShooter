@@ -1,8 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include <GameFramework/CharacterMovementComponent.h>
 #include "TarkovCopy/Interactable/InteractableObject.h"
-#include <Blueprint/UserWidget.h>
 #include "TarkovCopy/Player/Controller/FPPlayerController.h"
 #include "PlayerCharacter.h"
 
@@ -339,6 +337,7 @@ void APlayerCharacter::FireWeapon()
 			GetController()->GetPlayerViewPoint(start, dir);
 		else 
 		{
+			currentActiveGun->UpdateMuzzleInfo();
 			start = currentActiveGun->muzzleStart;
 			dir = currentActiveGun->muzzleDir;
 		}
