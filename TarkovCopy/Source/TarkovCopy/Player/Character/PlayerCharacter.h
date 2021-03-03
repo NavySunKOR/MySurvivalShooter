@@ -81,6 +81,8 @@ protected:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UInventory> inventoryOrigin;
 
+	class ATarkovCopyGameModeBase* gameMode;
+
 
 public:	
 	UPROPERTY()

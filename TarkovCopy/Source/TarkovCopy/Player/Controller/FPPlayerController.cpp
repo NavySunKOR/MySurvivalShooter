@@ -15,7 +15,7 @@ void AFPPlayerController::BeginPlay()
 {
 
 	healthHud = CreateWidget<UUserWidget>(this, healthHudWidget);
-	healthHud->AddToViewport(4);
+	healthHud->AddToViewport(1);
 	healthHudBg = healthHud->GetWidgetFromName(TEXT("Splash"));
 
 	crosshair = CreateWidget<UUserWidget>(this, crosshairWidget);
@@ -27,8 +27,17 @@ void AFPPlayerController::BeginPlay()
 	exfilAlert = CreateWidget<UUserWidget>(this, exfilAlertWidget);
 	exfilAlert->AddToViewport();
 
+	youreDead = CreateWidget<UUserWidget>(this, youreDeadWidget);
+	youreDead->AddToViewport(2);
+
+	youveEscaped = CreateWidget<UUserWidget>(this, youveEscapedWidget);
+	youveEscaped->AddToViewport(2);
+
+
 	alertHud->SetVisibility(ESlateVisibility::Hidden);
 	exfilAlert->SetVisibility(ESlateVisibility::Hidden);
+	youveEscaped->SetVisibility(ESlateVisibility::Hidden);
+	youreDead->SetVisibility(ESlateVisibility::Hidden);
 
 	alertType = Cast<UTextBlock>(alertHud->GetWidgetFromName(TEXT("AlertType")));
 	missionObject = Cast<UTextBlock>(alertHud->GetWidgetFromName(TEXT("Object")));
@@ -210,6 +219,12 @@ void AFPPlayerController::UpdateInventoryUI()
 	}
 }
 
+void AFPPlayerController::Dead()
+{
+	youreDead->SetVisibility(ESlateVisibility::Visible);
+	//TODO:메인화면으로 가는거 넣을것.
+}
+
 void AFPPlayerController::ShowQuestInfo(FString itemName, float distance)
 {
 	alertHud->SetVisibility(ESlateVisibility::Visible);
@@ -267,6 +282,8 @@ void AFPPlayerController::ExfilingComplete()
 	UE_LOG(LogTemp, Warning, TEXT("ExfilingComplete"));
 	isExfiling = false;
 	exfilAlert->SetVisibility(ESlateVisibility::Hidden);
+	youveEscaped->SetVisibility(ESlateVisibility::Visible);
+	//TODO:메인화면으로 옮기는 작업 넣을것
 }
 
 void AFPPlayerController::CancelExfiling()

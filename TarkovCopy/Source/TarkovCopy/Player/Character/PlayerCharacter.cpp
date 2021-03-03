@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "TarkovCopy/Interactable/InteractableObject.h"
+#include "TarkovCopy/GameMode/TarkovCopyGameModeBase.h"
 #include "TarkovCopy/Player/Controller/FPPlayerController.h"
 #include "PlayerCharacter.h"
 
@@ -17,6 +18,7 @@ APlayerCharacter::APlayerCharacter()
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+	gameMode =Cast<ATarkovCopyGameModeBase>(GetWorld()->GetAuthGameMode());
 	playerController = Cast<AFPPlayerController>(GetController());
 	GetCharacterMovement()->MaxWalkSpeed = walkingSpeed;
 	curHp = maxHp;
@@ -111,6 +113,9 @@ void APlayerCharacter::TookDamage(float damage, FHitResult pHitParts)
 	if (curHp <= 0)
 	{
 		curHp = 0.f;
+		playerController->Dead();
+		if(gameMode)
+			gameMode->PlayerDied();
 	}
 	playerController->UpdateHealthHud(curHp);
 }
@@ -242,21 +247,29 @@ bool APlayerCharacter::IsReloading()
 
 void APlayerCharacter::MoveVertical(float pValue)
 {
+	if (gameMode && (gameMode->isPlayerDied || gameMode->isPlayerEscaped))
+		return;
 	AddMovementInput(GetActorForwardVector() * 50.f * pValue * deltaTime);
 }
 
 void APlayerCharacter::MoveHorizontal(float pValue)
 {
+	if (gameMode && (gameMode->isPlayerDied || gameMode->isPlayerEscaped))
+		return;
 	AddMovementInput(GetActorRightVector() * 50.f * pValue * deltaTime);
 }
 
 void APlayerCharacter::RotateHorizontal(float pValue)
 {
+	if (gameMode && (gameMode->isPlayerDied || gameMode->isPlayerEscaped))
+		return;
 	AddControllerYawInput(pValue);
 }
 
 void APlayerCharacter::RotateVertical(float pValue)
 {
+	if (gameMode && (gameMode->isPlayerDied || gameMode->isPlayerEscaped))
+		return;
 	AddControllerPitchInput(-pValue);
 }
 
@@ -328,7 +341,7 @@ void APlayerCharacter::EquipSecondary()
 
 void APlayerCharacter::FireWeapon()
 {
-	if (playerController->isInventoryOpened)
+	if (playerController->isInventoryOpened || gameMode->isPlayerDied || gameMode->isPlayerEscaped)
 	{
 		return;
 	}
@@ -355,10 +368,14 @@ void APlayerCharacter::FireWeapon()
 
 void APlayerCharacter::SetADSWeapon()
 {
-	if (playerController->isInventoryOpened)
+	if (playerController->isInventoryOpened )
 	{
 		return;
 	}
+
+	if (gameMode && (gameMode->isPlayerDied || gameMode->isPlayerEscaped))
+		return;
+
 	if (currentActiveGun && !IsCloseToWall())
 	{
 		currentActiveGun->SetADS();
@@ -376,7 +393,10 @@ void APlayerCharacter::SetHipfireWeapon()
 void APlayerCharacter::ReloadWeapon()
 {
 	UE_LOG(LogTemp, Warning, TEXT("isUsingInventory : %d"), inventory->isUsingInventory);
-	
+	if (gameMode && (gameMode->isPlayerDied || gameMode->isPlayerEscaped))
+		return;
+
+
 	if (currentActiveGun && !currentActiveGun->isReloading && !inventory->isUsingInventory)
 	{
 		int needAmmo = currentActiveGun->maximumMagRounds - currentActiveGun->curMagRounds;
@@ -431,7 +451,7 @@ void APlayerCharacter::ReloadWeapon()
 
 void APlayerCharacter::Interact()
 {
-	if (playerController->isInventoryOpened)
+	if (playerController->isInventoryOpened || gameMode->isPlayerDied || gameMode->isPlayerEscaped)
 	{
 		return;
 	}
@@ -458,6 +478,9 @@ void APlayerCharacter::Interact()
 
 void APlayerCharacter::InspectWeapon()
 {
+	if (gameMode && (gameMode->isPlayerDied || gameMode->isPlayerEscaped))
+		return;
+
 	if (currentActiveGun && !IsReloading() && !IsSprinting() && !IsAds() && !IsFiring())
 	{
 		currentActiveGun->InspectWeapon();
@@ -466,5 +489,8 @@ void APlayerCharacter::InspectWeapon()
 
 void APlayerCharacter::Inventory()
 {
+	if (gameMode && (gameMode->isPlayerDied || gameMode->isPlayerEscaped))
+		return;
+
 	playerController->OpenCloseInventory();
 }

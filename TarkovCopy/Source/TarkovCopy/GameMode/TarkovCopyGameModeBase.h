@@ -22,8 +22,13 @@ public:
 	TArray<TSubclassOf<ABaseGun>> allPlayerGunsInGame;
 	UPROPERTY(EditAnywhere)
 	TArray<TSubclassOf<ABaseGun>> allAIGunsInGame;
+	
+	bool isPlayerDied = false;
+	bool isPlayerEscaped = false;
 
+	virtual void PlayerDied();
 	virtual void QuestCompleted(AInteractableObject* questItem);
+	virtual void ExfilCompleted();
 	virtual void TryExfil();
 	virtual void CancelExfil();
 

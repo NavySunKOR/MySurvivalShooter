@@ -43,6 +43,14 @@ private:
 	TSubclassOf<UUserWidget> exfilAlertWidget;
 	UUserWidget* exfilAlert;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UUserWidget> youreDeadWidget;
+	UUserWidget* youreDead;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UUserWidget> youveEscapedWidget;
+	UUserWidget* youveEscaped;
+
 
 	//TODO: UI관련, 추 후에 컨트롤러로 옮길것
 	UPROPERTY(EditAnywhere)
@@ -84,13 +92,12 @@ public:
 	void RemoveSecondary();
 
 	void UpdateHealthHud(float pCurHealth);
-
 	void UpdateInventoryUI();
 
+	void Dead();
 
 	void ShowQuestInfo(FString itemName, float distance);
 	void ShowExfilPoints(FString exfilPointsName, float distance);
-
 	void ShowCannotExfil();
 	void Exfiling();
 	void ExfilingComplete();
