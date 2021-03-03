@@ -243,11 +243,15 @@ bool UBackpack::IsIntersected(UItemInfo* pItemInfo)
 bool UBackpack::UseItem(UItemInfo* pItemInfo)
 {
 	UItemInfo* itemRef = GetItemReference(pItemInfo);
-	itemRef->currentCapacity -= pItemInfo->consumeAmount;
-	if (itemRef->currentCapacity <= 0)
+	if (itemRef != nullptr)
+	{
+		itemRef->currentCapacity -= pItemInfo->consumeAmount;
 		return true;
+	}
 	else
+	{
 		return false;
+	}
 }
 
 bool UBackpack::AddItem(UItemInfo* pItemInfo,UInventory* pInventory)
@@ -390,7 +394,8 @@ UItemInfo* UBackpack::GetItemReference(UItemInfo* pItemPtr)
 {
 	for (int i = 0; i < itemContainers.Num(); i++)
 	{
-		if (itemContainers[i] == pItemPtr)
+		//적어도 한개라도 있다면
+		if (itemContainers[i] == pItemPtr && itemContainers[i]->currentCapacity >0)
 		{
 			return itemContainers[i];
 		}

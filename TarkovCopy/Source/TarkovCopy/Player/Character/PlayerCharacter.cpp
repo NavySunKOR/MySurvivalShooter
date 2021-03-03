@@ -107,6 +107,17 @@ void APlayerCharacter::CheckCloseToWall()
 //	//	secondaryWeapon->ConditionalBeginDestroy();
 //}
 
+float APlayerCharacter::HealPlayer(float pHealAmount)
+{
+	curHp += pHealAmount;
+	UE_LOG(LogTemp, Warning, TEXT("Healing"));
+	if (curHp > maxHp)
+	{
+		curHp = maxHp;
+	}
+	return curHp;
+}
+
 void APlayerCharacter::TookDamage(float damage, FHitResult pHitParts)
 {
 	curHp -= damage;

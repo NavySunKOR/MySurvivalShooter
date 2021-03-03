@@ -15,5 +15,8 @@ class TARKOVCOPY_API UItemMedikit : public UItemInfo
 {
 	GENERATED_BODY()
 public:
+	UPROPERTY(EditAnywhere)
+	float healAmount;
+
 	virtual void Use(AFPPlayerController* pPlayerCon) override;
 };

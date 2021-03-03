@@ -96,6 +96,7 @@ public:
 
 	//virtual void BeginDestroy();
 
+	float HealPlayer(float pHealAmount);
 	void TookDamage(float damage, FHitResult pHitParts);
 
 	bool PickupItem(UItemInfo* pItemInfo);

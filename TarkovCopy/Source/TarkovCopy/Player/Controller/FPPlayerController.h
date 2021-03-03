@@ -83,14 +83,15 @@ public:
 	bool isInventoryOpened= false;
 	void InitInvenotry();
 	void OpenCloseInventory();
-	void AddItem(UItemInfo* itemInfo,UInventory* pInvenRef);
 
+	void AddItem(UItemInfo* itemInfo,UInventory* pInvenRef);
 	void AddPrimary(TSubclassOf<ABaseGun> pWeaponClass);
 	void AddSecondary(TSubclassOf<ABaseGun> pWeaponClass);
 
 	void RemovePrimary();
 	void RemoveSecondary();
 
+	void HealPlayer(float pHealAmount);
 	void UpdateHealthHud(float pCurHealth);
 	void UpdateInventoryUI();
 

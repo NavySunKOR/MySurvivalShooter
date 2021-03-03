@@ -15,7 +15,7 @@ void AFPPlayerController::BeginPlay()
 {
 
 	healthHud = CreateWidget<UUserWidget>(this, healthHudWidget);
-	healthHud->AddToViewport(1);
+	healthHud->AddToViewport();
 	healthHudBg = healthHud->GetWidgetFromName(TEXT("Splash"));
 
 	crosshair = CreateWidget<UUserWidget>(this, crosshairWidget);
@@ -188,6 +188,17 @@ void AFPPlayerController::RemoveSecondary()
 	if (character != nullptr)
 	{
 		character->RemoveSecondary();
+	}
+}
+
+void AFPPlayerController::HealPlayer(float pHealAmount)
+{
+	APlayerCharacter* character = Cast<APlayerCharacter>(GetPawn());
+	if (character != nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UsingHealingItem"));
+		float curHp = character->HealPlayer(pHealAmount);
+		UpdateHealthHud(curHp);
 	}
 }
 

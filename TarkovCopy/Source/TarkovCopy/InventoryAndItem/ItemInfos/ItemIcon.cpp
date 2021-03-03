@@ -32,6 +32,7 @@ void UItemIcon::Init(UItemInfo* pItemInfo, UInventory* pInven, AFPPlayerControll
 
 void UItemIcon::UseItem()
 {
+	UE_LOG(LogTemp, Warning, TEXT("UsingItem"));
 	if (invenRef->HasItem(itemInfo))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("We gonna use %s"), *itemInfo->GetClass()->GetName());
