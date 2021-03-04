@@ -1,9 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "ExfilPoint.h"
+#include <Components/BoxComponent.h>
 #include <Kismet/GameplayStatics.h>
-#include <TarkovCopy/GameMode/EscapeGameMode.h>
+#include "TarkovCopy/GameMode/EscapeGameMode.h"
+#include "ExfilPoint.h"
 
 // Sets default values for this component's properties
 UExfilPoint::UExfilPoint()
@@ -21,13 +22,17 @@ void UExfilPoint::BeginPlay()
 {
 	Super::BeginPlay();
 	// ...
+	trigger = GetOwner()->FindComponentByClass<UBoxComponent>();
 	playerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
 	FScriptDelegate exfilingDelegate = FScriptDelegate();
 	FScriptDelegate cancelExfilingDelegate = FScriptDelegate();
 	exfilingDelegate.BindUFunction(this, "Exfiling");
 	cancelExfilingDelegate.BindUFunction(this, "CancelExfiling");
-	trigger->OnActorBeginOverlap.Add(exfilingDelegate);
-	trigger->OnActorEndOverlap.Add(cancelExfilingDelegate);
+	if (trigger != nullptr)
+	{
+		trigger->OnComponentBeginOverlap.Add(exfilingDelegate);
+		trigger->OnComponentEndOverlap.Add(cancelExfilingDelegate);
+	}
 }
 
 

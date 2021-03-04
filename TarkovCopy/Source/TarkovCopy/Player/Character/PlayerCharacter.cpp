@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "TarkovCopy/Interactable/InteractableObject.h"
+#include "TarkovCopy/Interactable/InteractableComponent.h"
 #include "TarkovCopy/GameMode/TarkovCopyGameModeBase.h"
 #include "TarkovCopy/Player/Controller/FPPlayerController.h"
 #include "PlayerCharacter.h"
@@ -479,10 +480,19 @@ void APlayerCharacter::Interact()
 
 	if (GetWorld()->LineTraceSingleByChannel(hit, start, start + dir.Vector() * 800.f, ECollisionChannel::ECC_Pawn, param))
 	{
-		AInteractableObject* inter = Cast<AInteractableObject>(hit.GetActor());
+		AActor* hitActor = hit.GetActor();
+		AInteractableObject* inter = Cast<AInteractableObject>(hitActor);
 		if (inter != nullptr)
 		{
 			inter->Interact();
+		}
+		else
+		{
+			UInteractableComponent* interComp = hitActor->FindComponentByClass<UInteractableComponent>();
+			if (interComp != nullptr)
+			{
+				interComp->Interact();
+			}
 		}
 	}
 }

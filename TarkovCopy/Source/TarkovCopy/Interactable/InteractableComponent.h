@@ -4,17 +4,17 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "ExfilPoint.generated.h"
+#include "InteractableComponent.generated.h"
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class TARKOVCOPY_API UExfilPoint : public UActorComponent
+class TARKOVCOPY_API UInteractableComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:	
 	// Sets default values for this component's properties
-	UExfilPoint();
+	UInteractableComponent();
 
 protected:
 	// Called when the game starts
@@ -22,16 +22,8 @@ protected:
 
 public:	
 	// Called every frame
+	virtual void Interact();
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	UPROPERTY(EditAnywhere)
-	class UBoxComponent* trigger;
-
-	UFUNCTION()
-	void Exfiling();
-	UFUNCTION()
-	void CancelExfiling();
-private:
-	APawn* playerPawn;
 		
 };
