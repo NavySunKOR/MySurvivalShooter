@@ -22,10 +22,14 @@ class TARKOVCOPY_API APlayerCharacter : public ACharacter
 public:
 	// Sets default values for this character's properties
 	APlayerCharacter();
+
+private: 
+	float moveVerticalValue = 0.f;
+	float moveHorizontalValue = 0.f;
+	float maxWalkValue = 0.f;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-	float deltaTime = 0.f;
 	AFPPlayerController* playerController;
 	bool isSprinting = false;
 	bool isCrouch = false;
@@ -77,6 +81,8 @@ protected:
 	float sprintingSpeed;
 	UPROPERTY(EditAnywhere)
 	float walkingSpeed;
+	UPROPERTY(EditAnywhere)
+	float adsWalkingSpeed;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UInventory> inventoryOrigin;

@@ -38,7 +38,6 @@ void APlayerCharacter::BeginPlay()
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	deltaTime = DeltaTime;
 
 	checkCloseToWallTimer += DeltaTime;
 	if (checkCloseToWallTimer > checkCloseToWallInterval)
@@ -46,6 +45,32 @@ void APlayerCharacter::Tick(float DeltaTime)
 		checkCloseToWallTimer = 0.f;
 		CheckCloseToWall();
 	}
+
+	//Movement
+
+	if (moveVerticalValue * moveVerticalValue > 0 || moveHorizontalValue * moveHorizontalValue > 0)
+	{
+		if (moveVerticalValue > 0)
+		{
+			if (moveHorizontalValue == 0 || (moveVerticalValue > 0 && moveHorizontalValue * moveHorizontalValue > 0))
+				maxWalkValue = (IsSprinting()) ? sprintingSpeed : walkingSpeed;
+			else
+				maxWalkValue = walkingSpeed;
+
+			maxWalkValue = (IsAds()) ? adsWalkingSpeed : maxWalkValue;
+		}
+		else
+		{
+			maxWalkValue = walkingSpeed;
+			maxWalkValue = (IsAds()) ? adsWalkingSpeed : maxWalkValue;
+		}
+
+		GetCharacterMovement()->MaxWalkSpeed = maxWalkValue;
+		UE_LOG(LogTemp, Warning, TEXT("speed : %f"), maxWalkValue);
+		AddMovementInput((GetActorForwardVector() * moveVerticalValue + GetActorRightVector() * moveHorizontalValue)/1.4f);
+	}
+
+
 }
 
 // Called to bind functionality to input
@@ -260,15 +285,23 @@ bool APlayerCharacter::IsReloading()
 void APlayerCharacter::MoveVertical(float pValue)
 {
 	if (gameMode && (gameMode->isPlayerDied || gameMode->isPlayerEscaped))
+	{
+		moveVerticalValue = 0;
 		return;
-	AddMovementInput(GetActorForwardVector() * 50.f * pValue * deltaTime);
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("MoveVertical : %f"), pValue);
+	moveVerticalValue = pValue;
 }
 
 void APlayerCharacter::MoveHorizontal(float pValue)
 {
 	if (gameMode && (gameMode->isPlayerDied || gameMode->isPlayerEscaped))
+	{
+		moveHorizontalValue = 0;
 		return;
-	AddMovementInput(GetActorRightVector() * 50.f * pValue * deltaTime);
+	}
+	moveHorizontalValue = pValue;
 }
 
 void APlayerCharacter::RotateHorizontal(float pValue)
@@ -287,16 +320,14 @@ void APlayerCharacter::RotateVertical(float pValue)
 
 void APlayerCharacter::SetSprinting()
 {
-	if (!isCrouch)
+	if (!isCrouch && ((moveVerticalValue > 0 && moveHorizontalValue == 0) || (moveVerticalValue > 0 && moveHorizontalValue * moveHorizontalValue> 0)))
 	{
-		GetCharacterMovement()->MaxWalkSpeed = sprintingSpeed;
 		isSprinting = true;
 	}
 }
 
 void APlayerCharacter::SetWalking()
 {
-	GetCharacterMovement()->MaxWalkSpeed = walkingSpeed;
 	isSprinting = false;
 }
 
