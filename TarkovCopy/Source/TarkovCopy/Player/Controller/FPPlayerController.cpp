@@ -215,10 +215,10 @@ void AFPPlayerController::UpdateInventoryUI()
 	bool isRemoved = false;
 	for (int i = 0; i < items.Num(); i++)
 	{
-		if (items[i]->itemInfo->currentCapacity == 0)
+		if (items[i]->itemInfo == nullptr || items[i]->itemInfo->currentCapacity == 0)
 		{
 			items[i]->RemoveFromParent();
-			items.RemoveAt(i);
+			items.Remove(items[i]);
 			isRemoved = true;
 			break;
 		}

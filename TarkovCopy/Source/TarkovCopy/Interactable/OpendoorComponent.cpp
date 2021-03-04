@@ -8,7 +8,7 @@ void UOpendoorComponent::BeginPlay()
 	Super::BeginPlay();
 	myOwnComponent = GetOwner();
 	originRotation = myOwnComponent->GetActorQuat();
-	targetRotation = FQuat(originRotation.Rotator() + FRotator(0, 0, 90.f));
+	targetRotation = FQuat(originRotation.Rotator() + FRotator(0, 90.f, 0));
 }
 
 void UOpendoorComponent::Interact()
@@ -22,10 +22,10 @@ void UOpendoorComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 
 	if (isDoorOpened)
 	{
-		myOwnComponent->SetActorRelativeRotation(FMath::Lerp(myOwnComponent->GetActorQuat(), targetRotation, 0.01f));
+		myOwnComponent->SetActorRelativeRotation(FMath::Lerp(myOwnComponent->GetActorQuat(), targetRotation, 0.1f));
 	}
 	else
 	{
-		myOwnComponent->SetActorRelativeRotation(FMath::Lerp(myOwnComponent->GetActorQuat(), originRotation, 0.01f));
+		myOwnComponent->SetActorRelativeRotation(FMath::Lerp(myOwnComponent->GetActorQuat(), originRotation, 0.1f));
 	}
 }

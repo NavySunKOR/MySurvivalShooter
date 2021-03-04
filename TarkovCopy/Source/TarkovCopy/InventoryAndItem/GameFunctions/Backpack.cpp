@@ -299,14 +299,11 @@ void UBackpack::UpdateAndCleanupBackpack()
 int UBackpack::GetAllPrimaryWeaponAmmo(FString pWeaponName)
 {
 	int sum = 0;
-	for (int i = 0; i < itemContainers.Num(); i++)
+	for (UItemInfo* item : itemContainers)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Item type : %d, item weapon class : %s , item weapon param class : %s"), itemContainers[i]->itemType,
-			*itemContainers[i]->weaponSubclass->GetName(),
-			*pWeaponName);
-		if (itemContainers[i]->itemType == ItemType::MAGAZINE && itemContainers[i]->weaponSubclass->GetName().Equals(pWeaponName))
+		if (item->itemType == ItemType::MAGAZINE && item->weaponSubclass->GetName().Equals(pWeaponName))
 		{
-			sum += itemContainers[i]->currentCapacity;
+			sum += item->currentCapacity;
 		}
 	}
 
@@ -316,14 +313,11 @@ int UBackpack::GetAllPrimaryWeaponAmmo(FString pWeaponName)
 int UBackpack::GetAllSecondaryWeaponAmmo(FString pWeaponName)
 {
 	int sum = 0;
-	for (int i = 0; i < itemContainers.Num(); i++)
+	for (UItemInfo* item : itemContainers)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Item type : %d, item weapon class : %s , item weapon param class : %s"), itemContainers[i]->itemType,
-			*itemContainers[i]->weaponSubclass->GetName(),
-			*pWeaponName);
-		if (itemContainers[i]->itemType == ItemType::MAGAZINE && itemContainers[i]->weaponSubclass->GetName().Equals(pWeaponName))
+		if (item->itemType == ItemType::MAGAZINE && item->weaponSubclass->GetName().Equals(pWeaponName))
 		{
-			sum += itemContainers[i]->currentCapacity;
+			sum += item->currentCapacity;
 		}
 	}
 
