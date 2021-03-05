@@ -116,7 +116,6 @@ void APlayerCharacter::CheckCloseToWall()
 
 	if (GetWorld()->LineTraceSingleByChannel(hit, startPos, startPos + dir * 150.f, ECollisionChannel::ECC_Pawn, paramCol))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("name : %s"), *hit.Actor->GetName());
 		isCloseToWall = true;
 	}
 	else

@@ -65,6 +65,11 @@ void AAICharacter::TookDamage(float pDamageAmount, FHitResult pHitParts)
 	}
 }
 
+float AAICharacter::GetCurrentWeaponRange()
+{
+	return currentActiveGun->range;
+}
+
 // Called to bind functionality to input
 void AAICharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
@@ -76,19 +81,16 @@ void AAICharacter::NotifyActorBeginOverlap(AActor* Other)
 {
 	if (!isDead && Other->ActorHasTag(FName("Player")))
 	{
-		FVector targetDir = (Other->GetActorLocation() - GetActorLocation());
+		/*FVector targetDir = (Other->GetActorLocation() - GetActorLocation());
 		targetDir.Normalize();
 		float angleCos = FVector::DotProduct(GetOwner()->GetActorForwardVector(), targetDir) / GetOwner()->GetActorForwardVector().Size() * targetDir.Size();
-		float toAngle = FMath::RadiansToDegrees(FMath::Acos(angleCos));
+		float toAngle = FMath::RadiansToDegrees(FMath::Acos(angleCos));*/
 
 		trackingTarget = Other;
 
-		if (toAngle < 90.f)
-		{
-			outPlayerLocation = trackingTarget->GetActorLocation();
-			outIsPlayerDetected = true;
-			aiController->SetFocus(Other);
-		}
+		outPlayerLocation = trackingTarget->GetActorLocation();
+		outIsPlayerDetected = true;
+		aiController->SetFocus(Other);
 	}
 }
 void AAICharacter::NotifyActorEndOverlap(AActor* Other)

@@ -12,8 +12,6 @@ EBTNodeResult::Type UBTTask_FireAtEnemy::ExecuteTask(UBehaviorTreeComponent& Own
 {
 	AAICharacter* aiCharacter = Cast<AAICharacter>(OwnerComp.GetAIOwner()->GetPawn());
 	ATarkovCopyGameModeBase* gameMode = Cast<ATarkovCopyGameModeBase>(GetWorld()->GetAuthGameMode());
-	
-	OwnerComp.GetAIOwner()->SetFocus(aiCharacter->targetActor,EAIFocusPriority::Gameplay);
 
 	if (aiCharacter == nullptr || (gameMode && (gameMode->isPlayerEscaped || gameMode->isPlayerDied)))
 	{

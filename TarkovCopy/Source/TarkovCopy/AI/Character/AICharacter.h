@@ -22,13 +22,6 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-	void TookDamage(float pDamageAmount, FHitResult pHitParts);
-
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 private:
 	float maxHp = 100.f;
 	float curHp;
@@ -43,7 +36,9 @@ private:
 	virtual void NotifyActorEndOverlap(AActor* Other) override;
 
 	void Dead();
-public:
+
+public:	
+	// Called every frame
 	FVector outPlayerLocation;
 	bool outIsPlayerDetected = false;
 	bool isDead = false;
@@ -51,6 +46,13 @@ public:
 	AActor* trackingTarget; // 추적 할때 사용(발소리 듣고 해당 현장으로 이동)
 	AActor* targetActor; //실제 육안으로 적을 발견 후 조준 후 발사 할때 사용
 
-
+	virtual void Tick(float DeltaTime) override;
+	void TookDamage(float pDamageAmount, FHitResult pHitParts);
+	float GetCurrentWeaponRange();
 	void FireWeapon();
+
+	// Called to bind functionality to input
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	
 };
