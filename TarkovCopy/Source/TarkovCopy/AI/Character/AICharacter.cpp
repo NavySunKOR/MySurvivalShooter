@@ -52,6 +52,17 @@ void AAICharacter::Tick(float DeltaTime)
 	{
 		outPlayerLocation = trackingTarget->GetActorLocation();
 	}
+
+	//탐지 범위 내에는 들어왔는데 건물 안이거나 아니면 벽에 가려져있을때 파악
+	if (trackingTarget != nullptr && !outIsPlayerDetected)
+	{
+		if (aiController->LineOfSightTo(trackingTarget))
+		{
+			outPlayerLocation = trackingTarget->GetActorLocation();
+			aiController->SetFocus(trackingTarget);
+			outIsPlayerDetected = true;
+		}
+	}
 }
 
 void AAICharacter::TookDamage(float pDamageAmount, FHitResult pHitParts)
@@ -88,10 +99,12 @@ void AAICharacter::NotifyActorBeginOverlap(AActor* Other)
 		float toAngle = FMath::RadiansToDegrees(FMath::Acos(angleCos));*/
 
 		trackingTarget = Other;
-
-		outPlayerLocation = trackingTarget->GetActorLocation();
-		outIsPlayerDetected = true;
-		aiController->SetFocus(Other);
+		if (aiController->LineOfSightTo(trackingTarget))
+		{
+			outPlayerLocation = trackingTarget->GetActorLocation();
+			aiController->SetFocus(Other);
+			outIsPlayerDetected = true;
+		}
 	}
 }
 void AAICharacter::NotifyActorEndOverlap(AActor* Other)
@@ -108,9 +121,10 @@ void AAICharacter::NotifyActorEndOverlap(AActor* Other)
 void AAICharacter::Dead()
 {
 	detectTrigger->SetActive(false);
+	GetCharacterMovement()->StopMovementImmediately();
+	FindComponentByClass<UCapsuleComponent>()->SetCollisionProfileName(TEXT("NoColision"));
 	FindComponentByClass<UCapsuleComponent>()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	GetMesh()->SetAnimInstanceClass(nullptr);
-	GetMesh()->SetCollisionProfileName(TEXT("Ragdoll"));
 	GetMesh()->SetSimulatePhysics(true);
 	DetachFromControllerPendingDestroy();
 	isDead = true;

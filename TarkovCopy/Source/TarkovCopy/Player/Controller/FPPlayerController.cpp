@@ -237,7 +237,7 @@ void AFPPlayerController::UpdateInventoryUI()
 
 	for (int i = tempItems.Num() - 1; i >= 0; i--)
 	{
-		if (tempItems[i]->itemInfo == nullptr || tempItems[i]->itemInfo->currentCapacity == 0)
+		if (tempItems[i] != nullptr && (tempItems[i]->itemInfo == nullptr || tempItems[i]->itemInfo->currentCapacity == 0))
 		{
 			tempItems[i]->RemoveFromParent();
 			tempItems[i] = nullptr;

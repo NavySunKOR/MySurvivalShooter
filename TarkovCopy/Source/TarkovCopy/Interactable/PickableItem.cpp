@@ -1,6 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
+#include <Components/BoxComponent.h>
 #include "PickableItem.h"
 
 void APickableItem::BeginPlay()
@@ -33,8 +33,10 @@ void APickableItem::Interact()
 	Super::Interact();
 	
 	if (playerCharacter->PickupItem(itemInfo))
+	{
 		SetActorHiddenInGame(true);
-		//Destroy();
+		FindComponentByClass<UBoxComponent>()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
 	else
 		UE_LOG(LogTemp, Warning, TEXT("Failed to pickup"));
 }
