@@ -198,20 +198,17 @@ void UBackpack::RemoveInvenVisualize(UItemInfo* pItemInfo)
 void UBackpack::CleanupBackpack()
 {
 	bool isChanged = false;
-	for (int i = 0 ; i < itemContainers.Num() ; i++)
+	TArray<UItemInfo*> copyItemContainers = itemContainers;
+	for (int i = copyItemContainers.Num() - 1; i >= 0; i--)
 	{
-		if (itemContainers[i]->currentCapacity <= 0)
+		if (copyItemContainers[i]->currentCapacity <= 0)
 		{
-			RemoveInvenVisualize(itemContainers[i]);
-			itemContainers.RemoveAt(i);
-			isChanged = true;
-			break;
+			RemoveInvenVisualize(copyItemContainers[i]);
+			copyItemContainers.RemoveAt(i);
 		}
 	}
-	if (isChanged)
-	{
-		CleanupBackpack();
-	}
+
+	itemContainers = copyItemContainers;
 }
 
 std::tuple<bool, int, int> UBackpack::HasEmptySpace(UItemInfo* pItemInfo)

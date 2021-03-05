@@ -88,6 +88,9 @@ public:
 	void AddPrimary(TSubclassOf<ABaseGun> pWeaponClass);
 	void AddSecondary(TSubclassOf<ABaseGun> pWeaponClass);
 
+	void SetADS();
+	void SetHipfire();
+
 	void RemovePrimary();
 	void RemoveSecondary();
 

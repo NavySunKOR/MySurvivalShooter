@@ -172,6 +172,16 @@ void AFPPlayerController::AddSecondary(TSubclassOf<ABaseGun> pWeaponClass)
 	}
 }
 
+void AFPPlayerController::SetADS()
+{
+	crosshair->SetVisibility(ESlateVisibility::Hidden);
+}
+
+void AFPPlayerController::SetHipfire()
+{
+	crosshair->SetVisibility(ESlateVisibility::Visible);
+}
+
 
 void AFPPlayerController::RemovePrimary()
 {
@@ -210,24 +220,21 @@ void AFPPlayerController::UpdateHealthHud(float pCurHealth)
 	healthHudBg->SetRenderOpacity(opacityAmount);
 }
 
+
 void AFPPlayerController::UpdateInventoryUI()
 {
-	bool isRemoved = false;
-	for (int i = 0; i < items.Num(); i++)
+	TArray<UItemIcon*> tempItems = items;
+
+	for (int i = tempItems.Num() - 1; i >= 0; i--)
 	{
-		if (items[i]->itemInfo == nullptr || items[i]->itemInfo->currentCapacity == 0)
+		if (tempItems[i]->itemInfo == nullptr || tempItems[i]->itemInfo->currentCapacity == 0)
 		{
-			items[i]->RemoveFromParent();
-			items.Remove(items[i]);
-			isRemoved = true;
-			break;
+			tempItems[i]->RemoveFromParent();
+			tempItems.RemoveAt(i);
 		}
 	}
 
-	if (isRemoved)
-	{
-		UpdateInventoryUI();
-	}
+	items = tempItems;
 }
 
 void AFPPlayerController::Dead()

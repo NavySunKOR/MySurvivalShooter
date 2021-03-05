@@ -50,6 +50,11 @@ void APlayerCharacter::Tick(float DeltaTime)
 
 	if (moveVerticalValue * moveVerticalValue > 0 || moveHorizontalValue * moveHorizontalValue > 0)
 	{
+		if (moveVerticalValue == 0 && IsSprinting())
+		{
+			SetWalking();
+		}
+
 		if (moveVerticalValue > 0)
 		{
 			if (moveHorizontalValue == 0 || (moveVerticalValue > 0 && moveHorizontalValue * moveHorizontalValue > 0))
@@ -66,7 +71,6 @@ void APlayerCharacter::Tick(float DeltaTime)
 		}
 
 		GetCharacterMovement()->MaxWalkSpeed = maxWalkValue;
-		UE_LOG(LogTemp, Warning, TEXT("speed : %f"), maxWalkValue);
 		AddMovementInput((GetActorForwardVector() * moveVerticalValue + GetActorRightVector() * moveHorizontalValue)/1.4f);
 	}
 
@@ -290,7 +294,6 @@ void APlayerCharacter::MoveVertical(float pValue)
 		return;
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("MoveVertical : %f"), pValue);
 	moveVerticalValue = pValue;
 }
 
@@ -422,6 +425,7 @@ void APlayerCharacter::SetADSWeapon()
 	if (currentActiveGun && !IsCloseToWall())
 	{
 		currentActiveGun->SetADS();
+		playerController->SetADS();
 	}
 }
 
@@ -430,6 +434,7 @@ void APlayerCharacter::SetHipfireWeapon()
 	if (currentActiveGun)
 	{
 		currentActiveGun->SetHipfire();
+		playerController->SetHipfire();
 	}
 }
 
