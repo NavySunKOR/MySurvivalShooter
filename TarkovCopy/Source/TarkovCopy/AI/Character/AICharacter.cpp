@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include <Components/SphereComponent.h>
+#include <Components/CapsuleComponent.h>
 #include "TarkovCopy/AI/Controller/UserCreatedAIController.h"
 #include "TarkovCopy/Player/Character/PlayerCharacter.h"
 #include "TarkovCopy/GameMode/TarkovCopyGameModeBase.h"
@@ -107,6 +108,7 @@ void AAICharacter::NotifyActorEndOverlap(AActor* Other)
 void AAICharacter::Dead()
 {
 	detectTrigger->SetActive(false);
+	FindComponentByClass<UCapsuleComponent>()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	GetMesh()->SetAnimInstanceClass(nullptr);
 	GetMesh()->SetCollisionProfileName(TEXT("Ragdoll"));
 	GetMesh()->SetSimulatePhysics(true);

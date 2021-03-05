@@ -220,6 +220,16 @@ void AFPPlayerController::UpdateHealthHud(float pCurHealth)
 	healthHudBg->SetRenderOpacity(opacityAmount);
 }
 
+void CleanupArray(TArray<UItemIcon*>& pItem)
+{
+	for (int i = pItem.Num() - 1; i >= 0; i--)
+	{
+		if (pItem[i] == nullptr)
+		{
+			pItem.RemoveAt(i);
+		}
+	}
+}
 
 void AFPPlayerController::UpdateInventoryUI()
 {
@@ -230,9 +240,11 @@ void AFPPlayerController::UpdateInventoryUI()
 		if (tempItems[i]->itemInfo == nullptr || tempItems[i]->itemInfo->currentCapacity == 0)
 		{
 			tempItems[i]->RemoveFromParent();
-			tempItems.RemoveAt(i);
+			tempItems[i] = nullptr;
 		}
 	}
+
+	CleanupArray(tempItems);
 
 	items = tempItems;
 }
