@@ -154,8 +154,6 @@ void APlayerCharacter::TookDamage(float damage, FHitResult pHitParts)
 	{
 		curHp = 0.f;
 		playerController->Dead();
-		if(gameMode)
-			gameMode->PlayerDied();
 	}
 	playerController->UpdateHealthHud(curHp);
 }
@@ -430,6 +428,8 @@ void APlayerCharacter::SetADSWeapon()
 
 void APlayerCharacter::SetHipfireWeapon()
 {
+	if (gameMode && (gameMode->isPlayerDied || gameMode->isPlayerEscaped))
+		return;
 	if (currentActiveGun)
 	{
 		currentActiveGun->SetHipfire();
@@ -547,6 +547,10 @@ void APlayerCharacter::Inventory()
 {
 	if (gameMode && (gameMode->isPlayerDied || gameMode->isPlayerEscaped))
 		return;
+	if (IsAds())
+	{
+		SetHipfireWeapon();
+	}
 
 	playerController->OpenCloseInventory();
 }

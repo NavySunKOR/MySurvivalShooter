@@ -13,6 +13,7 @@
 
 void AFPPlayerController::BeginPlay()
 {
+	bShowMouseCursor = false;
 
 	healthHud = CreateWidget<UUserWidget>(this, healthHudWidget);
 	healthHud->AddToViewport();
@@ -43,8 +44,8 @@ void AFPPlayerController::BeginPlay()
 	missionObject = Cast<UTextBlock>(alertHud->GetWidgetFromName(TEXT("Object")));
 	range = Cast<UTextBlock>(alertHud->GetWidgetFromName(TEXT("Range")));
 	exfilTimer = Cast<UTextBlock>(exfilAlert->GetWidgetFromName(TEXT("ExfilTimer")));
-
-	AEscapeGameMode* gameMode = GetWorld()->GetAuthGameMode<AEscapeGameMode>();
+	
+	gameMode = GetWorld()->GetAuthGameMode<AEscapeGameMode>();
 	if(gameMode)
 		gameMode->SelectQuestItems();
 
@@ -99,8 +100,27 @@ void AFPPlayerController::InitInvenotry()
 
 }
 
-void AFPPlayerController::OpenCloseInventory()
+void AFPPlayerController::OpenInventory()
 {
+	//오픈,클로즈 두개를 아예 별도로 써야되는 상황 떄문에 어쩔수 없이 openclose에서는 두번 체크함
+	if (!inventory->IsInViewport())
+	{
+		bShowMouseCursor = true;
+		bEnableClickEvents = true;
+		bEnableMouseOverEvents = true;
+		isInventoryOpened = true;
+		SetIgnoreLookInput(true);
+		SetIgnoreMoveInput(true);
+		crosshair->SetVisibility(ESlateVisibility::Hidden);
+		inventory->AddToViewport();
+
+		UE_LOG(LogTemp, Warning, TEXT("open"))
+	}
+}
+
+void AFPPlayerController::CloseInventory()
+{
+	//오픈,클로즈 두개를 아예 별도로 써야되는 상황 떄문에 어쩔수 없이 openclose함수에서는 두번 체크함
 	if (inventory->IsInViewport())
 	{
 		bShowMouseCursor = false;
@@ -109,21 +129,24 @@ void AFPPlayerController::OpenCloseInventory()
 		SetIgnoreLookInput(false);
 		SetIgnoreMoveInput(false);
 		isInventoryOpened = false;
+
+		crosshair->SetVisibility(ESlateVisibility::Visible);
 		inventory->RemoveFromViewport();
 
 		UE_LOG(LogTemp, Warning, TEXT("close"))
 	}
+}
+
+void AFPPlayerController::OpenCloseInventory()
+{
+	//오픈,클로즈 두 개를 아예 별도로 써야되는 상황이 존재하여, 어쩔수 없이 openclose함수에서는 두번 체크함
+	if (inventory->IsInViewport())
+	{
+		CloseInventory();
+	}
 	else
 	{
-		bShowMouseCursor = true;
-		bEnableClickEvents = true;
-		bEnableMouseOverEvents = true;
-		isInventoryOpened = true;
-		SetIgnoreLookInput(true);
-		SetIgnoreMoveInput(true);
-		inventory->AddToViewport();
-
-		UE_LOG(LogTemp, Warning, TEXT("open"))
+		OpenInventory();
 	}
 }
 
@@ -252,7 +275,10 @@ void AFPPlayerController::UpdateInventoryUI()
 void AFPPlayerController::Dead()
 {
 	youreDead->SetVisibility(ESlateVisibility::Visible);
-	//TODO:메인화면으로 가는거 넣을것.
+	crosshair->SetVisibility(ESlateVisibility::Hidden);
+	CloseInventory();
+	if(gameMode)
+	gameMode->PlayerDied();//메인화면으로 가는거 넣을것.
 }
 
 void AFPPlayerController::ShowQuestInfo(FString itemName, float distance)
@@ -313,7 +339,8 @@ void AFPPlayerController::ExfilingComplete()
 	isExfiling = false;
 	exfilAlert->SetVisibility(ESlateVisibility::Hidden);
 	youveEscaped->SetVisibility(ESlateVisibility::Visible);
-	//TODO:메인화면으로 옮기는 작업 넣을것
+	if(gameMode)
+	gameMode->ExfilCompleted();//TODO:메인화면으로 옮기는 작업 넣을것
 }
 
 void AFPPlayerController::CancelExfiling()

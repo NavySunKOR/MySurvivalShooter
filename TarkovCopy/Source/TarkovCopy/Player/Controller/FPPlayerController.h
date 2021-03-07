@@ -13,6 +13,7 @@
 /**
  * 
  */
+class AEscapeGameMode;
 UCLASS()
 class TARKOVCOPY_API AFPPlayerController : public APlayerController
 {
@@ -64,6 +65,8 @@ private:
 	TArray<UItemIcon*> items;
 
 
+	AEscapeGameMode* gameMode;
+
 	UTextBlock* alertType;
 	UTextBlock* missionObject;
 	UTextBlock* range;
@@ -78,6 +81,9 @@ private:
 
 
 	void CloseAlert();
+
+	void OpenInventory();
+	void CloseInventory();
 	
 public:
 	bool isInventoryOpened= false;

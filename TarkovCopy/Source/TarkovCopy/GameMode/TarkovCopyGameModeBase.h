@@ -17,7 +17,17 @@ class TARKOVCOPY_API ATarkovCopyGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
 
+private:
+	void ReturnToMainMenu();
+protected:
+	virtual void BeginPlay() override;
+
 public:
+	UPROPERTY(EditAnywhere)
+	USoundBase* diedSound;
+	UPROPERTY(EditAnywhere)
+	USoundBase* escapedSound;
+
 	UPROPERTY(EditAnywhere)
 	TArray<TSubclassOf<ABaseGun>> allPlayerGunsInGame;
 	UPROPERTY(EditAnywhere)
