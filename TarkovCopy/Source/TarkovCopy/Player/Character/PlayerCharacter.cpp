@@ -25,7 +25,7 @@ void APlayerCharacter::BeginPlay()
 	curHp = maxHp;
 
 	//TODO:나중에 인벤토리 초기화 고칠것
-
+	UE_LOG(LogTemp, Warning, TEXT("PlayerCharacterBegin"))
 	inventory = nullptr;
 	inventory = NewObject<UInventory>(this,inventoryOrigin);
 	inventory->Init(this);

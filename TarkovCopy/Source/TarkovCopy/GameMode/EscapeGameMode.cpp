@@ -53,6 +53,7 @@ void AEscapeGameMode::SelectExfilPoint()
 void AEscapeGameMode::StartPlay()
 {
 	Super::StartPlay();
+	UE_LOG(LogTemp, Warning, TEXT("InitEscape"));
 	//SelectQuestItems();
 }
 void AEscapeGameMode::QuestCompleted(AInteractableObject* questItem)

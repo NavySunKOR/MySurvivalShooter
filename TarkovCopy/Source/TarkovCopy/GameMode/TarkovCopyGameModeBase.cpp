@@ -11,6 +11,8 @@ void ATarkovCopyGameModeBase::ReturnToMainMenu()
 void ATarkovCopyGameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
+
+	UE_LOG(LogTemp, Warning, TEXT("TarkovCopyGameModeBegin"))
 }
 
 void ATarkovCopyGameModeBase::PlayerDied()
