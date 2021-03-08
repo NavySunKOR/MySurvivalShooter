@@ -1,8 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include <TarkovCopy/GameMode/EscapeGameMode.h>
 #include "QuestItem.h"
+#include <TarkovCopy/GameMode/EscapeGameMode.h>
 
 void AQuestItem::Interact()
 {

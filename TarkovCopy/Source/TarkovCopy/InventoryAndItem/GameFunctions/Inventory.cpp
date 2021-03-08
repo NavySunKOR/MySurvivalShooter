@@ -1,9 +1,9 @@
  // Fill out your copyright notice in the Description page of Project Settings.
 
+#include "Inventory.h"
 #include "TarkovCopy/Player/Character/PlayerCharacter.h"
 #include "TarkovCopy/Interactable/PickableItem.h"
 #include <Kismet/GameplayStatics.h>
-#include "Inventory.h"
 
 void UInventory::Init(APlayerCharacter* pPlayer)
 {

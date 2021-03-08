@@ -1,8 +1,8 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
+#include "TarkovCopyGameModeBase.h"
 #include <Kismet/GameplayStatics.h>
 #include <TimerManager.h>
-#include "TarkovCopyGameModeBase.h"
 
 void ATarkovCopyGameModeBase::ReturnToMainMenu()
 {

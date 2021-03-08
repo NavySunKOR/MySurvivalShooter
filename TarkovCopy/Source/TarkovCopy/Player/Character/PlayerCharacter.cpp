@@ -1,10 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+#include "PlayerCharacter.h"
 #include "TarkovCopy/Interactable/InteractableObject.h"
 #include "TarkovCopy/Interactable/InteractableComponent.h"
 #include "TarkovCopy/GameMode/TarkovCopyGameModeBase.h"
 #include "TarkovCopy/Player/Controller/FPPlayerController.h"
-#include "PlayerCharacter.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()

@@ -1,11 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
+#include "BaseGun.h"
 #include <Runtime/Engine/Classes/Kismet/GameplayStatics.h>
 #include "TarkovCopy/Player/Character/PlayerCharacter.h"
 #include "TarkovCopy/AI/Character/AICharacter.h"
 #include <Runtime/Engine/Classes/Components/ArrowComponent.h>
-#include "BaseGun.h"
 
 // Sets default values
 ABaseGun::ABaseGun()

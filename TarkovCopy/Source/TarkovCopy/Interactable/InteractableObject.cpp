@@ -1,8 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+#include "InteractableObject.h"
 #include <Kismet/GameplayStatics.h>
 #include <TarkovCopy/Player/Character/PlayerCharacter.h>
-#include "InteractableObject.h"
 
 // Sets default values for this component's properties
 AInteractableObject::AInteractableObject()

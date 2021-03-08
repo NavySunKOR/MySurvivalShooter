@@ -1,8 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+#include "ItemM9.h"
 #include "TarkovCopy/Player/Controller/FPPlayerController.h"
 #include "TarkovCopy/Weapons/BaseGun.h"
-#include "ItemM9.h"
 
 void UItemM9::Use(AFPPlayerController* pPlayerCon)
 {

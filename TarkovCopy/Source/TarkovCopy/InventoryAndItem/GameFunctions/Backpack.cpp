@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include <Layout/SlateRect.h>
 #include "Backpack.h"
+#include <Layout/SlateRect.h>
 
 
 void UBackpack::Init()
@@ -230,17 +230,9 @@ void UBackpack::CleanupBackpack()
 
 std::tuple<bool, int, int> UBackpack::HasEmptySpace(UItemInfo* pItemInfo)
 {
-	if (pItemInfo->width >= pItemInfo->height)
-	{
-			return HasEmptySpaceWidthAxis(pItemInfo);
-	}
-	else
-	{
-			return HasEmptySpaceHeightAxis(pItemInfo);
-	}
-
-
-	return std::tuple<bool, int, int>(false, -1, -1);
+	return HasEmptySpaceWidthAxis(pItemInfo); //TODO: 나중에 아이템을 세로로 기준으로 추가 하게 할건지 정해줄것
+	//return HasEmptySpaceHeightAxis(pItemInfo);
+	//return std::tuple<bool, int, int>(false, -1, -1);
 }
 
 

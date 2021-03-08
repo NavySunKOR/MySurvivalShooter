@@ -1,5 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+#include "FPPlayerController.h"
 #include <GameFramework/PlayerInput.h>
 #include <GameFramework/Character.h>
 #include <Kismet/GameplayStatics.h>
@@ -9,7 +10,6 @@
 #include <TimerManager.h>
 #include "TarkovCopy/GameMode/EscapeGameMode.h"
 #include "TarkovCopy/PublicProperty/UMGPublicProperites.h"
-#include "FPPlayerController.h"
 
 void AFPPlayerController::BeginPlay()
 {
@@ -260,7 +260,10 @@ void AFPPlayerController::UpdateInventoryUI()
 
 	for (int i = tempItems.Num() - 1; i >= 0; i--)
 	{
-		if (tempItems[i] != nullptr && (tempItems[i]->itemInfo == nullptr || tempItems[i]->itemInfo->currentCapacity == 0))
+		if (tempItems[i] != nullptr && 
+			(tempItems[i]->itemInfo == nullptr || 
+				!tempItems[i]->itemInfo->IsValidLowLevel() || 
+				tempItems[i]->itemInfo->currentCapacity <= 0))
 		{
 			tempItems[i]->RemoveFromParent();
 			tempItems[i] = nullptr;

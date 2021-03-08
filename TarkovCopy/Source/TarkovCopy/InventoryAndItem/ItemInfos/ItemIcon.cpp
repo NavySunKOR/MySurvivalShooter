@@ -2,12 +2,12 @@
 
 
 
+#include "ItemIcon.h"
 #include <Components/CanvasPanelSlot.h>
 #include <Blueprint/WidgetTree.h>
 #include "ItemInfo.h"
 #include "TarkovCopy/PublicProperty/UMGPublicProperites.h"
 #include "TarkovCopy/Player/Controller/FPPlayerController.h"
-#include "ItemIcon.h"
 
 void UItemIcon::Init(UItemInfo* pItemInfo, UInventory* pInven, AFPPlayerController* pController)
 {

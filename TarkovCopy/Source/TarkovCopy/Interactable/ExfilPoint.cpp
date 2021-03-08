@@ -1,10 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
+#include "ExfilPoint.h"
 #include <Components/BoxComponent.h>
 #include <Kismet/GameplayStatics.h>
 #include "TarkovCopy/GameMode/EscapeGameMode.h"
-#include "ExfilPoint.h"
 
 // Sets default values for this component's properties
 UExfilPoint::UExfilPoint()
