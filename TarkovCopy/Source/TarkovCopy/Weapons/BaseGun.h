@@ -41,10 +41,10 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Particles")
 	UParticleSystem* hitEnemyParticle;
 
-	UPROPERTY(EditAnywhere, Category = "Animations")
-	UAnimBlueprint* fppAnimBlueprints;
-	UPROPERTY(EditAnywhere, Category = "Animations")
-	UAnimBlueprint* tppAnimBlueprints;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Animations")
+	UAnimBlueprintGeneratedClass* fppAnimBlueprints;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animations")
+	UAnimBlueprintGeneratedClass*  tppAnimBlueprints;
 
 	UPROPERTY(EditAnywhere, Category = "Animations")
 	UAnimMontage* fireAnim;

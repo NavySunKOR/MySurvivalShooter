@@ -7,8 +7,14 @@
 #include "TarkovCopy/Player/Character/PlayerCharacter.h"
 #include "TarkovCopy/AI/Character/AICharacter.h"
 
+AM9::AM9()
+{
+}
+
 void AM9::BeginPlay()
 {
+	fppAnimBlueprints = LoadObject<UAnimBlueprintGeneratedClass>(NULL, TEXT("AnimBlueprint'/Game/Animations/Arms/ABP_Anim_M9.ABP_Anim_M9_C'"), NULL, LOAD_None, NULL);
+	tppAnimBlueprints = LoadObject<UAnimBlueprintGeneratedClass>(NULL, TEXT("AnimBlueprint'/Game/Animations/TPS/ABP_Anim_TPC_Handgun.ABP_Anim_TPC_Handgun_C'"), NULL, LOAD_None, NULL);
 	thirdPersonScale = FVector(1.f, 1.f, 1.f);
 	thirdPersonRotation = FRotator(0.f, 0.f, 0.f);
 	thirdPersonPosition = FVector(-2.391582f, 3.731291f, 12.247958f);

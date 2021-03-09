@@ -14,6 +14,7 @@ UCLASS()
 class TARKOVCOPY_API AM9 : public ABaseGun
 {
 	GENERATED_BODY()
+		AM9();
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

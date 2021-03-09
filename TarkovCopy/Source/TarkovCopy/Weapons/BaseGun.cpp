@@ -113,8 +113,13 @@ void ABaseGun::SetParentMeshFPP(USkeletalMeshComponent* pMeshComp)
 
 void ABaseGun::SetParentMeshTPP(USkeletalMeshComponent* pMeshComp)
 {
+	UE_LOG(LogTemp, Warning, TEXT("SetParentMeshTPP"))
 	parentMesh = pMeshComp;
-	parentMesh->SetAnimInstanceClass(tppAnimBlueprints->GetAnimBlueprintGeneratedClass());
+
+	UE_LOG(LogTemp, Warning, TEXT("parentMesh : %d , and class  %d"), parentMesh, tppAnimBlueprints)
+	parentMesh->SetAnimInstanceClass(tppAnimBlueprints);
+
+	UE_LOG(LogTemp, Warning, TEXT("SetAnimInstanceClass"))
 	weaponComponents = Cast<USceneComponent>(GetDefaultSubobjectByName(TEXT("Weapon_Root")));
 	muzzleArrow = Cast<UArrowComponent>(GetDefaultSubobjectByName(TEXT("Muzzle_Arrow")));
 
@@ -131,7 +136,7 @@ void ABaseGun::SetParentMeshTPP(USkeletalMeshComponent* pMeshComp)
 
 void ABaseGun::EquipWeapon()
 {
-	parentMesh->SetAnimInstanceClass(fppAnimBlueprints->GetAnimBlueprintGeneratedClass());
+	parentMesh->SetAnimInstanceClass(fppAnimBlueprints);
 }
 
 void ABaseGun::InspectWeapon()

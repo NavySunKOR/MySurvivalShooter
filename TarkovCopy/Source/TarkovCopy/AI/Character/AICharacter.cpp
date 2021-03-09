@@ -19,29 +19,48 @@ void AAICharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	detectTrigger = Cast< USphereComponent>(GetDefaultSubobjectByName(TEXT("Sphere")));
+	curHp = maxHp;
+
+	UE_LOG(LogTemp, Warning, TEXT("Dechaaaaaaaaaaa"));
+
 	ATarkovCopyGameModeBase* gameMode = GetWorld()->GetAuthGameMode<ATarkovCopyGameModeBase>();
+
+
+	UE_LOG(LogTemp, Warning, TEXT("gameMode %d"), gameMode);
+
+
 	int selectedWeapon = FMath::RandRange(0, gameMode->allAIGunsInGame.Num() - 1);
 	currentActiveGun = GetWorld()->SpawnActor<ABaseGun>(gameMode->allAIGunsInGame[selectedWeapon]);
+
+	UE_LOG(LogTemp, Warning, TEXT("spawn gun %d"), currentActiveGun);
+
 	aiController = Cast<AUserCreatedAIController>(GetController());
 
 	if (currentActiveGun != nullptr)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("deg"));
 		currentActiveGun->SetParentMeshTPP(GetMesh());
 		currentActiveGun->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, TEXT("Hand_R_Position"));
 		currentActiveGun->SetActorRelativeLocation(currentActiveGun->thirdPersonPosition);
-		currentActiveGun->SetActorRotation(FRotator(0,0,0));
+		currentActiveGun->SetActorRotation(FRotator(0, 0, 0));
 		currentActiveGun->weaponOwnerAICharacter = this;
+
+		UE_LOG(LogTemp, Warning, TEXT("peg"));
 		//currentActiveGun->SetActorRelativeRotation(GetMesh()->GetSocketRotation(TEXT("Hand_R_Position")) + currentActiveGun->thirdPersonRotation);
 		currentActiveGun->SetOwner(this);
+
+
+		UE_LOG(LogTemp, Warning, TEXT("seg"));
 
 	}
 	else
 	{
-		UE_LOG(LogTemp,Warning,TEXT("HELP! HELP!"))
+		UE_LOG(LogTemp, Warning, TEXT("HELP! HELP!"))
 	}
-	curHp = maxHp;
-	
+
 }
+
+
 
 // Called every frame
 void AAICharacter::Tick(float DeltaTime)

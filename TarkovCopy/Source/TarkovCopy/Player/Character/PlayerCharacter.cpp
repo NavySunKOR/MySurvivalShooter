@@ -171,9 +171,11 @@ bool APlayerCharacter::PickupItem(UItemInfo* pItemInfo)
 
 void APlayerCharacter::AddPrimary(TSubclassOf<ABaseGun> pWeaponOrigin)
 {
+	UE_LOG(LogTemp, Warning, TEXT("addprimary"));
 	primaryWeapon = GetWorld()->SpawnActor<ABaseGun>(pWeaponOrigin);
 	if (primaryWeapon != nullptr)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("primaryWeapon"));
 		primaryWeapon->SetParentMeshFPP(GetMesh());
 		primaryWeapon->AttachToActor(this, FAttachmentTransformRules::SnapToTargetIncludingScale);
 		primaryWeapon->SetOwner(this);
@@ -352,6 +354,7 @@ void APlayerCharacter::SetStanding()
 
 void APlayerCharacter::EquipPrimary()
 {
+	UE_LOG(LogTemp, Warning, TEXT("equipprimary"));
 	if (primaryWeapon)
 	{
 		primaryWeapon->SetActorHiddenInGame(false);

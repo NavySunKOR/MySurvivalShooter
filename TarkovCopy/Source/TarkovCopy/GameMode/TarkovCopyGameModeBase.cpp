@@ -1,8 +1,19 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "TarkovCopyGameModeBase.h"
+#include "TarkovCopy/AI/Character/AICharacter.h"
+#include <TimerManager.h>
+#include <EngineUtils.h>
 #include <Kismet/GameplayStatics.h>
 #include <TimerManager.h>
+
+
+ATarkovCopyGameModeBase::ATarkovCopyGameModeBase()
+{
+	static ConstructorHelpers::FClassFinder<AAICharacter> AICharacter(TEXT("Blueprint'/Game/Blueprints/AI/BP_AICharacter.BP_AICharacter_C'"));
+	if (AICharacter.Succeeded() && AICharacter.Class != NULL)
+		aiCharacter = AICharacter.Class;
+}
 
 void ATarkovCopyGameModeBase::ReturnToMainMenu()
 {
@@ -13,6 +24,29 @@ void ATarkovCopyGameModeBase::BeginPlay()
 	Super::BeginPlay();
 
 	UE_LOG(LogTemp, Warning, TEXT("TarkovCopyGameModeBegin"))
+		InitalizeAI();
+}
+
+void ATarkovCopyGameModeBase::InitalizeAI()
+{
+	TArray<AActor*> allSpawnPoints;
+	UGameplayStatics::GetAllActorsWithTag(GetWorld(), TEXT("SpawnPoints"), allSpawnPoints);
+
+	for (AActor* spawnPoint : allSpawnPoints)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("SpawnPoint"))
+		UE_LOG(LogTemp, Warning, TEXT("Hoxy....? : %d"), GetWorld())
+		UWorld* gatcha = GetWorld();
+
+		UE_LOG(LogTemp, Warning, TEXT("Gacha sanai %d"), aiCharacter);
+		AAICharacter* character = gatcha->SpawnActor<AAICharacter>(aiCharacter); // 근본없는 언리얼 새끼는 여기서 패키지로 나가면 터진다 ㅋㅋ
+
+		UE_LOG(LogTemp, Warning, TEXT("Spawned?"))
+		character->SetActorLocation(spawnPoint->GetActorLocation());
+
+		UE_LOG(LogTemp, Warning, TEXT("yes?"))
+		aiPlayers.Add(character);
+	}
 }
 
 void ATarkovCopyGameModeBase::PlayerDied()

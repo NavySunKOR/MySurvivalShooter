@@ -34,7 +34,6 @@ private:
 
 	virtual void NotifyActorBeginOverlap(AActor* Other) override;
 	virtual void NotifyActorEndOverlap(AActor* Other) override;
-
 	void Dead();
 
 public:	

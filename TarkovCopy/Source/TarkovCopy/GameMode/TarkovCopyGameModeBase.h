@@ -12,13 +12,19 @@
 /**
  * 
  */
+class AAICharacter;
 UCLASS()
 class TARKOVCOPY_API ATarkovCopyGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
-
+public:
+	ATarkovCopyGameModeBase();
 private:
 	void ReturnToMainMenu();
+	TArray<AAICharacter*> aiPlayers;
+	TSubclassOf<AAICharacter> aiCharacter;
+
+	void InitalizeAI();
 protected:
 	virtual void BeginPlay() override;
 
@@ -27,6 +33,9 @@ public:
 	USoundBase* diedSound;
 	UPROPERTY(EditAnywhere)
 	USoundBase* escapedSound;
+
+	
+
 
 	UPROPERTY(EditAnywhere)
 	TArray<TSubclassOf<ABaseGun>> allPlayerGunsInGame;
