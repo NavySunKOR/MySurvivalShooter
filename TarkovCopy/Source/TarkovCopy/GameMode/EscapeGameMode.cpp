@@ -30,14 +30,11 @@ void AEscapeGameMode::SelectQuestItems()
 }
 void AEscapeGameMode::SelectExfilPoint()
 {
-	TActorRange<AActor> actorsInWorld = TActorRange<AActor>(GetWorld());
-	for (AActor* exfil : actorsInWorld)
+
+	UGameplayStatics::GetAllActorsWithTag(GetWorld(), TEXT("ExfilPoint"), allExfilPoints);
+	for (AActor* exfil : allExfilPoints)
 	{
-		if (exfil->ActorHasTag(FName(TEXT("ExfilPoint"))))
-		{
-			exfil->SetActorHiddenInGame(true);
-			allExfilPoints.Add(exfil);
-		}
+		exfil->SetActorHiddenInGame(true);
 	}
 
 	int num = FMath::RandRange(0, allExfilPoints.Num() - 1);

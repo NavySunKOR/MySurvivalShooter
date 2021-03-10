@@ -75,7 +75,7 @@ void AAICharacter::Tick(float DeltaTime)
 	//탐지 범위 내에는 들어왔는데 건물 안이거나 아니면 벽에 가려져있을때 파악
 	if (trackingTarget != nullptr && !outIsPlayerDetected)
 	{
-		if (aiController->LineOfSightTo(trackingTarget))
+		if (aiController != nullptr && aiController->LineOfSightTo(trackingTarget))
 		{
 			outPlayerLocation = trackingTarget->GetActorLocation();
 			aiController->SetFocus(trackingTarget);
@@ -148,6 +148,17 @@ void AAICharacter::Dead()
 	DetachFromControllerPendingDestroy();
 	isDead = true;
 	aiController = nullptr;
+
+	FTimerHandle handle;
+	GetWorld()->GetTimerManager().SetTimer(handle, this, &AAICharacter::SetActiveFalse, 2.f);
+}
+void AAICharacter::SetActiveFalse()
+{
+	GetMesh()->SetSimulatePhysics(false);
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	currentActiveGun->SetActorEnableCollision(false);
+	currentActiveGun->SetActorHiddenInGame(true);
+	SetActorHiddenInGame(true);
 }
 
 void AAICharacter::FireWeapon()

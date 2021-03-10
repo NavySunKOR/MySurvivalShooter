@@ -172,6 +172,8 @@ bool APlayerCharacter::PickupItem(UItemInfo* pItemInfo)
 void APlayerCharacter::AddPrimary(TSubclassOf<ABaseGun> pWeaponOrigin)
 {
 	UE_LOG(LogTemp, Warning, TEXT("addprimary"));
+	if (primaryWeapon != nullptr)
+		return;
 	primaryWeapon = GetWorld()->SpawnActor<ABaseGun>(pWeaponOrigin);
 	if (primaryWeapon != nullptr)
 	{
@@ -186,6 +188,8 @@ void APlayerCharacter::AddPrimary(TSubclassOf<ABaseGun> pWeaponOrigin)
 
 void APlayerCharacter::AddSecondary(TSubclassOf<ABaseGun> pWeaponOrigin)
 {
+	if (secondaryWeapon != nullptr)
+		return;
 	secondaryWeapon = GetWorld()->SpawnActor<ABaseGun>(m9Origin);
 	if (secondaryWeapon != nullptr)
 	{

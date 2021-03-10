@@ -25,14 +25,14 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	USkeletalMeshComponent* parentMesh;
-	USceneComponent* magazineComponents;
-	USceneComponent* attachmentComponents;
-	USceneComponent* scopeComponents;
-	USceneComponent* weaponComponents;
-	USceneComponent* sliderComponents;
-	USceneComponent* hammerComponents;
-	UArrowComponent* muzzleArrow;
+	USkeletalMeshComponent* parentMesh = nullptr;
+	USceneComponent* magazineComponents = nullptr;
+	USceneComponent* attachmentComponents = nullptr;
+	USceneComponent* scopeComponents = nullptr;
+	USceneComponent* weaponComponents = nullptr;
+	USceneComponent* sliderComponents = nullptr;
+	USceneComponent* hammerComponents = nullptr;
+	UArrowComponent* muzzleArrow = nullptr;
 
 	UPROPERTY(EditAnywhere, Category = "Particles")
 	UParticleSystem* muzzleFireParticle;
@@ -41,10 +41,10 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Particles")
 	UParticleSystem* hitEnemyParticle;
 
-	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Animations")
+	UPROPERTY()
 	UAnimBlueprintGeneratedClass* fppAnimBlueprints;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animations")
-	UAnimBlueprintGeneratedClass*  tppAnimBlueprints;
+	UPROPERTY()
+	UAnimBlueprintGeneratedClass* tppAnimBlueprints;
 
 	UPROPERTY(EditAnywhere, Category = "Animations")
 	UAnimMontage* fireAnim;

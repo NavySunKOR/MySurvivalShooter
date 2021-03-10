@@ -41,12 +41,14 @@ public:
 	FVector outPlayerLocation;
 	bool outIsPlayerDetected = false;
 	bool isDead = false;
+	
 
 	AActor* trackingTarget; // 추적 할때 사용(발소리 듣고 해당 현장으로 이동)
 	AActor* targetActor; //실제 육안으로 적을 발견 후 조준 후 발사 할때 사용
 
 	virtual void Tick(float DeltaTime) override;
 	void TookDamage(float pDamageAmount, FHitResult pHitParts);
+	void SetActiveFalse();
 	float GetCurrentWeaponRange();
 	void FireWeapon();
 
