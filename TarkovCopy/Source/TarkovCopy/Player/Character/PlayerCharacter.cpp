@@ -123,6 +123,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAction(TEXT("Inventory"), EInputEvent::IE_Pressed, this, &APlayerCharacter::Inventory);
 	PlayerInputComponent->BindAction(TEXT("InspectWeapon"), EInputEvent::IE_Pressed, this, &APlayerCharacter::InspectWeapon);
 
+	PlayerInputComponent->BindAxis(TEXT("Tilting"), this, &APlayerCharacter::Tilting);
 	PlayerInputComponent->BindAxis(TEXT("MoveVertical"), this, &APlayerCharacter::MoveVertical);
 	PlayerInputComponent->BindAxis(TEXT("MoveHorizontal"), this, &APlayerCharacter::MoveHorizontal);
 	PlayerInputComponent->BindAxis(TEXT("RotateHorizontal"), this, &APlayerCharacter::RotateHorizontal);
@@ -194,6 +195,22 @@ bool APlayerCharacter::PickupItem(UItemInfo* pItemInfo)
 	}
 
 	return isItemAdded;
+}
+
+void APlayerCharacter::Tilting(float pValue)
+{
+	if (pValue < 0)
+	{
+
+	}
+	else if (pValue > 0)
+	{
+
+	}
+	else
+	{
+
+	}
 }
 
 void APlayerCharacter::AddPrimary(TSubclassOf<ABaseGun> pWeaponOrigin)

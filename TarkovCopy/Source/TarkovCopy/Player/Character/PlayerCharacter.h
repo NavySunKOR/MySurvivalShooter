@@ -112,6 +112,8 @@ public:
 
 	bool PickupItem(UItemInfo* pItemInfo);
 
+	void Tilting(float pValue);
+
 	void AddPrimary(TSubclassOf<ABaseGun> pWeaponOrigin);
 	void AddSecondary(TSubclassOf<ABaseGun> pWeaponOrigin);
 	void RemovePrimary();
