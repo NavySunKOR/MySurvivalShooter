@@ -6,7 +6,6 @@
 #include "GameFramework/Character.h"
 #include <GameFramework/CharacterMovementComponent.h>
 #include <Blueprint/UserWidget.h>
-#include <GameFramework/SpringArmComponent.h>
 #include <DrawDebugHelpers.h>
 #include "TarkovCopy/InventoryAndItem/ItemInfos/ItemInfo.h"
 #include "TarkovCopy/InventoryAndItem/GameFunctions/Inventory.h"
@@ -14,6 +13,7 @@
 #include "TarkovCopy/Weapons/BaseGun.h"
 #include "PlayerCharacter.generated.h"
 
+class USpringArmComponent;
 UCLASS()
 class TARKOVCOPY_API APlayerCharacter : public ACharacter
 {
@@ -29,6 +29,9 @@ private:
 	float maxWalkValue = 0.f;
 	bool isFired = false; // for semi auto mode only
 	bool isFirePressed = false; 
+	USpringArmComponent* springArm;
+	FVector springArmOrigin;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

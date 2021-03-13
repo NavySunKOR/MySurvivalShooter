@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "PlayerCharacter.h"
+#include <GameFramework/SpringArmComponent.h>
 #include "TarkovCopy/Interactable/InteractableObject.h"
 #include "TarkovCopy/Interactable/InteractableComponent.h"
 #include "TarkovCopy/GameMode/TarkovCopyGameModeBase.h"
@@ -20,6 +21,8 @@ void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	gameMode =Cast<ATarkovCopyGameModeBase>(GetWorld()->GetAuthGameMode());
+	springArm = FindComponentByClass<USpringArmComponent>();
+	springArmOrigin = GetMesh()->GetRelativeLocation();
 	playerController = Cast<AFPPlayerController>(GetController());
 	GetCharacterMovement()->MaxWalkSpeed = walkingSpeed;
 	curHp = maxHp;
@@ -100,6 +103,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 		}
 	
 	}
+
 }
 
 // Called to bind functionality to input
@@ -199,18 +203,15 @@ bool APlayerCharacter::PickupItem(UItemInfo* pItemInfo)
 
 void APlayerCharacter::Tilting(float pValue)
 {
-	if (pValue < 0)
-	{
+	FRotator quat;
+	quat.Roll = GetActorRotation().Roll + pValue * 20.f;
+	GetMesh()->SetWorldRotation(quat);
+	springArm->SetRelativeRotation(GetMesh()->GetRelativeRotation());
 
-	}
-	else if (pValue > 0)
-	{
+	FVector originVec = springArmOrigin;
+	originVec.Y = springArmOrigin.Y + pValue * 15.f;
+	GetMesh()->SetRelativeLocation(originVec);
 
-	}
-	else
-	{
-
-	}
 }
 
 void APlayerCharacter::AddPrimary(TSubclassOf<ABaseGun> pWeaponOrigin)
