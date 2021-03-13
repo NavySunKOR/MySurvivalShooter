@@ -89,6 +89,12 @@ public:
 	UPROPERTY(EditAnywhere, Category = "EditableStatus")
 	int itemCode;
 
+	UPROPERTY(EditAnywhere, Category = "EditableStatus")
+	bool isCanAutoFire;
+	UPROPERTY()
+	bool isAutoFire;
+
+
 	int reloadState; //use for shotgun
 	bool isAds = false;
 	bool isFiring = false;

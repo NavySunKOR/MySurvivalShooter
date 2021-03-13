@@ -74,7 +74,32 @@ void APlayerCharacter::Tick(float DeltaTime)
 		AddMovementInput((GetActorForwardVector() * moveVerticalValue + GetActorRightVector() * moveHorizontalValue)/1.4f);
 	}
 
-
+	if (isFirePressed)
+	{
+		if (currentActiveGun && currentActiveGun->CanFireWeapon() && !IsCloseToWall()) // 세미에서 오토로 바꿔서 쏠때 발생하는 버그를 막기 위하여 처리
+		{
+			if (currentActiveGun->isAutoFire && !isFired)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Is Auto Fire"));
+				ActualFireWeapon();
+			}
+			else if (!isFired)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Semi Fire"));
+				isFired = true;
+				ActualFireWeapon();
+			}
+		}
+		else if (currentActiveGun && (!IsFiring()) && (!IsReloading()) && IsEmptyMagazine() && !IsCloseToWall())
+		{
+			if (!isFired)
+			{
+				isFired = true;
+				currentActiveGun->EmptyFireWeapon();
+			}
+		}
+	
+	}
 }
 
 // Called to bind functionality to input
@@ -87,6 +112,8 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAction(TEXT("EquipPrimary"), EInputEvent::IE_Pressed, this, &APlayerCharacter::EquipPrimary);
 	PlayerInputComponent->BindAction(TEXT("EquipSecondary"), EInputEvent::IE_Pressed, this, &APlayerCharacter::EquipSecondary);
 	PlayerInputComponent->BindAction(TEXT("Fire"), EInputEvent::IE_Pressed, this, &APlayerCharacter::FireWeapon);
+	PlayerInputComponent->BindAction(TEXT("Fire"), EInputEvent::IE_Released, this, &APlayerCharacter::FireUpWeapon);
+	PlayerInputComponent->BindAction(TEXT("SetWeaponSelector"), EInputEvent::IE_Released, this, &APlayerCharacter::SetWeaponSelector);
 	PlayerInputComponent->BindAction(TEXT("ADS"), EInputEvent::IE_Pressed, this, &APlayerCharacter::SetADSWeapon);
 	PlayerInputComponent->BindAction(TEXT("ADS"), EInputEvent::IE_Released, this, &APlayerCharacter::SetHipfireWeapon);
 	PlayerInputComponent->BindAction(TEXT("Reload"), EInputEvent::IE_Pressed, this, &APlayerCharacter::ReloadWeapon);
@@ -395,25 +422,33 @@ void APlayerCharacter::FireWeapon()
 	{
 		return;
 	}
-	if (currentActiveGun && currentActiveGun->CanFireWeapon() && !IsCloseToWall())
-	{
-		FVector start;
-		FRotator dir;
-		if(!IsAds())
-			GetController()->GetPlayerViewPoint(start, dir);
-		else 
-		{
-			currentActiveGun->UpdateMuzzleInfo();
-			start = currentActiveGun->muzzleStart;
-			dir = currentActiveGun->muzzleDir;
-		}
+	UE_LOG(LogTemp, Warning, TEXT("Tang tang tang"));
 
-		currentActiveGun->FireWeapon(start,dir);
-	}
-	else if (currentActiveGun && (!IsFiring()) && (!IsReloading()) && IsEmptyMagazine() && !IsCloseToWall())
+	isFirePressed = true;
+}
+
+
+
+void APlayerCharacter::ActualFireWeapon()
+{
+	FVector start;
+	FRotator dir;
+	if (!IsAds())
+		GetController()->GetPlayerViewPoint(start, dir);
+	else
 	{
-		currentActiveGun->EmptyFireWeapon();
+		currentActiveGun->UpdateMuzzleInfo();
+		start = currentActiveGun->muzzleStart;
+		dir = currentActiveGun->muzzleDir;
 	}
+
+	currentActiveGun->FireWeapon(start, dir);
+}
+
+void APlayerCharacter::FireUpWeapon()
+{
+	isFirePressed = false;
+	isFired = false;
 }
 
 void APlayerCharacter::SetADSWeapon()
@@ -500,6 +535,14 @@ void APlayerCharacter::ReloadWeapon()
 
 			inventory->isUsingInventory = false;
 		}
+	}
+}
+
+void APlayerCharacter::SetWeaponSelector()
+{
+	if (currentActiveGun && currentActiveGun->isCanAutoFire)
+	{
+		currentActiveGun->isAutoFire = !currentActiveGun->isAutoFire;
 	}
 }
 

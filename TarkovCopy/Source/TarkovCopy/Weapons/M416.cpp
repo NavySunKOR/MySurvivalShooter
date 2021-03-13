@@ -13,6 +13,7 @@ AM416::AM416()
 
 void AM416::BeginPlay()
 {
+	isAutoFire = true;
 	fppAnimBlueprints = LoadObject<UAnimBlueprintGeneratedClass>(NULL, TEXT("AnimBlueprint'/Game/Animations/Arms/ABP_Anim_M416.ABP_Anim_M416_C'"), NULL, LOAD_None, NULL);
 	tppAnimBlueprints = LoadObject<UAnimBlueprintGeneratedClass>(NULL, TEXT("AnimBlueprint'/Game/Animations/TPS/ABP_Anim_TPC_Rifle.ABP_Anim_TPC_Rifle_C'"), NULL, LOAD_None, NULL);
 

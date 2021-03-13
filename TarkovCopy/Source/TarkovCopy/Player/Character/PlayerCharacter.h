@@ -27,6 +27,8 @@ private:
 	float moveVerticalValue = 0.f;
 	float moveHorizontalValue = 0.f;
 	float maxWalkValue = 0.f;
+	bool isFired = false; // for semi auto mode only
+	bool isFirePressed = false; 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -52,9 +54,12 @@ protected:
 	void EquipPrimary();
 	void EquipSecondary();
 	void FireWeapon();
+	void FireUpWeapon();
 	void SetADSWeapon();
 	void SetHipfireWeapon();
 	void ReloadWeapon();
+	void SetWeaponSelector();
+	void ActualFireWeapon();
 
 	void Interact();
 	void InspectWeapon();

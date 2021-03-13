@@ -32,6 +32,7 @@ void ABaseGun::FireWeapon(FVector start, FRotator dir)
 
 void ABaseGun::EmptyFireWeapon()
 {
+	isFiring = true;
 	UGameplayStatics::SpawnSoundAttached(emptyFireWeaponSound, weaponComponents);
 	if(weaponOwnerCharacter)
 		weaponOwnerCharacter->PlayAnimMontage(emptyFireAnim);
