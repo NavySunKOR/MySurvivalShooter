@@ -47,7 +47,7 @@ public:
 	AActor* targetActor; //실제 육안으로 적을 발견 후 조준 후 발사 할때 사용
 
 	virtual void Tick(float DeltaTime) override;
-	void TookDamage(float pDamageAmount, FHitResult pHitParts);
+	void TookDamage(float pDamageAmount, FHitResult pHitParts, AActor* pShooter);
 	void SetActiveFalse();
 	float GetCurrentWeaponRange();
 	void FireWeapon();

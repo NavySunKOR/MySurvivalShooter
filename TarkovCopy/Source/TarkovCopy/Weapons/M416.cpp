@@ -42,14 +42,12 @@ void AM416::FireWeapon(FVector start,FRotator dir)
 	//TODO: 힙파이어냐 아니면 ads냐에 따라서 발사 방식을 다르게 하고, ads에서 발사시 총기는 선형 방식으로 반동을 적용(무기가 위로 올라가야함);
 	if (GetWorld()->LineTraceSingleByChannel(hit, start, start + dir.Vector() * range, ECollisionChannel::ECC_Pawn , param))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Hit something : %s"), *hit.GetActor()->GetName());
 		//맞은 hit가 캐릭터면
 		AAICharacter* aiCharacter = Cast<AAICharacter>(hit.GetActor());
 		APlayerCharacter* playerCharacter = Cast<APlayerCharacter>(hit.GetActor());
 		if (aiCharacter != nullptr)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("NAME : %s"), *aiCharacter->GetName());
-			aiCharacter->TookDamage(damage, hit);
+			aiCharacter->TookDamage(damage, hit,GetOwner());
 			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), hitEnemyParticle, hit.ImpactPoint);
 			UGameplayStatics::SpawnSoundAtLocation(GetWorld(), hitEnemySound, hit.ImpactPoint,hit.ImpactNormal.Rotation());
 		}

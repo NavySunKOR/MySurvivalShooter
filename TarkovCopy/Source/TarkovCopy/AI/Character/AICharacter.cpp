@@ -19,20 +19,10 @@ void AAICharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	detectTrigger = Cast< USphereComponent>(GetDefaultSubobjectByName(TEXT("Sphere")));
-	curHp = maxHp;
-
-	UE_LOG(LogTemp, Warning, TEXT("Dechaaaaaaaaaaa"));
-
 	ATarkovCopyGameModeBase* gameMode = GetWorld()->GetAuthGameMode<ATarkovCopyGameModeBase>();
-
-
-	UE_LOG(LogTemp, Warning, TEXT("gameMode %d"), gameMode);
-
-
+	curHp = maxHp;
 	int selectedWeapon = FMath::RandRange(0, gameMode->allAIGunsInGame.Num() - 1);
 	currentActiveGun = GetWorld()->SpawnActor<ABaseGun>(gameMode->allAIGunsInGame[selectedWeapon]);
-
-	UE_LOG(LogTemp, Warning, TEXT("spawn gun %d"), currentActiveGun);
 
 	aiController = Cast<AUserCreatedAIController>(GetController());
 
@@ -84,10 +74,58 @@ void AAICharacter::Tick(float DeltaTime)
 	}
 }
 
-void AAICharacter::TookDamage(float pDamageAmount, FHitResult pHitParts)
+void CalculateDamageAmount(float& pDamage,FHitResult& pHitParts)
+{
+	//Head shot
+	UE_LOG(LogTemp,Warning,TEXT("BONE : %s"), *pHitParts.BoneName.ToString())
+	if (pHitParts.BoneName.ToString().Equals(TEXT("head")) || pHitParts.BoneName.ToString().Equals(TEXT("neck")))
+	{
+		pDamage *= 2.5f;
+		UE_LOG(LogTemp, Warning, TEXT("Headshot"))
+		//TODO:나중에 방어구 시스템 나오면 데미지 경감 시켜줄 것.
+	}
+	else if(pHitParts.BoneName.ToString().Equals(TEXT("hips")) 
+		|| pHitParts.BoneName.ToString().Equals(TEXT("spine"))
+		|| pHitParts.BoneName.ToString().Equals(TEXT("chest"))) //Body shot
+	{
+
+		UE_LOG(LogTemp, Warning, TEXT("Bodyshot"))
+		pDamage *= 1.5f;
+		//TODO:나중에 방어구 시스템 나오면 데미지 경감 시켜줄 것.
+	}
+	else if (pHitParts.BoneName.ToString().Contains(TEXT("shoulder"))
+		|| pHitParts.BoneName.ToString().Contains(TEXT("arm"))
+		) //Shoulder and arm
+	{
+		UE_LOG(LogTemp, Warning, TEXT("shouldershot"))
+		pDamage *=0.85f;
+		//TODO:나중에 방어구 시스템 나오면 데미지 경감 시켜줄 것.
+	}
+	else if (pHitParts.BoneName.ToString().Contains(TEXT("leg"))) //Leg and thigh
+	{
+		UE_LOG(LogTemp, Warning, TEXT("leg shot"))
+		pDamage *= 1.25f;
+		//TODO:나중에 방어구 시스템 나오면 데미지 경감 시켜줄 것.
+	}
+	else if (pHitParts.BoneName.ToString().Contains(TEXT("hand"))
+		|| pHitParts.BoneName.ToString().Contains(TEXT("foot")))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("maldan shot"))
+		pDamage *= 0.5f;
+		//TODO:나중에 방어구 시스템 나오면 데미지 경감 시켜줄 것.
+	}
+
+}
+
+void AAICharacter::TookDamage(float pDamageAmount, FHitResult pHitParts,AActor* pShooter)
 {
 	//hitParts에 따라서 pDamageAmount를 계산할것.
+	CalculateDamageAmount(pDamageAmount, pHitParts);
+
 	curHp -= pDamageAmount;
+
+	UE_LOG(LogTemp, Warning, TEXT("damage : %f"), pDamageAmount)
+	NotifyActorBeginOverlap(pShooter);
 	if (curHp <= 0)
 	{
 		//TODO:PawnKilled 넣을것.
@@ -163,10 +201,14 @@ void AAICharacter::SetActiveFalse()
 
 void AAICharacter::FireWeapon()
 {
-	FVector start = GetActorLocation();
-	FVector dir = (targetActor->GetActorLocation() - GetActorLocation());
-	if (currentActiveGun->curMagRounds > 0 && !currentActiveGun->isReloading)
+	if (currentActiveGun->CanFireWeapon())
+	{
+		FVector start = GetActorLocation();
+		FVector dir = (targetActor->GetActorLocation() - GetActorLocation());
 		currentActiveGun->FireWeapon(GetActorLocation(), dir.Rotation());
-	else if(!currentActiveGun->isReloading)
+	}
+	else if (currentActiveGun->curMagRounds <= 0 && !currentActiveGun->isReloading){
 		currentActiveGun->Reload(currentActiveGun->maximumMagRounds - currentActiveGun->curMagRounds);
+	}
 }
+

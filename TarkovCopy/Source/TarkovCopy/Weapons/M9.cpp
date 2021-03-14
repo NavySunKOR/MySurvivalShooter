@@ -42,7 +42,7 @@ void AM9::FireWeapon(FVector start, FRotator dir)
 		APlayerCharacter* playerCharacter = Cast<APlayerCharacter>(hit.GetActor());
 		if (aiCharacter != nullptr)
 		{
-			aiCharacter->TookDamage(damage, hit);
+			aiCharacter->TookDamage(damage, hit, GetOwner());
 		}
 		else if (playerCharacter != nullptr)
 		{
