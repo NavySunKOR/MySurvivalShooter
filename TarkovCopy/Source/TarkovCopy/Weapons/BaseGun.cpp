@@ -18,6 +18,7 @@ ABaseGun::ABaseGun()
 void ABaseGun::BeginPlay()
 {
 	Super::BeginPlay();
+	calcBulletSpreadRadius = initBulletSpreadRadius;
 	fireInterval = 60.f / rpm;
 	curMagRounds = maximumMagRounds;
 }
@@ -26,6 +27,8 @@ void ABaseGun::FireWeapon(FVector start, FRotator dir)
 {
 	curMagRounds--;
 	isFiring = true;
+	UE_LOG(LogTemp, Warning, TEXT("calcBulletSpreadRadius : %f"), calcBulletSpreadRadius);
+	calcBulletSpreadRadius += bulletSpreadIncrement;
 	UGameplayStatics::SpawnSoundAttached(fireWeaponSound, weaponComponents);
 	UGameplayStatics::SpawnEmitterAttached(muzzleFireParticle, muzzleArrow);
 }
@@ -169,6 +172,13 @@ void ABaseGun::Tick(float DeltaTime)
 	{
 		muzzleStart = muzzleArrow->GetComponentLocation();
 		muzzleDir = muzzleArrow->GetForwardVector().Rotation();
+	}
+
+	calcBulletSpreadRadius -= bulletSpreadDecrementPerSecond;
+
+	if (calcBulletSpreadRadius > maxBulletSpreadRadius || calcBulletSpreadRadius < initBulletSpreadRadius)
+	{
+		calcBulletSpreadRadius = FMath::Clamp<float>(calcBulletSpreadRadius, initBulletSpreadRadius, maxBulletSpreadRadius);
 	}
 
 }

@@ -34,8 +34,15 @@ void AM9::FireWeapon(FVector start, FRotator dir)
 	APawn* player = Cast<APawn>(GetOwner());
 	param.AddIgnoredActor(player);
 
+	FVector endPoint = start + dir.Vector() * range;
+	if (!isAds)
+	{
+		endPoint += FVector(FMath::RandRange(-calcBulletSpreadRadius, calcBulletSpreadRadius), 0.f, FMath::RandRange(-calcBulletSpreadRadius, calcBulletSpreadRadius));
+	}
+
+
 	//TODO: 힙파이어냐 아니면 ads냐에 따라서 발사 방식을 다르게 하고, ads에서 발사시 총기는 선형 방식으로 반동을 적용(무기가 위로 올라가야함);
-	if (GetWorld()->LineTraceSingleByChannel(hit, start, start + dir.Vector() * range, ECollisionChannel::ECC_Pawn, param))
+	if (GetWorld()->LineTraceSingleByChannel(hit, start, endPoint, ECollisionChannel::ECC_Pawn, param))
 	{
 		//맞은 hit가 캐릭터면
 		AAICharacter* aiCharacter = Cast<AAICharacter>(hit.GetActor());

@@ -17,6 +17,7 @@ class TARKOVCOPY_API ABaseGun : public APawn
 	GENERATED_BODY()
 private:
 	bool isFPP;
+
 public:
 	// Sets default values for this pawn's properties
 	ABaseGun();
@@ -24,6 +25,7 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	float calcBulletSpreadRadius;
 
 	USkeletalMeshComponent* parentMesh = nullptr;
 	USceneComponent* magazineComponents = nullptr;
@@ -88,6 +90,14 @@ public:
 	float range;
 	UPROPERTY(EditAnywhere, Category = "EditableStatus")
 	int itemCode;
+	UPROPERTY(EditAnywhere, Category = "EditableStatus")
+	float initBulletSpreadRadius;
+	UPROPERTY(EditAnywhere, Category = "EditableStatus")
+	float maxBulletSpreadRadius;
+	UPROPERTY(EditAnywhere, Category = "EditableStatus")
+	float bulletSpreadIncrement;
+	UPROPERTY(EditAnywhere, Category = "EditableStatus")
+	float bulletSpreadDecrementPerSecond;
 
 	UPROPERTY(EditAnywhere, Category = "EditableStatus")
 	bool isCanAutoFire;
