@@ -100,6 +100,11 @@ public:
 	float bulletSpreadDecrementPerSecond;
 
 	UPROPERTY(EditAnywhere, Category = "EditableStatus")
+	float adsBulletHorizontalSpreadIncrement;
+	UPROPERTY(EditAnywhere, Category = "EditableStatus")
+	float adsBulletVerticalSpreadIncrement;
+
+	UPROPERTY(EditAnywhere, Category = "EditableStatus")
 	bool isCanAutoFire;
 	UPROPERTY()
 	bool isAutoFire;

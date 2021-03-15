@@ -148,12 +148,16 @@ void APlayerCharacter::CheckCloseToWall()
 
 	if (GetWorld()->LineTraceSingleByChannel(hit, startPos, startPos + dir * 150.f, ECollisionChannel::ECC_Pawn, paramCol))
 	{
+		UE_LOG(LogTemp, Warning, TEXT("hit object name : %s"), *hit.Actor->GetName());
 		isCloseToWall = true;
 	}
 	else
 	{
 		isCloseToWall = false;
 	}
+
+
+	UE_LOG(LogTemp, Warning, TEXT("hit object name : %d"), isCloseToWall);
 }
 
 //void APlayerCharacter::BeginDestroy()
@@ -461,6 +465,13 @@ void APlayerCharacter::ActualFireWeapon()
 	}
 
 	currentActiveGun->FireWeapon(start, dir);
+
+	if (IsAds())
+	{
+		AddControllerPitchInput(-currentActiveGun->adsBulletVerticalSpreadIncrement);
+		AddControllerYawInput(currentActiveGun->adsBulletHorizontalSpreadIncrement);
+	}
+
 }
 
 void APlayerCharacter::FireUpWeapon()
