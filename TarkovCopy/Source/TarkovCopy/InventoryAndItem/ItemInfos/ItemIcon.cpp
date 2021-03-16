@@ -4,6 +4,7 @@
 
 #include "ItemIcon.h"
 #include <Components/CanvasPanelSlot.h>
+#include <Components/VerticalBox.h>
 #include <Blueprint/WidgetTree.h>
 #include "ItemInfo.h"
 #include "TarkovCopy/PublicProperty/UMGPublicProperites.h"
@@ -28,6 +29,11 @@ void UItemIcon::Init(UItemInfo* pItemInfo, UInventory* pInven, AFPPlayerControll
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Setting size failllllled!"));
 	}
+}
+
+void UItemIcon::OpenDetailPanel()
+{
+	controllerRef->OpenItemDetailPanel(this);
 }
 
 void UItemIcon::UseItem()

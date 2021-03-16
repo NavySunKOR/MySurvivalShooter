@@ -14,6 +14,7 @@
  * 
  */
 class AEscapeGameMode;
+class UVerticalBox;
 UCLASS()
 class TARKOVCOPY_API AFPPlayerController : public APlayerController
 {
@@ -29,27 +30,34 @@ public:
 private:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUserWidget> healthHudWidget;
+	UPROPERTY()
 	UUserWidget* healthHud;
+	UPROPERTY()
 	UWidget* healthHudBg;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUserWidget> crosshairWidget;
+	UPROPERTY()
 	UUserWidget* crosshair;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUserWidget> alertHudWidget;
+	UPROPERTY()
 	UUserWidget* alertHud;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUserWidget> exfilAlertWidget;
+	UPROPERTY()
 	UUserWidget* exfilAlert;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUserWidget> youreDeadWidget;
+	UPROPERTY()
 	UUserWidget* youreDead;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUserWidget> youveEscapedWidget;
+	UPROPERTY()
 	UUserWidget* youveEscaped;
 
 
@@ -62,19 +70,29 @@ private:
 	UUserWidget* inventory;
 	UPROPERTY()
 	UCanvasPanel* itemContainer;
+	UPROPERTY()
+	UVerticalBox* itemDetailPanel;
+	UPROPERTY()
 	TArray<UItemIcon*> items;
 
-
+	UPROPERTY()
 	AEscapeGameMode* gameMode;
 
+	UPROPERTY()
 	UTextBlock* alertType;
+	UPROPERTY()
 	UTextBlock* missionObject;
+	UPROPERTY()
 	UTextBlock* range;
+
+	UPROPERTY()
+	UItemIcon* currentActiveItemIcon;
 
 
 
 	//Exfil°ü·Ã
 	bool isExfiling = false;
+	UPROPERTY()
 	UTextBlock* exfilTimer;
 	float timeToExfil = 5.f;
 	float exfilCounter = 0.f;
@@ -89,6 +107,7 @@ public:
 	bool isInventoryOpened= false;
 	void InitInvenotry();
 	void OpenCloseInventory();
+	void OpenItemDetailPanel(UItemIcon* pItemIcon);
 
 	void AddItem(UItemInfo* itemInfo,UInventory* pInvenRef);
 	void AddPrimary(TSubclassOf<ABaseGun> pWeaponClass);
@@ -112,6 +131,14 @@ public:
 	void Exfiling();
 	void ExfilingComplete();
 	void CancelExfiling();
+
+
+
+	//BlueprintUsable
+	UFUNCTION(BlueprintCallable)
+	void UseCurrentActiveItem();
+	UFUNCTION(BlueprintCallable)
+	void DiscardCurrentActiveItem();
 
 
 

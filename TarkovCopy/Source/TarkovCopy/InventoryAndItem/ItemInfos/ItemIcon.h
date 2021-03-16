@@ -27,6 +27,9 @@ public:
 
 	void Init(UItemInfo* pItemInfo, UInventory* pInven, AFPPlayerController* pController);
 	UFUNCTION(BlueprintCallable)
+	void OpenDetailPanel();
+
+	UFUNCTION(BlueprintCallable)
 	void UseItem();
 	UFUNCTION(BlueprintCallable)
 	void DropItem();

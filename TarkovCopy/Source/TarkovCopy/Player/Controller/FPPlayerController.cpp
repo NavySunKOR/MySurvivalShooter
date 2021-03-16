@@ -7,9 +7,11 @@
 #include <Blueprint/WidgetTree.h>
 #include <Blueprint/UserWidget.h>
 #include <Components/CanvasPanelSlot.h>
+#include <Components/VerticalBox.h>
 #include <TimerManager.h>
 #include "TarkovCopy/GameMode/EscapeGameMode.h"
 #include "TarkovCopy/PublicProperty/UMGPublicProperites.h"
+#include <Blueprint/WidgetLayoutLibrary.h>
 
 void AFPPlayerController::BeginPlay()
 {
@@ -81,9 +83,9 @@ void AFPPlayerController::InitInvenotry()
 		inventory->RemoveFromViewport();
 
 	inventory = CreateWidget<UUserWidget>(this, inventoryWidget);
-
+	itemDetailPanel = Cast<UVerticalBox>(inventory->GetWidgetFromName(TEXT("DetailPanel")));
 	itemContainer = Cast<UCanvasPanel>(inventory->GetWidgetFromName(TEXT("ItemContainer")));
-	if (itemContainer == nullptr)
+	if (itemContainer == nullptr || itemDetailPanel)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Gone burst!"));
 	}
@@ -113,7 +115,7 @@ void AFPPlayerController::OpenInventory()
 		SetIgnoreMoveInput(true);
 		crosshair->SetVisibility(ESlateVisibility::Hidden);
 		inventory->AddToViewport();
-
+		itemDetailPanel->SetVisibility(ESlateVisibility::Hidden);
 		UE_LOG(LogTemp, Warning, TEXT("open"))
 	}
 }
@@ -132,6 +134,7 @@ void AFPPlayerController::CloseInventory()
 
 		crosshair->SetVisibility(ESlateVisibility::Visible);
 		inventory->RemoveFromViewport();
+		itemDetailPanel->SetVisibility(ESlateVisibility::Hidden);
 
 		UE_LOG(LogTemp, Warning, TEXT("close"))
 	}
@@ -148,6 +151,31 @@ void AFPPlayerController::OpenCloseInventory()
 	{
 		OpenInventory();
 	}
+}
+
+void AFPPlayerController::OpenItemDetailPanel(UItemIcon* pItemIcon)
+{
+	currentActiveItemIcon = pItemIcon;
+	itemDetailPanel->SetVisibility(ESlateVisibility::Visible);
+	/*FVector2D mouse;
+	mouse = Cast<UCanvasPanelSlot>(pItemIcon->Slot)->GetPosition();*/
+	float mouseX;
+	float mouseY;
+	GetMousePosition(mouseX, mouseY);
+	FVector2D mouse;
+	mouse.X = mouseX;
+	mouse.Y = mouseY;
+
+	UE_LOG(LogTemp,Warning,TEXT("Vector Origin : %s"),*mouse.ToString())
+
+	float scale = UWidgetLayoutLibrary::GetViewportScale(this);
+	mouse.X /= scale;
+	mouse.Y /= scale;
+
+
+	UE_LOG(LogTemp, Warning, TEXT("Vector Resized : %s , scale factor is : %f"), *mouse.ToString(),scale)
+
+	itemDetailPanel->SetRenderTranslation(mouse);
 }
 
 void AFPPlayerController::AddItem(UItemInfo* itemInfo, UInventory* pInvenRef)
@@ -356,6 +384,16 @@ void AFPPlayerController::CancelExfiling()
 		exfilAlert->SetVisibility(ESlateVisibility::Hidden);
 		UE_LOG(LogTemp, Warning, TEXT("Cancel exfiling....."));
 	}
+}
+
+void AFPPlayerController::UseCurrentActiveItem()
+{
+
+}
+
+void AFPPlayerController::DiscardCurrentActiveItem()
+{
+
 }
 
 void AFPPlayerController::CloseAlert()
