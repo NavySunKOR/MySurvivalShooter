@@ -59,20 +59,17 @@ void AM416::FireWeapon(FVector start,FRotator dir)
 		//아니면 지형처리.
 		else if (playerCharacter != nullptr)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Hit player mamag"));
+			UE_LOG(LogTemp, Warning, TEXT("Hit player mamag part : %s"), *(hit.BoneName.ToString()));
 			playerCharacter->TookDamage(damage, hit);
 			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), hitEnemyParticle, hit.ImpactPoint);
 			UGameplayStatics::SpawnSoundAtLocation(GetWorld(), hitEnemySound, hit.ImpactPoint, hit.ImpactNormal.Rotation());
 		}
 		else
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Terrain~!"));
 			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), hitTerrainParticle, hit.ImpactPoint);
 			UGameplayStatics::SpawnSoundAtLocation(GetWorld(), hitTerrainSound, hit.ImpactPoint, hit.ImpactNormal.Rotation());
 
 		}
-
-		UE_LOG(LogTemp, Warning, TEXT("Done!"));
 	}
 
 

@@ -77,19 +77,15 @@ void AAICharacter::Tick(float DeltaTime)
 void CalculateDamageAmount(float& pDamage,FHitResult& pHitParts)
 {
 	//Head shot
-	UE_LOG(LogTemp,Warning,TEXT("BONE : %s"), *pHitParts.BoneName.ToString())
 	if (pHitParts.BoneName.ToString().Equals(TEXT("head")) || pHitParts.BoneName.ToString().Equals(TEXT("neck")))
 	{
 		pDamage *= 2.5f;
-		UE_LOG(LogTemp, Warning, TEXT("Headshot"))
 		//TODO:나중에 방어구 시스템 나오면 데미지 경감 시켜줄 것.
 	}
 	else if(pHitParts.BoneName.ToString().Equals(TEXT("hips")) 
 		|| pHitParts.BoneName.ToString().Equals(TEXT("spine"))
 		|| pHitParts.BoneName.ToString().Equals(TEXT("chest"))) //Body shot
 	{
-
-		UE_LOG(LogTemp, Warning, TEXT("Bodyshot"))
 		pDamage *= 1.5f;
 		//TODO:나중에 방어구 시스템 나오면 데미지 경감 시켜줄 것.
 	}
@@ -97,20 +93,17 @@ void CalculateDamageAmount(float& pDamage,FHitResult& pHitParts)
 		|| pHitParts.BoneName.ToString().Contains(TEXT("arm"))
 		) //Shoulder and arm
 	{
-		UE_LOG(LogTemp, Warning, TEXT("shouldershot"))
 		pDamage *=0.85f;
 		//TODO:나중에 방어구 시스템 나오면 데미지 경감 시켜줄 것.
 	}
 	else if (pHitParts.BoneName.ToString().Contains(TEXT("leg"))) //Leg and thigh
 	{
-		UE_LOG(LogTemp, Warning, TEXT("leg shot"))
 		pDamage *= 1.25f;
 		//TODO:나중에 방어구 시스템 나오면 데미지 경감 시켜줄 것.
 	}
 	else if (pHitParts.BoneName.ToString().Contains(TEXT("hand"))
 		|| pHitParts.BoneName.ToString().Contains(TEXT("foot")))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("maldan shot"))
 		pDamage *= 0.5f;
 		//TODO:나중에 방어구 시스템 나오면 데미지 경감 시켜줄 것.
 	}
@@ -124,7 +117,6 @@ void AAICharacter::TookDamage(float pDamageAmount, FHitResult pHitParts,AActor* 
 
 	curHp -= pDamageAmount;
 
-	UE_LOG(LogTemp, Warning, TEXT("damage : %f"), pDamageAmount)
 	NotifyActorBeginOverlap(pShooter);
 	if (curHp <= 0)
 	{

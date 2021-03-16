@@ -148,16 +148,12 @@ void APlayerCharacter::CheckCloseToWall()
 
 	if (GetWorld()->LineTraceSingleByChannel(hit, startPos, startPos + dir * 150.f, ECollisionChannel::ECC_Pawn, paramCol))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("hit object name : %s"), *hit.Actor->GetName());
 		isCloseToWall = true;
 	}
 	else
 	{
 		isCloseToWall = false;
 	}
-
-
-	UE_LOG(LogTemp, Warning, TEXT("hit object name : %d"), isCloseToWall);
 }
 
 //void APlayerCharacter::BeginDestroy()
@@ -185,6 +181,14 @@ float APlayerCharacter::HealPlayer(float pHealAmount)
 
 void APlayerCharacter::TookDamage(float damage, FHitResult pHitParts)
 {
+	int generated = rand() % 10;
+	if (generated < 3) // 0,1,2 중 하나 걸리니까 30퍼센트 헤드샷
+	{
+		damage *= 2.5f;
+		UE_LOG(LogTemp, Warning, TEXT("Headshot!!!!!!"));
+	}
+
+
 	curHp -= damage;
 	if (curHp <= 0)
 	{
