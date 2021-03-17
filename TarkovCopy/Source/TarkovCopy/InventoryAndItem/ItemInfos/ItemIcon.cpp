@@ -36,7 +36,7 @@ void UItemIcon::Init(UItemInfo* pItemInfo, UInventory* pInven, AFPPlayerControll
 	dragObjectImage = Cast<UImage>(dragObject->GetWidgetFromName(TEXT("ICON")));
 	dragObjectImage->SetBrushFromTexture(itemInfo->spriteToUse);
 	dragObjectImage->SetOpacity(0.3f);
-	dragObject->AddToViewport(6);
+	//dragObject->AddToViewport(6);
 	dragObjectSlot = Cast<UCanvasPanelSlot>(dragObjectImage->Slot);
 	UE_LOG(LogTemp, Warning, TEXT("original class of dragObjectSlot : %d or %d"), dragObjectSlot, dragObjectImage->Slot)
 
