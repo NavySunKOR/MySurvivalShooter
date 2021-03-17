@@ -69,7 +69,10 @@ private:
 
 
 	UPROPERTY()
+	UUserWidget* inventory;
+	UPROPERTY()
 	UCanvasPanel* itemContainer;
+
 	UPROPERTY()
 	UVerticalBox* itemDetailPanel;
 	UPROPERTY()
@@ -106,7 +109,8 @@ private:
 public:
 	bool isInventoryOpened= false;
 	UPROPERTY()
-	UUserWidget* inventory;
+	UCanvasPanelSlot* inventoryContainerSlot;
+
 
 	void InitInvenotry();
 	void OpenCloseInventory();

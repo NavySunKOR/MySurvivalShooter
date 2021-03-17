@@ -59,7 +59,7 @@ public:
 
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 	virtual void NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation)override;
-	void OnDropAction();
+	void OnDropAction(FVector2D lastMousePosition);
 
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 

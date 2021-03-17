@@ -93,9 +93,9 @@ void AFPPlayerController::InitInvenotry()
 	if (backgroundImage != nullptr && itemContainer != nullptr)
 	{
 		backgroundImage->SetSize(FVector2D(UMGPublicProperites::BASIC_INVENTORY_GRID_WIDTH, UMGPublicProperites::BASIC_INVENTORY_GRID_HEIGHT) * character->inventory->backpack->GetBackpackSize());
-		UCanvasPanelSlot* canva = Cast<UCanvasPanelSlot>(itemContainer->Slot);
-		if (canva != nullptr)
-			canva->SetSize(FVector2D(UMGPublicProperites::BASIC_INVENTORY_GRID_WIDTH, UMGPublicProperites::BASIC_INVENTORY_GRID_HEIGHT) * character->inventory->backpack->GetBackpackSize());
+		inventoryContainerSlot = Cast<UCanvasPanelSlot>(itemContainer->Slot);
+		if (inventoryContainerSlot != nullptr)
+			inventoryContainerSlot->SetSize(FVector2D(UMGPublicProperites::BASIC_INVENTORY_GRID_WIDTH, UMGPublicProperites::BASIC_INVENTORY_GRID_HEIGHT) * character->inventory->backpack->GetBackpackSize());
 	}
 	else
 		UE_LOG(LogTemp, Warning, TEXT("Canvas is null!"));

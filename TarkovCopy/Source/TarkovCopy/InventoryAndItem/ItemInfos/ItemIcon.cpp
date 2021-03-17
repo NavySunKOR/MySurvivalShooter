@@ -114,11 +114,27 @@ void UItemIcon::NativeOnDragDetected(const FGeometry& InGeometry, const FPointer
 
 }
 
-void UItemIcon::OnDropAction()
+void UItemIcon::OnDropAction(FVector2D lastMousePosition)
 {
 	UE_LOG(LogTemp, Warning, TEXT("OnDropAction"))
 
 		//좌표계산해서 드랍인지 아니면 스위칭인지 판단할것.
+		
+		FSlateRect rect;
+		rect.Left = controllerRef->inventoryContainerSlot->GetPosition().X;
+		rect.Top = controllerRef->inventoryContainerSlot->GetPosition().Y;
+		rect.Right = rect.Left + controllerRef->inventoryContainerSlot->GetSize().X;
+		rect.Bottom = rect.Top + controllerRef->inventoryContainerSlot->GetSize().Y;
+		if (rect.ContainsPoint(lastMousePosition))
+		{
+
+			UE_LOG(LogTemp, Warning, TEXT("Move item"))
+		}
+		else
+		{
+			DropItem();
+			UE_LOG(LogTemp, Warning, TEXT("DropItem"))
+		}
 	isDragged = false;
 }
 
@@ -138,7 +154,12 @@ void UItemIcon::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 
 	if (isDragged && !handledDragDrop.IsMouseButtonDown(EKeys::LeftMouseButton))
 	{
-		OnDropAction();
+		FVector2D mousePos;
+		float scale = UWidgetLayoutLibrary::GetViewportScale(this);
+		controllerRef->GetMousePosition(mousePos.X, mousePos.Y);
+		mousePos /= scale;
+
+		OnDropAction(mousePos);
 	}
 
 }
