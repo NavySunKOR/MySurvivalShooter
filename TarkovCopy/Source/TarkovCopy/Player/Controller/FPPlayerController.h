@@ -68,8 +68,7 @@ private:
 	TSubclassOf<UItemIcon> iconWidget;
 	UPROPERTY()
 	UUserWidget* inventory;
-	UPROPERTY()
-	UCanvasPanel* itemContainer;
+
 	UPROPERTY()
 	UVerticalBox* itemDetailPanel;
 	UPROPERTY()
@@ -105,6 +104,9 @@ private:
 	
 public:
 	bool isInventoryOpened= false;
+	UPROPERTY()
+	UCanvasPanel* itemContainer;
+
 	void InitInvenotry();
 	void OpenCloseInventory();
 	void OpenItemDetailPanel(UItemIcon* pItemIcon);
