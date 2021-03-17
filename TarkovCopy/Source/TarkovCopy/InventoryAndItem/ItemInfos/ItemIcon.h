@@ -53,12 +53,13 @@ public:
 	UCanvasPanelSlot* dragObjectSlot;
 	UPROPERTY()
 	UDragDropOperation* dragDrop;
+	UPROPERTY()
+	FPointerEvent handledDragDrop;
+
 
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
-	virtual void NativeOnDragEnter(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)override;
 	virtual void NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation)override;
-	virtual void NativeOnDragLeave(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)override;
-	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation);
+	void OnDropAction();
 
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 

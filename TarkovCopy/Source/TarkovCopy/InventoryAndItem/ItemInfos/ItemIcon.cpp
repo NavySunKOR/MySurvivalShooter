@@ -27,26 +27,17 @@ void UItemIcon::Init(UItemInfo* pItemInfo, UInventory* pInven, AFPPlayerControll
 		canvas->SetSize(FVector2D(itemInfo->width * UMGPublicProperites::BASIC_INVENTORY_GRID_WIDTH, itemInfo->height * UMGPublicProperites::BASIC_INVENTORY_GRID_HEIGHT));
 		canvas->SetPosition(FVector2D(itemInfo->left * UMGPublicProperites::BASIC_INVENTORY_GRID_WIDTH, itemInfo->top * UMGPublicProperites::BASIC_INVENTORY_GRID_HEIGHT));
 	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Setting size failllllled!"));
-	}
+
 
 	dragObject = CreateWidget<UUserWidget>(this, origin);
 	dragObjectImage = Cast<UImage>(dragObject->GetWidgetFromName(TEXT("ICON")));
 	dragObjectImage->SetBrushFromTexture(itemInfo->spriteToUse);
 	dragObjectImage->SetOpacity(0.3f);
-	//dragObject->AddToViewport(6);
 	dragObjectSlot = Cast<UCanvasPanelSlot>(dragObjectImage->Slot);
-	UE_LOG(LogTemp, Warning, TEXT("original class of dragObjectSlot : %d or %d"), dragObjectSlot, dragObjectImage->Slot)
-
 	if (dragObjectSlot != nullptr)
 	{
 		dragObjectSlot->SetSize(FVector2D(itemInfo->width * UMGPublicProperites::BASIC_INVENTORY_GRID_WIDTH, itemInfo->height * UMGPublicProperites::BASIC_INVENTORY_GRID_HEIGHT));
-
-		UE_LOG(LogTemp, Warning, TEXT("original size of dragObjectSlot : %s"), *dragObjectSlot->GetSize().ToString())
 	}
-	dragObject->SetVisibility(ESlateVisibility::Hidden);
 
 }
 
@@ -97,55 +88,40 @@ FReply UItemIcon::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPo
 	{
 		OpenDetailPanel();
 	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("OnReleased"))
+	}
 	return reply.NativeReply;
 }
 
-void UItemIcon::NativeOnDragEnter(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
-{
-	Super::NativeOnDragEnter(InGeometry, InDragDropEvent, InOperation);
-	UE_LOG(LogTemp, Warning, TEXT("OnDragEnter"))
-	
-
-}
 
 void UItemIcon::NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation)
 {
 	UE_LOG(LogTemp,Warning,TEXT("OnDragDetected"))
-	Super::NativeOnDragDetected(InGeometry, InMouseEvent, OutOperation);
-
-	dragObject->SetVisibility(ESlateVisibility::Visible);
-
-	FScriptDelegate onDrop;
-	onDrop.BindUFunction(this, TEXT("NativeOnDrop"));
+	dragDrop = nullptr;
 	dragDrop = UWidgetBlueprintLibrary::CreateDragDropOperation(UDragDropOperation::StaticClass());
-	dragDrop->OnDrop.Add(onDrop);
-	dragDrop->Payload = dragObject;
+	FScriptDelegate delegat;
+	delegat.BindUFunction(this, TEXT("OnDropAction"));
+	dragDrop->Payload = this;
 	dragDrop->DefaultDragVisual = dragObject;
 	dragDrop->Pivot = EDragPivot::MouseDown;
-
 	OutOperation = dragDrop;
+	handledDragDrop = InMouseEvent;
 
 	isDragged = true;
-
-
+	Super::NativeOnDragDetected(InGeometry, InMouseEvent, OutOperation);
 
 }
 
-void UItemIcon::NativeOnDragLeave(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
+void UItemIcon::OnDropAction()
 {
-	Super::NativeOnDragLeave(InDragDropEvent, InOperation);
-	UE_LOG(LogTemp, Warning, TEXT("NativeOnDragLeave"))
-	//dragObject->SetVisibility(ESlateVisibility::Hidden);
-	//TODO:드롭한 포지션에 아이템 재배치 
-}
+	UE_LOG(LogTemp, Warning, TEXT("OnDropAction"))
 
-bool UItemIcon::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
-{
-	UE_LOG(LogTemp, Warning, TEXT("NativeOnDrop"))
+		//좌표계산해서 드랍인지 아니면 스위칭인지 판단할것.
 	isDragged = false;
-	dragObject->SetVisibility(ESlateVisibility::Hidden);
-	return Super::NativeOnDrop(InGeometry, InDragDropEvent, InOperation);
 }
+
 
 void UItemIcon::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
@@ -157,7 +133,12 @@ void UItemIcon::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 		float scale = UWidgetLayoutLibrary::GetViewportScale(this);
 		controllerRef->GetMousePosition(mousePos.X, mousePos.Y);
 		mousePos /= scale;
-		//dragDrop->Offset = mousePos;
-		dragObjectSlot->SetPosition(mousePos);
+		dragDrop->Offset = mousePos;
 	}
+
+	if (isDragged && !handledDragDrop.IsMouseButtonDown(EKeys::LeftMouseButton))
+	{
+		OnDropAction();
+	}
+
 }
