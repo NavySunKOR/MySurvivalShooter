@@ -388,12 +388,13 @@ void AFPPlayerController::CancelExfiling()
 
 void AFPPlayerController::UseCurrentActiveItem()
 {
+	currentActiveItemIcon->UseItem();
 
 }
 
 void AFPPlayerController::DiscardCurrentActiveItem()
 {
-
+	currentActiveItemIcon->DropItem();
 }
 
 void AFPPlayerController::CloseAlert()

@@ -259,8 +259,10 @@ void APlayerCharacter::RemovePrimary()
 {
 	if (currentActiveGun == primaryWeapon)
 	{
-		primaryWeapon->Destroy();
-		currentActiveGun->Destroy();
+		if(primaryWeapon)
+			primaryWeapon->Destroy();
+		if(currentActiveGun)
+			currentActiveGun->Destroy();
 		currentActiveGun = nullptr;
 		primaryWeapon = nullptr;
 
@@ -275,8 +277,10 @@ void APlayerCharacter::RemoveSecondary()
 {
 	if (currentActiveGun == secondaryWeapon)
 	{
-		secondaryWeapon->Destroy();
-		currentActiveGun->Destroy();
+		if (secondaryWeapon)
+			secondaryWeapon->Destroy();
+		if (currentActiveGun)
+			currentActiveGun->Destroy();
 		currentActiveGun = nullptr;
 		secondaryWeapon = nullptr;
 
