@@ -116,7 +116,10 @@ public:
 	void OpenCloseInventory();
 	void OpenItemDetailPanel(UItemIcon* pItemIcon);
 
+	//Item
 	void AddItem(UItemInfo* itemInfo,UInventory* pInvenRef);
+	bool CanItemMoveTo(FSlateRect pIntSlateRect);
+	void MoveItemTo(UItemInfo* pItemInfo, FSlateRect pIntSlateRect);
 	void AddPrimary(TSubclassOf<ABaseGun> pWeaponClass);
 	void AddSecondary(TSubclassOf<ABaseGun> pWeaponClass);
 

@@ -127,7 +127,18 @@ void UItemIcon::OnDropAction(FVector2D lastMousePosition)
 		rect.Bottom = rect.Top + controllerRef->inventoryContainerSlot->GetSize().Y;
 		if (rect.ContainsPoint(lastMousePosition))
 		{
+			FSlateRect positionIntRect;
+			positionIntRect.Left = (int)(lastMousePosition.X / UMGPublicProperites::BASIC_INVENTORY_GRID_WIDTH) - (itemInfo->width / 2);
+			positionIntRect.Top = (int)(lastMousePosition.Y / UMGPublicProperites::BASIC_INVENTORY_GRID_HEIGHT)  - (itemInfo->height/2);
+			positionIntRect.Right = (int)(positionIntRect.Left + itemInfo->width);
+			positionIntRect.Bottom = (int)(positionIntRect.Top + itemInfo->height);
 
+			UE_LOG(LogTemp, Warning, TEXT("Mouse position : %s"), *positionIntRect.ToString())
+
+			if (controllerRef->CanItemMoveTo(positionIntRect))
+			{
+				controllerRef->MoveItemTo(itemInfo, positionIntRect);
+			}
 			UE_LOG(LogTemp, Warning, TEXT("Move item"))
 		}
 		else

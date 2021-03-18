@@ -209,6 +209,16 @@ bool APlayerCharacter::PickupItem(UItemInfo* pItemInfo)
 	return isItemAdded;
 }
 
+bool APlayerCharacter::HasInventoryEmptySpace(FSlateRect pIntSlateRect)
+{
+	return inventory->HasBackpackEmptySpace(pIntSlateRect);
+}
+
+void APlayerCharacter::ReplaceItem(UItemInfo* pItemInfo, FSlateRect pIntSlateRect)
+{
+	inventory->ReplaceItem(pItemInfo, pIntSlateRect);
+}
+
 void APlayerCharacter::Tilting(float pValue)
 {
 	FRotator quat;

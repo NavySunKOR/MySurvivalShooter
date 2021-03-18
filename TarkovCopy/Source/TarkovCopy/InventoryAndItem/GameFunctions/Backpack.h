@@ -33,11 +33,14 @@ public:
 	int capacityHeight;
 
 	void Init();
+	bool HasEmptySpace(FSlateRect pIntSlateRect);
 	std::tuple<bool, int, int> HasEmptySpace(UItemInfo* pItemInfo);
 	bool IsIntersected(UItemInfo* pItemInfo);
 	bool UseItem(UItemInfo* pItemInfo);//return : isEmpty;
 	bool AddItem(UItemInfo* pItemInfo,UInventory* pInventory);
 	bool HasItem(UItemInfo* pItemInfo);
+	void RemoveItemPosition(UItemInfo* pItemInfo);
+	void MoveItemPosition(UItemInfo* pItemInfo);
 	void ActualRemoveItem(UItemInfo* pItemInfo);
 	void UpdateAndCleanupBackpack();
 

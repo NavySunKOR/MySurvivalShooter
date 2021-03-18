@@ -35,6 +35,27 @@ void UBackpack::Init()
 	}
 }
 
+bool  UBackpack::HasEmptySpace(FSlateRect pIntSlateRect)
+{
+	if (pIntSlateRect.Right >= capacityWidth || pIntSlateRect.Bottom >= capacityHeight)
+	{
+		return false;
+	}
+
+	for (int x = pIntSlateRect.Left; x < pIntSlateRect.Right; x++)
+	{
+		for (int y = pIntSlateRect.Top; y < pIntSlateRect.Bottom; y++)
+		{
+			if (invenVisualize[x][y] == true)
+			{
+				return false;
+			}
+		}
+	}
+
+	return true;
+}
+
 std::tuple<bool, int, int> UBackpack::HasEmptySpaceWidthAxis(UItemInfo* pItemInfo)
 {
 	int spaceXCount = 0;
@@ -289,6 +310,16 @@ bool UBackpack::HasItem(UItemInfo* pItemInfo)
 	{
 		return false;
 	}
+}
+
+void UBackpack::RemoveItemPosition(UItemInfo* pItemInfo)
+{
+	RemoveInvenVisualize(pItemInfo);
+}
+
+void UBackpack::MoveItemPosition(UItemInfo* pItemInfo)
+{
+	UpdateInvenVisualize(pItemInfo);
 }
 
 void UBackpack::ActualRemoveItem(UItemInfo* pItemInfo)

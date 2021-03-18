@@ -26,11 +26,14 @@ public:
 	UBackpack* backpack = nullptr;
 
 	void Init(APlayerCharacter* pPlayer);
+	bool HasBackpackEmptySpace(FSlateRect pIntSlateRect);
+
 	bool AddItemToInventory(UItemInfo* item);
 	bool UseItem(UItemInfo* pItem);
 	bool DropItem(UItemInfo* pItem);
 	void RemoveItem(UItemInfo* pItem);
 	bool HasItem(UItemInfo* pItem);
+	void ReplaceItem(UItemInfo* pItemInfo,FSlateRect pIntSlateRect);
 
 	//AboutWeapons
 

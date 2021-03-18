@@ -182,18 +182,18 @@ void AFPPlayerController::AddItem(UItemInfo* itemInfo, UInventory* pInvenRef)
 {
 	if (inventory == nullptr)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Fucking inven"))
+		UE_LOG(LogTemp, Warning, TEXT("no inven"))
 			return;
 	}
 	if (inventory->WidgetTree == nullptr)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Fucking WidgetTree"))
+		UE_LOG(LogTemp, Warning, TEXT("no WidgetTree"))
 			return;
 	}
 
 	if (iconWidget == nullptr)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Fucking iconWidget"))
+		UE_LOG(LogTemp, Warning, TEXT("no iconWidget"))
 		return;
 	}
 
@@ -203,6 +203,53 @@ void AFPPlayerController::AddItem(UItemInfo* itemInfo, UInventory* pInvenRef)
 	uiItem->Slot = panelSlotForItem;
 	uiItem->Init(itemInfo, pInvenRef, this);
 	items.Add(uiItem);
+}
+
+bool AFPPlayerController::CanItemMoveTo(FSlateRect pIntSlateRect)
+{
+	APlayerCharacter* character = Cast<APlayerCharacter>(GetPawn());
+	if (character != nullptr)
+	{
+		return character->HasInventoryEmptySpace(pIntSlateRect);
+	}
+	else
+	{
+		return false;
+	}
+}
+
+void AFPPlayerController::MoveItemTo(UItemInfo* pItemInfo, FSlateRect pIntSlateRect)
+{
+	//RemoveAndAddItem
+
+	APlayerCharacter* character = Cast<APlayerCharacter>(GetPawn());
+	if (character != nullptr)
+	{
+		character->ReplaceItem(pItemInfo,pIntSlateRect);
+	}
+	else
+	{
+		return;
+	}
+
+
+	//UpdateUI
+	for (int i = 0; i < items.Num(); i++)
+	{
+		if (items[i]->itemInfo == pItemInfo)
+		{
+			FVector2D position = FVector2D(
+				((int)pIntSlateRect.Left * UMGPublicProperites::BASIC_INVENTORY_GRID_WIDTH), ((int)pIntSlateRect.Top * UMGPublicProperites::BASIC_INVENTORY_GRID_HEIGHT)
+			);
+
+			
+			UCanvasPanelSlot* panelSlot = Cast<UCanvasPanelSlot>(items[i]->Slot);
+			UE_LOG(LogTemp, Warning, TEXT("scotch : %s"), *position.ToString());
+			panelSlot->SetPosition(position);
+			break;
+		}
+	}
+
 }
 
 void AFPPlayerController::AddPrimary(TSubclassOf<ABaseGun> pWeaponClass)

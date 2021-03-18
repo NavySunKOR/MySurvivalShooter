@@ -25,6 +25,11 @@ void UInventory::Init(APlayerCharacter* pPlayer)
 	}
 }
 
+bool UInventory::HasBackpackEmptySpace(FSlateRect pIntSlateRect)
+{
+	return backpack->HasEmptySpace(pIntSlateRect);
+}
+
 bool UInventory::AddItemToInventory(UItemInfo* item)
 {
 	return backpack->AddItem(item,this);
@@ -73,6 +78,20 @@ void UInventory::RemoveItem(UItemInfo* pItem)
 bool UInventory::HasItem(UItemInfo* pItem)
 {
 	return backpack->HasItem(pItem);
+}
+
+void UInventory::ReplaceItem(UItemInfo* pItemInfo, FSlateRect pIntSlateRect)
+{
+	//remove item origin position
+	backpack->RemoveItemPosition(pItemInfo);
+
+	pItemInfo->left = pIntSlateRect.Left;
+	pItemInfo->top = pIntSlateRect.Top;
+
+	backpack->MoveItemPosition(pItemInfo);
+
+	//move to pIntSlateRect
+
 }
 
 int UInventory::GetAllPrimaryWeaponAmmo(FString pWeaponClassName)

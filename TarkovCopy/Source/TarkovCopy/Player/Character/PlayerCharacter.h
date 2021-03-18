@@ -112,10 +112,12 @@ public:
 
 	float HealPlayer(float pHealAmount);
 	void TookDamage(float damage, FHitResult pHitParts);
+	void Tilting(float pValue);
+
 
 	bool PickupItem(UItemInfo* pItemInfo);
-
-	void Tilting(float pValue);
+	bool HasInventoryEmptySpace(FSlateRect pIntSlateRect);
+	void ReplaceItem(UItemInfo* pItemInfo, FSlateRect pIntSlateRect);
 
 	void AddPrimary(TSubclassOf<ABaseGun> pWeaponOrigin);
 	void AddSecondary(TSubclassOf<ABaseGun> pWeaponOrigin);
