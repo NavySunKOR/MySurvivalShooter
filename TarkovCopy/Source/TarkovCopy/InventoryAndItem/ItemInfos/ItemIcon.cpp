@@ -37,8 +37,8 @@ void UItemIcon::Init(UItemInfo* pItemInfo, UInventory* pInven, AFPPlayerControll
 	if (dragObjectSlot != nullptr)
 	{
 		dragObjectSlot->SetSize(FVector2D(itemInfo->width * UMGPublicProperites::BASIC_INVENTORY_GRID_WIDTH, itemInfo->height * UMGPublicProperites::BASIC_INVENTORY_GRID_HEIGHT));
-	}
 
+	}
 }
 
 void UItemIcon::OpenDetailPanel()
@@ -98,17 +98,21 @@ FReply UItemIcon::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPo
 
 void UItemIcon::NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation)
 {
-	UE_LOG(LogTemp,Warning,TEXT("OnDragDetected"))
+	UE_LOG(LogTemp, Warning, TEXT("OnDragDetected"))
+
+	/*FVector2D mousePos;
+	float scale = UWidgetLayoutLibrary::GetViewportScale(this);
+	controllerRef->GetMousePosition(mousePos.X, mousePos.Y);
+	mousePos /= scale;*/
+
 	dragDrop = nullptr;
 	dragDrop = UWidgetBlueprintLibrary::CreateDragDropOperation(UDragDropOperation::StaticClass());
-	FScriptDelegate delegat;
-	delegat.BindUFunction(this, TEXT("OnDropAction"));
 	dragDrop->Payload = this;
 	dragDrop->DefaultDragVisual = dragObject;
 	dragDrop->Pivot = EDragPivot::MouseDown;
 	OutOperation = dragDrop;
-	handledDragDrop = InMouseEvent;
 
+	handledDragDrop = InMouseEvent;
 	isDragged = true;
 	Super::NativeOnDragDetected(InGeometry, InMouseEvent, OutOperation);
 
@@ -153,15 +157,6 @@ void UItemIcon::OnDropAction(FVector2D lastMousePosition)
 void UItemIcon::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
-
-	if (isDragged)
-	{
-		FVector2D mousePos;
-		float scale = UWidgetLayoutLibrary::GetViewportScale(this);
-		controllerRef->GetMousePosition(mousePos.X, mousePos.Y);
-		mousePos /= scale;
-		dragDrop->Offset = mousePos;
-	}
 
 	if (isDragged && !handledDragDrop.IsMouseButtonDown(EKeys::LeftMouseButton))
 	{
