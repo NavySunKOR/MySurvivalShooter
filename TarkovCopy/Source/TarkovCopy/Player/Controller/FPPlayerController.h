@@ -118,8 +118,11 @@ public:
 
 	//Item
 	void AddItem(UItemInfo* itemInfo,UInventory* pInvenRef);
+	void StartMoveItemPos(UItemInfo* pItemInfo);
 	bool CanItemMoveTo(FSlateRect pIntSlateRect);
 	void MoveItemTo(UItemInfo* pItemInfo, FSlateRect pIntSlateRect);
+	void FailedToMoveItemPos(UItemInfo* pItemInfo);
+
 	void AddPrimary(TSubclassOf<ABaseGun> pWeaponClass);
 	void AddSecondary(TSubclassOf<ABaseGun> pWeaponClass);
 

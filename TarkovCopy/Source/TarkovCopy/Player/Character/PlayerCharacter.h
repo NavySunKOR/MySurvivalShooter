@@ -116,8 +116,10 @@ public:
 
 
 	bool PickupItem(UItemInfo* pItemInfo);
-	bool HasInventoryEmptySpace(FSlateRect pIntSlateRect);
-	void ReplaceItem(UItemInfo* pItemInfo, FSlateRect pIntSlateRect);
+	void StartMoveItemPos(UItemInfo* pItemInfo);
+	bool CanItemMoveTo(FSlateRect pIntSlateRect);
+	void MoveItemTo(UItemInfo* pItemInfo, FSlateRect pIntSlateRect);
+	void FailedToMoveItemPos(UItemInfo* pItemInfo);
 
 	void AddPrimary(TSubclassOf<ABaseGun> pWeaponOrigin);
 	void AddSecondary(TSubclassOf<ABaseGun> pWeaponOrigin);

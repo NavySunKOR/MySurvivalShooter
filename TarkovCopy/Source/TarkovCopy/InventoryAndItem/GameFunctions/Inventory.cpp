@@ -25,11 +25,6 @@ void UInventory::Init(APlayerCharacter* pPlayer)
 	}
 }
 
-bool UInventory::HasBackpackEmptySpace(FSlateRect pIntSlateRect)
-{
-	return backpack->HasEmptySpace(pIntSlateRect);
-}
-
 bool UInventory::AddItemToInventory(UItemInfo* item)
 {
 	return backpack->AddItem(item,this);
@@ -80,7 +75,17 @@ bool UInventory::HasItem(UItemInfo* pItem)
 	return backpack->HasItem(pItem);
 }
 
-void UInventory::ReplaceItem(UItemInfo* pItemInfo, FSlateRect pIntSlateRect)
+void UInventory::StartMoveItemPos(UItemInfo* pItemInfo)
+{
+	backpack->RemoveItemPosition(pItemInfo);
+}
+
+bool UInventory::CanItemMoveTo(FSlateRect pIntSlateRect)
+{
+	return backpack->HasEmptySpace(pIntSlateRect);
+}
+
+void UInventory::MoveItemTo(UItemInfo* pItemInfo, FSlateRect pIntSlateRect)
 {
 	//remove item origin position
 	backpack->RemoveItemPosition(pItemInfo);
@@ -92,6 +97,11 @@ void UInventory::ReplaceItem(UItemInfo* pItemInfo, FSlateRect pIntSlateRect)
 
 	//move to pIntSlateRect
 
+}
+
+void UInventory::FailedToMoveItemPos(UItemInfo* pItemInfo)
+{
+	backpack->MoveItemPosition(pItemInfo);
 }
 
 int UInventory::GetAllPrimaryWeaponAmmo(FString pWeaponClassName)

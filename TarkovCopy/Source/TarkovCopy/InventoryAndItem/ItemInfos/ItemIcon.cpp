@@ -100,11 +100,10 @@ void UItemIcon::NativeOnDragDetected(const FGeometry& InGeometry, const FPointer
 {
 	UE_LOG(LogTemp, Warning, TEXT("OnDragDetected"))
 
-	/*FVector2D mousePos;
-	float scale = UWidgetLayoutLibrary::GetViewportScale(this);
-	controllerRef->GetMousePosition(mousePos.X, mousePos.Y);
-	mousePos /= scale;*/
-
+		/*FVector2D mousePos;
+		float scale = UWidgetLayoutLibrary::GetViewportScale(this);
+		controllerRef->GetMousePosition(mousePos.X, mousePos.Y);
+		mousePos /= scale;*/
 	dragDrop = nullptr;
 	dragDrop = UWidgetBlueprintLibrary::CreateDragDropOperation(UDragDropOperation::StaticClass());
 	dragDrop->Payload = this;
@@ -125,25 +124,75 @@ void UItemIcon::OnDropAction(FVector2D lastMousePosition)
 		//좌표계산해서 드랍인지 아니면 스위칭인지 판단할것.
 		
 		FSlateRect rect;
-		rect.Left = controllerRef->inventoryContainerSlot->GetPosition().X;
-		rect.Top = controllerRef->inventoryContainerSlot->GetPosition().Y;
-		rect.Right = rect.Left + controllerRef->inventoryContainerSlot->GetSize().X;
-		rect.Bottom = rect.Top + controllerRef->inventoryContainerSlot->GetSize().Y;
+		rect.Left = (int)controllerRef->inventoryContainerSlot->GetPosition().X;
+		rect.Top = (int)controllerRef->inventoryContainerSlot->GetPosition().Y;
+		rect.Right = (int)rect.Left + controllerRef->inventoryContainerSlot->GetSize().X; // 스타트 지점이 0 인 경우 
+		rect.Bottom = (int)rect.Top + controllerRef->inventoryContainerSlot->GetSize().Y;
 		if (rect.ContainsPoint(lastMousePosition))
 		{
 			FSlateRect positionIntRect;
-			positionIntRect.Left = (int)(lastMousePosition.X / UMGPublicProperites::BASIC_INVENTORY_GRID_WIDTH) - (itemInfo->width / 2);
-			positionIntRect.Top = (int)(lastMousePosition.Y / UMGPublicProperites::BASIC_INVENTORY_GRID_HEIGHT)  - (itemInfo->height/2);
+			positionIntRect.Left = (int)((lastMousePosition.X / UMGPublicProperites::BASIC_INVENTORY_GRID_WIDTH) - (itemInfo->width / 2));
+			positionIntRect.Top = (int)((lastMousePosition.Y / UMGPublicProperites::BASIC_INVENTORY_GRID_HEIGHT)  - (itemInfo->height/2));
 			positionIntRect.Right = (int)(positionIntRect.Left + itemInfo->width);
 			positionIntRect.Bottom = (int)(positionIntRect.Top + itemInfo->height);
 
+
+
+			rect.Left = (int)(rect.Left /UMGPublicProperites::BASIC_INVENTORY_GRID_WIDTH);
+			rect.Right = (int)(rect.Right/UMGPublicProperites::BASIC_INVENTORY_GRID_WIDTH);
+			rect.Top = (int)(rect.Top/UMGPublicProperites::BASIC_INVENTORY_GRID_HEIGHT);
+			rect.Bottom = (int)(rect.Bottom/UMGPublicProperites::BASIC_INVENTORY_GRID_HEIGHT);
+
+			UE_LOG(LogTemp, Warning, TEXT("item edge right : %f bottom : %f , container right : %f  bottom : %f"), positionIntRect.Right, positionIntRect.Bottom, rect.Right, rect.Bottom);
+
+
+
+			//마우스 커서만 빗나간게 아니라 아이템 길이가 길어서 벗어난 경우를 대비
+			if (positionIntRect.Left < rect.Left  || positionIntRect.Top < rect.Left)
+			{
+				if (positionIntRect.Left < rect.Left)
+				{
+					positionIntRect.Left = (int)rect.Left;
+					positionIntRect.Right = (int)(positionIntRect.Left + itemInfo->width);
+				}
+				if (positionIntRect.Top < rect.Top)
+				{
+					positionIntRect.Top = (int)rect.Top;
+					positionIntRect.Bottom = (int)(positionIntRect.Top + itemInfo->height);
+				}
+			}
+
+
+			if (positionIntRect.Right > rect.Right || positionIntRect.Bottom > rect.Bottom)
+			{
+				if (positionIntRect.Right > rect.Right)
+				{
+					positionIntRect.Right = (int)rect.Right;
+					positionIntRect.Left = (int)((int)positionIntRect.Right - itemInfo->width);
+				}
+				if (positionIntRect.Bottom > rect.Bottom)
+				{
+					positionIntRect.Bottom = (int)rect.Bottom;
+					positionIntRect.Top = (int)((int)positionIntRect.Bottom - itemInfo->height);
+				}
+			}
+
+
 			UE_LOG(LogTemp, Warning, TEXT("Mouse position : %s"), *positionIntRect.ToString())
+
+			//현재 아이템 위치를 일단 없앤다(한칸씩 옮기는거 가능하게끔)
+			controllerRef->StartMoveItemPos(itemInfo);
 
 			if (controllerRef->CanItemMoveTo(positionIntRect))
 			{
+				UE_LOG(LogTemp, Warning, TEXT("Move item"))
 				controllerRef->MoveItemTo(itemInfo, positionIntRect);
 			}
-			UE_LOG(LogTemp, Warning, TEXT("Move item"))
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Failed to Move item"))
+				controllerRef->FailedToMoveItemPos(itemInfo);
+			}
 		}
 		else
 		{

@@ -205,12 +205,21 @@ void AFPPlayerController::AddItem(UItemInfo* itemInfo, UInventory* pInvenRef)
 	items.Add(uiItem);
 }
 
+void AFPPlayerController::StartMoveItemPos(UItemInfo* pItemInfo)
+{
+	APlayerCharacter* character = Cast<APlayerCharacter>(GetPawn());
+	if (character != nullptr)
+	{
+		character->StartMoveItemPos(pItemInfo);
+	}
+}
+
 bool AFPPlayerController::CanItemMoveTo(FSlateRect pIntSlateRect)
 {
 	APlayerCharacter* character = Cast<APlayerCharacter>(GetPawn());
 	if (character != nullptr)
 	{
-		return character->HasInventoryEmptySpace(pIntSlateRect);
+		return character->CanItemMoveTo(pIntSlateRect);
 	}
 	else
 	{
@@ -225,7 +234,7 @@ void AFPPlayerController::MoveItemTo(UItemInfo* pItemInfo, FSlateRect pIntSlateR
 	APlayerCharacter* character = Cast<APlayerCharacter>(GetPawn());
 	if (character != nullptr)
 	{
-		character->ReplaceItem(pItemInfo,pIntSlateRect);
+		character->MoveItemTo(pItemInfo,pIntSlateRect);
 	}
 	else
 	{
@@ -250,6 +259,15 @@ void AFPPlayerController::MoveItemTo(UItemInfo* pItemInfo, FSlateRect pIntSlateR
 		}
 	}
 
+}
+
+void AFPPlayerController::FailedToMoveItemPos(UItemInfo* pItemInfo)
+{
+	APlayerCharacter* character = Cast<APlayerCharacter>(GetPawn());
+	if (character != nullptr)
+	{
+		character->FailedToMoveItemPos(pItemInfo);
+	}
 }
 
 void AFPPlayerController::AddPrimary(TSubclassOf<ABaseGun> pWeaponClass)

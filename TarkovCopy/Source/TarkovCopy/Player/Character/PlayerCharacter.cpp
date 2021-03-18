@@ -209,14 +209,24 @@ bool APlayerCharacter::PickupItem(UItemInfo* pItemInfo)
 	return isItemAdded;
 }
 
-bool APlayerCharacter::HasInventoryEmptySpace(FSlateRect pIntSlateRect)
+void APlayerCharacter::StartMoveItemPos(UItemInfo* pItemInfo)
 {
-	return inventory->HasBackpackEmptySpace(pIntSlateRect);
+	inventory->StartMoveItemPos(pItemInfo);
 }
 
-void APlayerCharacter::ReplaceItem(UItemInfo* pItemInfo, FSlateRect pIntSlateRect)
+bool APlayerCharacter::CanItemMoveTo(FSlateRect pIntSlateRect)
 {
-	inventory->ReplaceItem(pItemInfo, pIntSlateRect);
+	return inventory->CanItemMoveTo(pIntSlateRect);
+}
+
+void APlayerCharacter::MoveItemTo(UItemInfo* pItemInfo, FSlateRect pIntSlateRect)
+{
+	inventory->MoveItemTo(pItemInfo, pIntSlateRect);
+}
+
+void APlayerCharacter::FailedToMoveItemPos(UItemInfo* pItemInfo)
+{
+	inventory->FailedToMoveItemPos(pItemInfo);
 }
 
 void APlayerCharacter::Tilting(float pValue)

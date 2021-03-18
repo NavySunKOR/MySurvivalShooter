@@ -37,7 +37,7 @@ void UBackpack::Init()
 
 bool  UBackpack::HasEmptySpace(FSlateRect pIntSlateRect)
 {
-	if (pIntSlateRect.Right >= capacityWidth || pIntSlateRect.Bottom >= capacityHeight)
+	if (pIntSlateRect.Right > capacityWidth || pIntSlateRect.Bottom > capacityHeight)
 	{
 		return false;
 	}
