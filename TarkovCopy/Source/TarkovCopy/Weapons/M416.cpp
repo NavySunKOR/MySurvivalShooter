@@ -144,6 +144,7 @@ void AM416::Tick(float DeltaTime)
 		if (reloadTimer > reloadInterval)
 		{
 			curMagRounds += tempInsertMag;
+			itemWeapon->currentMagazineAmmo = curMagRounds;
 			isReloading = false;
 			reloadTimer = 0.f;
 		}

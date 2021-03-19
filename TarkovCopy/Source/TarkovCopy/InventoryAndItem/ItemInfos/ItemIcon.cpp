@@ -34,22 +34,13 @@ void UItemIcon::Init(UItemInfo* pItemInfo, UInventory* pInven, AFPPlayerControll
 	{
 		canvas->SetSize(FVector2D(itemInfo->width * UMGPublicProperites::BASIC_INVENTORY_GRID_WIDTH, itemInfo->height * UMGPublicProperites::BASIC_INVENTORY_GRID_HEIGHT));
 		canvas->SetPosition(FVector2D(itemInfo->left * UMGPublicProperites::BASIC_INVENTORY_GRID_WIDTH, itemInfo->top * UMGPublicProperites::BASIC_INVENTORY_GRID_HEIGHT));
-		UE_LOG(LogTemp, Warning, TEXT("JABOOOOONG"));
-
+	
 		UOverlaySlot* imageOverlay = Cast<UOverlaySlot>(iconImage->Slot);
 		if (imageOverlay)
 		{
 			imageOverlay->SetHorizontalAlignment(EHorizontalAlignment::HAlign_Fill);
 			imageOverlay->SetVerticalAlignment(EVerticalAlignment::VAlign_Fill);
 		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("NONE"));
-		}
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("OBANS"));
 	}
 
 	//드래그 앤 드롭 오브젝트
@@ -61,7 +52,6 @@ void UItemIcon::Init(UItemInfo* pItemInfo, UInventory* pInven, AFPPlayerControll
 	if (dragObjectSlot != nullptr)
 	{
 		dragObjectSlot->SetSize(FVector2D(itemInfo->width * UMGPublicProperites::BASIC_INVENTORY_GRID_WIDTH, itemInfo->height * UMGPublicProperites::BASIC_INVENTORY_GRID_HEIGHT));
-
 	}
 }
 
@@ -72,10 +62,8 @@ void UItemIcon::OpenDetailPanel()
 
 void UItemIcon::UseItem()
 {
-	UE_LOG(LogTemp, Warning, TEXT("UsingItem"));
 	if (invenRef->HasItem(itemInfo))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("We gonna use %s"), *itemInfo->GetClass()->GetName());
 		itemInfo->Use(controllerRef); // 여기서 consumable인지 아닌지 결정해줌.
 
 		bool isEmpty = invenRef->UseItem(itemInfo);
@@ -84,7 +72,7 @@ void UItemIcon::UseItem()
 		{
 			itemInfo->refInventory = nullptr;
 			invenRef->RemoveItem(itemInfo);
-			RemoveFromParent();
+			controllerRef->DropItem(this);
 		}
 	}
 }
@@ -96,7 +84,7 @@ void UItemIcon::DropItem()
 	{
 		itemInfo->DropItem(controllerRef);
 		itemInfo->refInventory = nullptr;
-		RemoveFromParent();
+		controllerRef->DropItem(this);
 	}
 }
 

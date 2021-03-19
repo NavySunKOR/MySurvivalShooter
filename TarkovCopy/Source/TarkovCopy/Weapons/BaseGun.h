@@ -7,9 +7,9 @@
 #include "BaseGun.generated.h"
 
 class UArrowComponent;
-class UItemInfo;
 class APlayerCharacter;
 class AAICharacter;
+class UItemWeapon;
 
 UCLASS()
 class TARKOVCOPY_API ABaseGun : public APawn
@@ -128,6 +128,7 @@ public:
 
 	APlayerCharacter* weaponOwnerCharacter;
 	AAICharacter* weaponOwnerAICharacter;
+	UItemWeapon* itemWeapon;
 	
 
 	virtual void UpdateMuzzleInfo();
@@ -142,6 +143,8 @@ public:
 	virtual void SetParentMeshTPP(USkeletalMeshComponent* pMeshComp);
 	virtual void EquipWeapon();
 	virtual void InspectWeapon();
+
+	virtual void SetInfo(UItemWeapon* pItemWeapon);
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

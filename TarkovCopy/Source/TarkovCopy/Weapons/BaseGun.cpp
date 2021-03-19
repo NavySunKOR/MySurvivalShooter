@@ -3,6 +3,7 @@
 
 #include "BaseGun.h"
 #include <Runtime/Engine/Classes/Kismet/GameplayStatics.h>
+#include "TarkovCopy/InventoryAndItem/ItemInfos/ItemWeapon.h"
 #include "TarkovCopy/Player/Character/PlayerCharacter.h"
 #include "TarkovCopy/AI/Character/AICharacter.h"
 #include <Runtime/Engine/Classes/Components/ArrowComponent.h>
@@ -20,7 +21,7 @@ void ABaseGun::BeginPlay()
 	Super::BeginPlay();
 	calcBulletSpreadRadius = initBulletSpreadRadius;
 	fireInterval = 60.f / rpm;
-	curMagRounds = maximumMagRounds;
+	//curMagRounds = maximumMagRounds;
 }
 
 void ABaseGun::FireWeapon(FVector start, FRotator dir)
@@ -31,6 +32,8 @@ void ABaseGun::FireWeapon(FVector start, FRotator dir)
 	calcBulletSpreadRadius += bulletSpreadIncrement;
 	UGameplayStatics::SpawnSoundAttached(fireWeaponSound, weaponComponents);
 	UGameplayStatics::SpawnEmitterAttached(muzzleFireParticle, muzzleArrow);
+
+	itemWeapon->currentMagazineAmmo = curMagRounds;
 }
 
 void ABaseGun::EmptyFireWeapon()
@@ -146,6 +149,12 @@ void ABaseGun::EquipWeapon()
 void ABaseGun::InspectWeapon()
 {
 	weaponOwnerCharacter->PlayAnimMontage(inspectWeaponAnim);
+}
+
+void ABaseGun::SetInfo(UItemWeapon* pItemWeapon)
+{
+	itemWeapon = pItemWeapon;
+	curMagRounds = itemWeapon->currentMagazineAmmo;
 }
 
 void ABaseGun::UpdateMuzzleInfo()

@@ -121,8 +121,8 @@ public:
 	void MoveItemTo(UItemInfo* pItemInfo, FSlateRect pIntSlateRect);
 	void FailedToMoveItemPos(UItemInfo* pItemInfo);
 
-	void AddPrimary(TSubclassOf<ABaseGun> pWeaponOrigin);
-	void AddSecondary(TSubclassOf<ABaseGun> pWeaponOrigin);
+	void AddPrimary(TSubclassOf<ABaseGun> pWeaponOrigin,UItemWeapon* pItemWeapon);
+	void AddSecondary(TSubclassOf<ABaseGun> pWeaponOrigin, UItemWeapon* pItemWeapon);
 	void RemovePrimary();
 	void RemoveSecondary();
 

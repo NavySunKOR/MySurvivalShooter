@@ -3,6 +3,7 @@
 
 #include "M9.h"
 #include <Kismet/GameplayStatics.h>
+#include "TarkovCopy/InventoryAndItem/ItemInfos/ItemWeapon.h"
 #include "TarkovCopy/AI/Character/AICharacter.h"
 #include "TarkovCopy/Player/Character/PlayerCharacter.h"
 #include "TarkovCopy/AI/Character/AICharacter.h"
@@ -142,6 +143,7 @@ void AM9::Tick(float DeltaTime)
 		if (reloadTimer > reloadInterval)
 		{
 			curMagRounds += tempInsertMag;
+			itemWeapon->currentMagazineAmmo = curMagRounds;
 			isReloading = false;
 			reloadTimer = 0.f;
 		}

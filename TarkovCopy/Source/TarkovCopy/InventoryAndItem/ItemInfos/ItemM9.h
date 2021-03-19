@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "TarkovCopy/InventoryAndItem/ItemInfos/ItemInfo.h"
+#include "TarkovCopy/InventoryAndItem/ItemInfos/ItemWeapon.h"
 #include "ItemM9.generated.h"
 
 class AFPPlayerController;
@@ -12,7 +13,7 @@ class ABaseGun;
  * 
  */
 UCLASS()
-class TARKOVCOPY_API UItemM9 : public UItemInfo
+class TARKOVCOPY_API UItemM9 : public UItemWeapon
 {
 	GENERATED_BODY()
 public:

@@ -242,7 +242,7 @@ void APlayerCharacter::Tilting(float pValue)
 
 }
 
-void APlayerCharacter::AddPrimary(TSubclassOf<ABaseGun> pWeaponOrigin)
+void APlayerCharacter::AddPrimary(TSubclassOf<ABaseGun> pWeaponOrigin, UItemWeapon* pItemWeapon)
 {
 	UE_LOG(LogTemp, Warning, TEXT("addprimary"));
 	if (primaryWeapon != nullptr)
@@ -251,6 +251,7 @@ void APlayerCharacter::AddPrimary(TSubclassOf<ABaseGun> pWeaponOrigin)
 	if (primaryWeapon != nullptr)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("primaryWeapon"));
+		primaryWeapon->SetInfo(pItemWeapon);
 		primaryWeapon->SetParentMeshFPP(GetMesh());
 		primaryWeapon->AttachToActor(this, FAttachmentTransformRules::SnapToTargetIncludingScale);
 		primaryWeapon->SetOwner(this);
@@ -259,13 +260,14 @@ void APlayerCharacter::AddPrimary(TSubclassOf<ABaseGun> pWeaponOrigin)
 	EquipPrimary();
 }
 
-void APlayerCharacter::AddSecondary(TSubclassOf<ABaseGun> pWeaponOrigin)
+void APlayerCharacter::AddSecondary(TSubclassOf<ABaseGun> pWeaponOrigin, UItemWeapon* pItemWeapon)
 {
 	if (secondaryWeapon != nullptr)
 		return;
 	secondaryWeapon = GetWorld()->SpawnActor<ABaseGun>(m9Origin);
 	if (secondaryWeapon != nullptr)
 	{
+		secondaryWeapon->SetInfo(pItemWeapon);
 		secondaryWeapon->SetParentMeshFPP(GetMesh());
 		secondaryWeapon->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
 		secondaryWeapon->SetOwner(this);

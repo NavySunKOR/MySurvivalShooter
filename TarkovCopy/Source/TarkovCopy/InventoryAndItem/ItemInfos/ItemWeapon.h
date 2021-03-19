@@ -4,19 +4,22 @@
 
 #include "CoreMinimal.h"
 #include "TarkovCopy/InventoryAndItem/ItemInfos/ItemInfo.h"
-#include "TarkovCopy/InventoryAndItem/ItemInfos/ItemWeapon.h"
-#include "ItemM416.generated.h"
+#include "TarkovCopy/Weapons/BaseGun.h"
+#include "ItemWeapon.generated.h"
 
 /**
  * 
  */
-class ABaseGun;
-class AFPPlayerController;
 UCLASS()
-class TARKOVCOPY_API UItemM416 : public UItemWeapon
+class TARKOVCOPY_API UItemWeapon : public UItemInfo
 {
 	GENERATED_BODY()
 public:
-	virtual void Use(AFPPlayerController* pPlayerCon) override; // Return : isConsumable
+	virtual void Use(AFPPlayerController* pPlayerCon) override; 
 	virtual void DropItem(AFPPlayerController* pPlayerCon) override;
+	UPROPERTY(EditAnywhere)
+	int currentMagazineAmmo;
+	UPROPERTY(EditAnywhere)
+	int maxMagazineAmmo;
+	
 };

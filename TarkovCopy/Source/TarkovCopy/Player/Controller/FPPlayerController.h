@@ -21,7 +21,6 @@ class TARKOVCOPY_API AFPPlayerController : public APlayerController
 	GENERATED_BODY()
 //Generated
 protected: 
-	virtual void SetupInputComponent();
 	virtual void BeginPlay() override;
 public:
 	virtual void PlayerTick(float DeltaTime);
@@ -91,6 +90,8 @@ private:
 	UPROPERTY()
 	UItemIcon* currentActiveItemIcon;
 
+	UPROPERTY()
+	APlayerCharacter* character;
 
 
 	//Exfil°ü·Ã
@@ -118,13 +119,14 @@ public:
 
 	//Item
 	void AddItem(UItemInfo* itemInfo,UInventory* pInvenRef);
+	void DropItem(UItemIcon* pItemIcon);
 	void StartMoveItemPos(UItemInfo* pItemInfo);
 	bool CanItemMoveTo(FSlateRect pIntSlateRect);
 	void MoveItemTo(UItemInfo* pItemInfo, FSlateRect pIntSlateRect);
 	void FailedToMoveItemPos(UItemInfo* pItemInfo);
 
-	void AddPrimary(TSubclassOf<ABaseGun> pWeaponClass);
-	void AddSecondary(TSubclassOf<ABaseGun> pWeaponClass);
+	void AddPrimary(TSubclassOf<ABaseGun> pWeaponClass,UItemWeapon* pItemWeapon);
+	void AddSecondary(TSubclassOf<ABaseGun> pWeaponClass, UItemWeapon* pItemWeapon);
 
 	void SetADS();
 	void SetHipfire();

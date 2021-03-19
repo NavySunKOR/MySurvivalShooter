@@ -53,14 +53,6 @@ void AFPPlayerController::BeginPlay()
 
 }
 
-void AFPPlayerController::SetupInputComponent()
-{
-
-}
-
-
-
-
 void AFPPlayerController::PlayerTick(float DeltaTime)
 {
 	Super::PlayerTick(DeltaTime);
@@ -85,10 +77,7 @@ void AFPPlayerController::InitInvenotry()
 	inventory = CreateWidget<UUserWidget>(this, inventoryWidget);
 	itemDetailPanel = Cast<UVerticalBox>(inventory->GetWidgetFromName(TEXT("DetailPanel")));
 	itemContainer = Cast<UCanvasPanel>(inventory->GetWidgetFromName(TEXT("ItemContainer")));
-	if (itemContainer == nullptr || itemDetailPanel)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Gone burst!"));
-	}
+
 	UCanvasPanelSlot* backgroundImage  = Cast<UCanvasPanelSlot>(inventory->GetWidgetFromName(TEXT("Background"))->Slot);
 	if (backgroundImage != nullptr && itemContainer != nullptr)
 	{
@@ -97,8 +86,6 @@ void AFPPlayerController::InitInvenotry()
 		if (inventoryContainerSlot != nullptr)
 			inventoryContainerSlot->SetSize(FVector2D(UMGPublicProperites::BASIC_INVENTORY_GRID_WIDTH, UMGPublicProperites::BASIC_INVENTORY_GRID_HEIGHT) * character->inventory->backpack->GetBackpackSize());
 	}
-	else
-		UE_LOG(LogTemp, Warning, TEXT("Canvas is null!"));
 
 }
 
@@ -116,7 +103,6 @@ void AFPPlayerController::OpenInventory()
 		crosshair->SetVisibility(ESlateVisibility::Hidden);
 		inventory->AddToViewport();
 		itemDetailPanel->SetVisibility(ESlateVisibility::Hidden);
-		UE_LOG(LogTemp, Warning, TEXT("open"))
 	}
 }
 
@@ -135,8 +121,6 @@ void AFPPlayerController::CloseInventory()
 		crosshair->SetVisibility(ESlateVisibility::Visible);
 		inventory->RemoveFromViewport();
 		itemDetailPanel->SetVisibility(ESlateVisibility::Hidden);
-
-		UE_LOG(LogTemp, Warning, TEXT("close"))
 	}
 }
 
@@ -157,57 +141,40 @@ void AFPPlayerController::OpenItemDetailPanel(UItemIcon* pItemIcon)
 {
 	currentActiveItemIcon = pItemIcon;
 	itemDetailPanel->SetVisibility(ESlateVisibility::Visible);
-	/*FVector2D mouse;
-	mouse = Cast<UCanvasPanelSlot>(pItemIcon->Slot)->GetPosition();*/
-	float mouseX;
-	float mouseY;
-	GetMousePosition(mouseX, mouseY);
+
 	FVector2D mouse;
-	mouse.X = mouseX;
-	mouse.Y = mouseY;
-
-	UE_LOG(LogTemp,Warning,TEXT("Vector Origin : %s"),*mouse.ToString())
-
+	GetMousePosition(mouse.X, mouse.Y);
 	float scale = UWidgetLayoutLibrary::GetViewportScale(this);
-	mouse.X /= scale;
-	mouse.Y /= scale;
-
-
-	UE_LOG(LogTemp, Warning, TEXT("Vector Resized : %s , scale factor is : %f"), *mouse.ToString(),scale)
-
+	mouse /= scale;
 	itemDetailPanel->SetRenderTranslation(mouse);
 }
 
 void AFPPlayerController::AddItem(UItemInfo* itemInfo, UInventory* pInvenRef)
 {
-	if (inventory == nullptr)
+	if (inventory == nullptr || inventory->WidgetTree == nullptr || iconWidget == nullptr)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("no inven"))
-			return;
-	}
-	if (inventory->WidgetTree == nullptr)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("no WidgetTree"))
-			return;
-	}
-
-	if (iconWidget == nullptr)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("no iconWidget"))
 		return;
 	}
 
 	UItemIcon* uiItem = inventory->WidgetTree->ConstructWidget<UItemIcon>(iconWidget); //TODO:WidgetTree가 계속 널이 되는 경우가 있는데 이 문제를 해결해야됨.
 	UCanvasPanelSlot* panelSlotForItem = Cast<UCanvasPanelSlot>(itemContainer->AddChild(uiItem));
-
 	uiItem->Slot = panelSlotForItem;
 	uiItem->Init(itemInfo, pInvenRef, this);
 	items.Add(uiItem);
 }
 
+void AFPPlayerController::DropItem(UItemIcon* pItemIcon)
+{
+	itemContainer->RemoveChild(pItemIcon);
+	items.Remove(pItemIcon);
+}
+
 void AFPPlayerController::StartMoveItemPos(UItemInfo* pItemInfo)
 {
-	APlayerCharacter* character = Cast<APlayerCharacter>(GetPawn());
+	//컨트롤러가 캐릭터보다 먼저 초기화 되는 상황 때문에 다음과 같이 넣어놓음
+	if(character == nullptr)
+		character = Cast<APlayerCharacter>(GetPawn());
+
 	if (character != nullptr)
 	{
 		character->StartMoveItemPos(pItemInfo);
@@ -216,7 +183,9 @@ void AFPPlayerController::StartMoveItemPos(UItemInfo* pItemInfo)
 
 bool AFPPlayerController::CanItemMoveTo(FSlateRect pIntSlateRect)
 {
-	APlayerCharacter* character = Cast<APlayerCharacter>(GetPawn());
+	if (character == nullptr)
+		character = Cast<APlayerCharacter>(GetPawn());
+
 	if (character != nullptr)
 	{
 		return character->CanItemMoveTo(pIntSlateRect);
@@ -230,8 +199,9 @@ bool AFPPlayerController::CanItemMoveTo(FSlateRect pIntSlateRect)
 void AFPPlayerController::MoveItemTo(UItemInfo* pItemInfo, FSlateRect pIntSlateRect)
 {
 	//RemoveAndAddItem
+	if (character == nullptr)
+		character = Cast<APlayerCharacter>(GetPawn());
 
-	APlayerCharacter* character = Cast<APlayerCharacter>(GetPawn());
 	if (character != nullptr)
 	{
 		character->MoveItemTo(pItemInfo,pIntSlateRect);
@@ -250,10 +220,7 @@ void AFPPlayerController::MoveItemTo(UItemInfo* pItemInfo, FSlateRect pIntSlateR
 			FVector2D position = FVector2D(
 				((int)pIntSlateRect.Left * UMGPublicProperites::BASIC_INVENTORY_GRID_WIDTH), ((int)pIntSlateRect.Top * UMGPublicProperites::BASIC_INVENTORY_GRID_HEIGHT)
 			);
-
-			
 			UCanvasPanelSlot* panelSlot = Cast<UCanvasPanelSlot>(items[i]->Slot);
-			UE_LOG(LogTemp, Warning, TEXT("scotch : %s"), *position.ToString());
 			panelSlot->SetPosition(position);
 			break;
 		}
@@ -263,28 +230,34 @@ void AFPPlayerController::MoveItemTo(UItemInfo* pItemInfo, FSlateRect pIntSlateR
 
 void AFPPlayerController::FailedToMoveItemPos(UItemInfo* pItemInfo)
 {
-	APlayerCharacter* character = Cast<APlayerCharacter>(GetPawn());
+	if (character == nullptr)
+		character = Cast<APlayerCharacter>(GetPawn());
+
 	if (character != nullptr)
 	{
 		character->FailedToMoveItemPos(pItemInfo);
 	}
 }
 
-void AFPPlayerController::AddPrimary(TSubclassOf<ABaseGun> pWeaponClass)
+void AFPPlayerController::AddPrimary(TSubclassOf<ABaseGun> pWeaponClass, UItemWeapon* pItemWeapon)
 {
-	APlayerCharacter* character = Cast<APlayerCharacter>(GetPawn());
+	if (character == nullptr)
+		character = Cast<APlayerCharacter>(GetPawn());
+
 	if (character != nullptr)
 	{
-		character->AddPrimary(pWeaponClass);
+		character->AddPrimary(pWeaponClass, pItemWeapon);
 	}
 }
 
-void AFPPlayerController::AddSecondary(TSubclassOf<ABaseGun> pWeaponClass)
+void AFPPlayerController::AddSecondary(TSubclassOf<ABaseGun> pWeaponClass, UItemWeapon* pItemWeapon)
 {
-	APlayerCharacter* character = Cast<APlayerCharacter>(GetPawn());
+	if (character == nullptr)
+		character = Cast<APlayerCharacter>(GetPawn());
+
 	if (character != nullptr)
 	{
-		character->AddSecondary(pWeaponClass);
+		character->AddSecondary(pWeaponClass, pItemWeapon);
 	}
 }
 
@@ -301,7 +274,9 @@ void AFPPlayerController::SetHipfire()
 
 void AFPPlayerController::RemovePrimary()
 {
-	APlayerCharacter* character = Cast<APlayerCharacter>(GetPawn());
+	if (character == nullptr) 
+		character = Cast<APlayerCharacter>(GetPawn());
+
 	if (character != nullptr)
 	{
 		character->RemovePrimary();
@@ -310,7 +285,9 @@ void AFPPlayerController::RemovePrimary()
 
 void AFPPlayerController::RemoveSecondary()
 {
-	APlayerCharacter* character = Cast<APlayerCharacter>(GetPawn());
+	if (character == nullptr)
+		character = Cast<APlayerCharacter>(GetPawn());
+
 	if (character != nullptr)
 	{
 		character->RemoveSecondary();
@@ -319,10 +296,11 @@ void AFPPlayerController::RemoveSecondary()
 
 void AFPPlayerController::HealPlayer(float pHealAmount)
 {
-	APlayerCharacter* character = Cast<APlayerCharacter>(GetPawn());
+	if (character == nullptr)
+		character = Cast<APlayerCharacter>(GetPawn());
+
 	if (character != nullptr)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("UsingHealingItem"));
 		float curHp = character->HealPlayer(pHealAmount);
 		UpdateHealthHud(curHp);
 	}
@@ -349,25 +327,19 @@ void CleanupArray(TArray<UItemIcon*>& pItem)
 
 void AFPPlayerController::UpdateInventoryUI()
 {
-	TArray<UItemIcon*> tempItems = items;
-
-	for (int i = tempItems.Num() - 1; i >= 0; i--)
+	for (int i = items.Num() - 1; i >= 0; i--)
 	{
-		if (tempItems[i] != nullptr && tempItems[i]->IsValidLowLevel())
+		if (items[i] != nullptr && items[i]->IsValidLowLevel())
 		{
-			if(tempItems[i]->itemInfo == nullptr ||
-				!tempItems[i]->itemInfo->IsValidLowLevel() ||
-				tempItems[i]->itemInfo->currentCapacity <= 0)
+			if(items[i]->itemInfo == nullptr ||
+				!items[i]->itemInfo->IsValidLowLevel() ||
+				items[i]->itemInfo->currentCapacity <= 0)
 			{
-				tempItems[i]->RemoveFromParent();
-				tempItems[i] = nullptr;
+				itemContainer->RemoveChild(items[i]);
+				items.RemoveAt(i);
 			}
 		}
 	}
-
-	CleanupArray(tempItems);
-
-	items = tempItems;
 }
 
 void AFPPlayerController::Dead()
@@ -417,7 +389,7 @@ void AFPPlayerController::ShowExfilPoints(FString exfilPointsName, float distanc
 
 void AFPPlayerController::ShowCannotExfil()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Can not exfil!"));
+
 }
 
 void AFPPlayerController::Exfiling()
@@ -427,18 +399,16 @@ void AFPPlayerController::Exfiling()
 		isExfiling = true;
 		exfilCounter = 0.f;
 		exfilAlert->SetVisibility(ESlateVisibility::Visible);
-		UE_LOG(LogTemp, Warning, TEXT("Exfiling......"));
 	}
 }
 
 void AFPPlayerController::ExfilingComplete()
 {
-	UE_LOG(LogTemp, Warning, TEXT("ExfilingComplete"));
 	isExfiling = false;
 	exfilAlert->SetVisibility(ESlateVisibility::Hidden);
 	youveEscaped->SetVisibility(ESlateVisibility::Visible);
 	if(gameMode)
-	gameMode->ExfilCompleted();//TODO:메인화면으로 옮기는 작업 넣을것
+		gameMode->ExfilCompleted();
 }
 
 void AFPPlayerController::CancelExfiling()
@@ -447,7 +417,6 @@ void AFPPlayerController::CancelExfiling()
 	{
 		isExfiling = false;
 		exfilAlert->SetVisibility(ESlateVisibility::Hidden);
-		UE_LOG(LogTemp, Warning, TEXT("Cancel exfiling....."));
 	}
 }
 

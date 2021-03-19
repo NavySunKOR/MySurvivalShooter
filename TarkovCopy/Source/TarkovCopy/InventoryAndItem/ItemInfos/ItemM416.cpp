@@ -8,7 +8,7 @@
 void UItemM416::Use(AFPPlayerController* pPlayerCon)
 {
 	UE_LOG(LogTemp, Warning, TEXT("EquipPrimaryWeapon"))
-	pPlayerCon->AddPrimary(weaponSubclass);
+	pPlayerCon->AddPrimary(weaponSubclass, this);
 	Super::Use(pPlayerCon);
 }
 void UItemM416::DropItem(AFPPlayerController* pPlayerCon)
