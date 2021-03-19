@@ -11,6 +11,7 @@
 class UItemInfo;
 class UInventory;
 class AFPPlayerController;
+class UTextBlock;
 /**
  * 
  */
@@ -28,12 +29,13 @@ public:
 	UPROPERTY()
 	UImage* iconImage;
 	UPROPERTY()
+	UTextBlock* textAmount;
+	UPROPERTY()
 	UInventory* invenRef;
 	UPROPERTY()
 	AFPPlayerController* controllerRef;
 
 	void Init(UItemInfo* pItemInfo, UInventory* pInven, AFPPlayerController* pController);
-	UFUNCTION(BlueprintCallable)
 	void OpenDetailPanel();
 
 	UFUNCTION(BlueprintCallable)
