@@ -70,6 +70,8 @@ public:
 	virtual void Use(AFPPlayerController* pPlayerCon); // Return : isEmpty
 	virtual void DropItem(AFPPlayerController* pPlayerCon);
 	virtual void InitRect(float pLeft, float pTop);
+	virtual FString GetItemAmountString() const;
+
 	/*UItemInfo operator=(UItemInfo &other);*/
 
 };

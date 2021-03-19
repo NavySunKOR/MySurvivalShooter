@@ -69,7 +69,8 @@ void AFPPlayerController::PlayerTick(float DeltaTime)
 
 void AFPPlayerController::InitInvenotry()
 {
-	APlayerCharacter* character = Cast<APlayerCharacter>(GetPawn());
+	if (ownerPlayerCharacter == nullptr)
+		ownerPlayerCharacter = Cast<APlayerCharacter>(GetPawn());
 
 	if (inventory)
 		inventory->RemoveFromViewport();
@@ -81,10 +82,10 @@ void AFPPlayerController::InitInvenotry()
 	UCanvasPanelSlot* backgroundImage  = Cast<UCanvasPanelSlot>(inventory->GetWidgetFromName(TEXT("Background"))->Slot);
 	if (backgroundImage != nullptr && itemContainer != nullptr)
 	{
-		backgroundImage->SetSize(FVector2D(UMGPublicProperites::BASIC_INVENTORY_GRID_WIDTH, UMGPublicProperites::BASIC_INVENTORY_GRID_HEIGHT) * character->inventory->backpack->GetBackpackSize());
+		backgroundImage->SetSize(FVector2D(UMGPublicProperites::BASIC_INVENTORY_GRID_WIDTH, UMGPublicProperites::BASIC_INVENTORY_GRID_HEIGHT) * ownerPlayerCharacter->inventory->backpack->GetBackpackSize());
 		inventoryContainerSlot = Cast<UCanvasPanelSlot>(itemContainer->Slot);
 		if (inventoryContainerSlot != nullptr)
-			inventoryContainerSlot->SetSize(FVector2D(UMGPublicProperites::BASIC_INVENTORY_GRID_WIDTH, UMGPublicProperites::BASIC_INVENTORY_GRID_HEIGHT) * character->inventory->backpack->GetBackpackSize());
+			inventoryContainerSlot->SetSize(FVector2D(UMGPublicProperites::BASIC_INVENTORY_GRID_WIDTH, UMGPublicProperites::BASIC_INVENTORY_GRID_HEIGHT) * ownerPlayerCharacter->inventory->backpack->GetBackpackSize());
 	}
 
 }
@@ -172,23 +173,23 @@ void AFPPlayerController::DropItem(UItemIcon* pItemIcon)
 void AFPPlayerController::StartMoveItemPos(UItemInfo* pItemInfo)
 {
 	//컨트롤러가 캐릭터보다 먼저 초기화 되는 상황 때문에 다음과 같이 넣어놓음
-	if(character == nullptr)
-		character = Cast<APlayerCharacter>(GetPawn());
+	if(ownerPlayerCharacter == nullptr)
+		ownerPlayerCharacter = Cast<APlayerCharacter>(GetPawn());
 
-	if (character != nullptr)
+	if (ownerPlayerCharacter != nullptr)
 	{
-		character->StartMoveItemPos(pItemInfo);
+		ownerPlayerCharacter->StartMoveItemPos(pItemInfo);
 	}
 }
 
 bool AFPPlayerController::CanItemMoveTo(FSlateRect pIntSlateRect)
 {
-	if (character == nullptr)
-		character = Cast<APlayerCharacter>(GetPawn());
+	if (ownerPlayerCharacter == nullptr)
+		ownerPlayerCharacter = Cast<APlayerCharacter>(GetPawn());
 
-	if (character != nullptr)
+	if (ownerPlayerCharacter != nullptr)
 	{
-		return character->CanItemMoveTo(pIntSlateRect);
+		return ownerPlayerCharacter->CanItemMoveTo(pIntSlateRect);
 	}
 	else
 	{
@@ -199,12 +200,12 @@ bool AFPPlayerController::CanItemMoveTo(FSlateRect pIntSlateRect)
 void AFPPlayerController::MoveItemTo(UItemInfo* pItemInfo, FSlateRect pIntSlateRect)
 {
 	//RemoveAndAddItem
-	if (character == nullptr)
-		character = Cast<APlayerCharacter>(GetPawn());
+	if (ownerPlayerCharacter == nullptr)
+		ownerPlayerCharacter = Cast<APlayerCharacter>(GetPawn());
 
-	if (character != nullptr)
+	if (ownerPlayerCharacter != nullptr)
 	{
-		character->MoveItemTo(pItemInfo,pIntSlateRect);
+		ownerPlayerCharacter->MoveItemTo(pItemInfo,pIntSlateRect);
 	}
 	else
 	{
@@ -230,34 +231,34 @@ void AFPPlayerController::MoveItemTo(UItemInfo* pItemInfo, FSlateRect pIntSlateR
 
 void AFPPlayerController::FailedToMoveItemPos(UItemInfo* pItemInfo)
 {
-	if (character == nullptr)
-		character = Cast<APlayerCharacter>(GetPawn());
+	if (ownerPlayerCharacter == nullptr)
+		ownerPlayerCharacter = Cast<APlayerCharacter>(GetPawn());
 
-	if (character != nullptr)
+	if (ownerPlayerCharacter != nullptr)
 	{
-		character->FailedToMoveItemPos(pItemInfo);
+		ownerPlayerCharacter->FailedToMoveItemPos(pItemInfo);
 	}
 }
 
 void AFPPlayerController::AddPrimary(TSubclassOf<ABaseGun> pWeaponClass, UItemWeapon* pItemWeapon)
 {
-	if (character == nullptr)
-		character = Cast<APlayerCharacter>(GetPawn());
+	if (ownerPlayerCharacter == nullptr)
+		ownerPlayerCharacter = Cast<APlayerCharacter>(GetPawn());
 
-	if (character != nullptr)
+	if (ownerPlayerCharacter != nullptr)
 	{
-		character->AddPrimary(pWeaponClass, pItemWeapon);
+		ownerPlayerCharacter->AddPrimary(pWeaponClass, pItemWeapon);
 	}
 }
 
 void AFPPlayerController::AddSecondary(TSubclassOf<ABaseGun> pWeaponClass, UItemWeapon* pItemWeapon)
 {
-	if (character == nullptr)
-		character = Cast<APlayerCharacter>(GetPawn());
+	if (ownerPlayerCharacter == nullptr)
+		ownerPlayerCharacter = Cast<APlayerCharacter>(GetPawn());
 
-	if (character != nullptr)
+	if (ownerPlayerCharacter != nullptr)
 	{
-		character->AddSecondary(pWeaponClass, pItemWeapon);
+		ownerPlayerCharacter->AddSecondary(pWeaponClass, pItemWeapon);
 	}
 }
 
@@ -274,34 +275,34 @@ void AFPPlayerController::SetHipfire()
 
 void AFPPlayerController::RemovePrimary()
 {
-	if (character == nullptr) 
-		character = Cast<APlayerCharacter>(GetPawn());
+	if (ownerPlayerCharacter == nullptr) 
+		ownerPlayerCharacter = Cast<APlayerCharacter>(GetPawn());
 
-	if (character != nullptr)
+	if (ownerPlayerCharacter != nullptr)
 	{
-		character->RemovePrimary();
+		ownerPlayerCharacter->RemovePrimary();
 	}
 }
 
 void AFPPlayerController::RemoveSecondary()
 {
-	if (character == nullptr)
-		character = Cast<APlayerCharacter>(GetPawn());
+	if (ownerPlayerCharacter == nullptr)
+		ownerPlayerCharacter = Cast<APlayerCharacter>(GetPawn());
 
-	if (character != nullptr)
+	if (ownerPlayerCharacter != nullptr)
 	{
-		character->RemoveSecondary();
+		ownerPlayerCharacter->RemoveSecondary();
 	}
 }
 
 void AFPPlayerController::HealPlayer(float pHealAmount)
 {
-	if (character == nullptr)
-		character = Cast<APlayerCharacter>(GetPawn());
+	if (ownerPlayerCharacter == nullptr)
+		ownerPlayerCharacter = Cast<APlayerCharacter>(GetPawn());
 
-	if (character != nullptr)
+	if (ownerPlayerCharacter != nullptr)
 	{
-		float curHp = character->HealPlayer(pHealAmount);
+		float curHp = ownerPlayerCharacter->HealPlayer(pHealAmount);
 		UpdateHealthHud(curHp);
 	}
 }

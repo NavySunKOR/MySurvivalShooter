@@ -12,3 +12,12 @@ void UItemWeapon::DropItem(AFPPlayerController* pPlayerCon)
 {
 	Super::DropItem(pPlayerCon);
 }
+
+FString  UItemWeapon::GetItemAmountString() const
+{
+	FString message;
+	message.AppendInt(currentMagazineAmmo);
+	message.AppendChar('/');
+	message.AppendInt(maxMagazineAmmo);
+	return message;
+}

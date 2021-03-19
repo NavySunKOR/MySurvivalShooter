@@ -91,7 +91,7 @@ private:
 	UItemIcon* currentActiveItemIcon;
 
 	UPROPERTY()
-	APlayerCharacter* character;
+	APlayerCharacter* ownerPlayerCharacter;
 
 
 	//Exfil°ü·Ã

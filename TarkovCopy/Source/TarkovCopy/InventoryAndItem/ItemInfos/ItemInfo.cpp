@@ -16,18 +16,15 @@ void UItemInfo::InitRect(float pLeft, float pTop)
 	rect.Right = left + width;
 	rect.Bottom = top - height;
 }
-//UItemInfo UItemInfo::operator=(UItemInfo& other)
-//{
-//	UItemInfo items;
-//	items.width = other.width;
-//	items.height = other.height;
-//	items.spriteToUse = other.spriteToUse;
-//	items.meshToDrop = other.meshToDrop;
-//	items.maxCapacity = other.maxCapacity;
-//	items.currentCapacity = other.currentCapacity;
-//
-//	return items;
-//}
+FString UItemInfo::GetItemAmountString() const
+{
+	FString message;
+	message.AppendInt(currentCapacity);
+	message.AppendChar('/');
+	message.AppendInt(maxCapacity);
+	return message;
+}
+
 void UItemInfo::Use(AFPPlayerController* pPlayerCon)
 {
 	UE_LOG(LogTemp,Warning,TEXT("Item!"))

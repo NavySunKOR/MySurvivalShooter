@@ -17,6 +17,7 @@ class TARKOVCOPY_API UItemWeapon : public UItemInfo
 public:
 	virtual void Use(AFPPlayerController* pPlayerCon) override; 
 	virtual void DropItem(AFPPlayerController* pPlayerCon) override;
+	virtual FString GetItemAmountString() const override;
 	UPROPERTY(EditAnywhere)
 	int currentMagazineAmmo;
 	UPROPERTY(EditAnywhere)

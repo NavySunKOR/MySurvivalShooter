@@ -21,9 +21,6 @@ void UItemIcon::Init(UItemInfo* pItemInfo, UInventory* pInven, AFPPlayerControll
 	controllerRef = pController;
 
 	//내부 컴포넌트 초기화
-	
-	textAmount = Cast<UTextBlock>(GetWidgetFromName(TEXT("Amount")));
-	textAmount->SetText(FText::FromName(TEXT("1/1")));
 	iconImage = Cast<UImage>(GetWidgetFromName(TEXT("Icon")));
 	iconImage->SetBrushFromTexture(pItemInfo->spriteToUse);
 	WidgetTree->RootWidget = GetWidgetFromName(TEXT("Parent"));
@@ -62,8 +59,10 @@ void UItemIcon::OpenDetailPanel()
 
 void UItemIcon::UseItem()
 {
+	UE_LOG(LogTemp,Warning,TEXT("Using items"))
 	if (invenRef->HasItem(itemInfo))
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Use "))
 		itemInfo->Use(controllerRef); // 여기서 consumable인지 아닌지 결정해줌.
 
 		bool isEmpty = invenRef->UseItem(itemInfo);
@@ -86,6 +85,11 @@ void UItemIcon::DropItem()
 		itemInfo->refInventory = nullptr;
 		controllerRef->DropItem(this);
 	}
+}
+
+FString UItemIcon::GetAmountText() const
+{
+	return itemInfo->GetItemAmountString();
 }
 
 FReply UItemIcon::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
@@ -150,8 +154,6 @@ void UItemIcon::OnDropAction(FVector2D lastMousePosition)
 		rect.Right = (int)(rect.Right/UMGPublicProperites::BASIC_INVENTORY_GRID_WIDTH);
 		rect.Top = (int)(rect.Top/UMGPublicProperites::BASIC_INVENTORY_GRID_HEIGHT);
 		rect.Bottom = (int)(rect.Bottom/UMGPublicProperites::BASIC_INVENTORY_GRID_HEIGHT);
-
-		UE_LOG(LogTemp, Warning, TEXT("item edge right : %f bottom : %f , container right : %f  bottom : %f"), positionIntRect.Right, positionIntRect.Bottom, rect.Right, rect.Bottom);
 
 		//마우스 커서만 빗나간게 아니라 아이템 길이가 길어서 벗어난 경우를 대비
 		if (positionIntRect.Left < rect.Left  || positionIntRect.Top < rect.Left)

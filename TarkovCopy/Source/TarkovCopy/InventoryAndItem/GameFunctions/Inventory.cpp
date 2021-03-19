@@ -56,7 +56,6 @@ bool UInventory::DropItem(UItemInfo* pItem)
 		APickableItem* picks = inventoryOwner->GetWorld()->SpawnActor<APickableItem>(pItem->meshToDrop); //TODO:나중에 SETVisibleOff했던 아이템을 자리로 스폰하고 visible을 킬것
 		picks->itemInfo = pItem; // 이미 먹었던 아이템을 다시 토해내는것이므로 완전 새로운 스폰이 아니고 일정 정보는 가지고 가야한다.
 		picks->SetActorLocation(inventoryOwner->GetActorLocation() + inventoryOwner->GetActorUpVector() * 50.f + inventoryOwner->GetActorForwardVector() * 50.f);
-		//picks->itemInfo = pItem; //추 후에 itemInfo를 destroy 해야되는 경우가 생기면 이걸 매니저에서 레퍼런싱 해서 다시 넣어야 됨.
 		backpack->ActualRemoveItem(pItem);
 		return true;
 	}

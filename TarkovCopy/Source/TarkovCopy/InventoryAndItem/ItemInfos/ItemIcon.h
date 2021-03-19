@@ -29,8 +29,6 @@ public:
 	UPROPERTY()
 	UImage* iconImage;
 	UPROPERTY()
-	UTextBlock* textAmount;
-	UPROPERTY()
 	UInventory* invenRef;
 	UPROPERTY()
 	AFPPlayerController* controllerRef;
@@ -42,6 +40,9 @@ public:
 	void UseItem();
 	UFUNCTION(BlueprintCallable)
 	void DropItem();
+
+	UFUNCTION(BlueprintPure)
+	FString GetAmountText() const;
 
 
 	//Item Drag operation
