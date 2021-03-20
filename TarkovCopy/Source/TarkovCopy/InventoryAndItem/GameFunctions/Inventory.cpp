@@ -52,12 +52,17 @@ bool UInventory::UseItem(UItemInfo* pItem)
 bool UInventory::DropItem(UItemInfo* pItem)
 {
 	//TODO:Primary Weapon, Secondary Weapon 을 버리는걸 별도로 처리 할 듯
-	if (backpack->HasItem(pItem)) 
+	if (backpack->HasItem(pItem) || primaryWeapon == (UItemWeapon*)pItem || secondaryWeapon == (UItemWeapon*)pItem)
 	{
 		APickableItem* picks = inventoryOwner->GetWorld()->SpawnActor<APickableItem>(pItem->meshToDrop); //TODO:나중에 SETVisibleOff했던 아이템을 자리로 스폰하고 visible을 킬것
 		picks->itemInfo = pItem; // 이미 먹었던 아이템을 다시 토해내는것이므로 완전 새로운 스폰이 아니고 일정 정보는 가지고 가야한다.
 		picks->SetActorLocation(inventoryOwner->GetActorLocation() + inventoryOwner->GetActorUpVector() * 50.f + inventoryOwner->GetActorForwardVector() * 50.f);
-		backpack->ActualRemoveItem(pItem);
+		if(backpack->HasItem(pItem))
+			backpack->ActualRemoveItem(pItem);
+		else if(primaryWeapon == (UItemWeapon*)pItem)
+			primaryWeapon = nullptr;
+		else
+			secondaryWeapon = nullptr;
 		return true;
 	}
 	else
@@ -71,9 +76,9 @@ void UInventory::RemoveItem(UItemInfo* pItem)
 	backpack->ActualRemoveItem(pItem);
 }
 
-bool UInventory::HasItem(UItemInfo* pItem)
+bool UInventory::HasItem(UItemInfo* pItem) const
 {
-	return backpack->HasItem(pItem);
+	return (backpack->HasItem(pItem) || primaryWeapon == (UItemWeapon*)pItem || secondaryWeapon == (UItemWeapon*)pItem);
 }
 
 void UInventory::StartMoveItemPos(UItemInfo* pItemInfo)
@@ -81,7 +86,7 @@ void UInventory::StartMoveItemPos(UItemInfo* pItemInfo)
 	backpack->RemoveItemPosition(pItemInfo);
 }
 
-bool UInventory::CanItemMoveTo(FSlateRect pIntSlateRect)
+bool UInventory::CanItemMoveTo(FSlateRect pIntSlateRect) const
 {
 	return backpack->HasEmptySpace(pIntSlateRect);
 }
@@ -104,13 +109,13 @@ void UInventory::FailedToMoveItemPos(UItemInfo* pItemInfo)
 {
 	backpack->MoveItemPosition(pItemInfo);
 }
-
-int UInventory::GetAllPrimaryWeaponAmmo(FString pWeaponClassName)
+ 
+int UInventory::GetAllPrimaryWeaponAmmo(FString pWeaponClassName) const
 {
 	return backpack->GetAllPrimaryWeaponAmmo(pWeaponClassName);
 }
 
-int UInventory::GetAllSecondaryWeaponAmmo(FString pWeaponClassName)
+int UInventory::GetAllSecondaryWeaponAmmo(FString pWeaponClassName) const
 {
 	return backpack->GetAllSecondaryWeaponAmmo(pWeaponClassName);
 }

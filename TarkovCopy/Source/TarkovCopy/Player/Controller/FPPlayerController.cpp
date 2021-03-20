@@ -187,6 +187,12 @@ void AFPPlayerController::AddItem(UItemInfo* itemInfo, UInventory* pInvenRef)
 void AFPPlayerController::DropItem(UItemIcon* pItemIcon)
 {
 	itemContainer->RemoveChild(pItemIcon);
+	//
+	if (!ownerPlayerCharacter->inventory->HasItem(pItemIcon->itemInfo))
+	{
+		primaryWeaponContainer->RemoveChild(pItemIcon);
+		secondaryWeaponContainer->RemoveChild(pItemIcon);
+	}
 	items.Remove(pItemIcon);
 }
 
