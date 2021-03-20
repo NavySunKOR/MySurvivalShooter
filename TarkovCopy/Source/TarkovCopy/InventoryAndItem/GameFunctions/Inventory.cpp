@@ -94,10 +94,25 @@ bool UInventory::CanItemMoveTo(FSlateRect pIntSlateRect) const
 void UInventory::MoveItemTo(UItemInfo* pItemInfo, FSlateRect pIntSlateRect)
 {
 	//remove item origin position
-	backpack->RemoveItemPosition(pItemInfo);
+	if (backpack->HasItem(pItemInfo))
+	{
+		backpack->RemoveItemPosition(pItemInfo);
+	}
+	else if (primaryWeapon == (UItemWeapon*)pItemInfo)
+	{
+		primaryWeapon = nullptr;
+		backpack->AddItemContainerArray(pItemInfo);
+	}
+	else if (secondaryWeapon == (UItemWeapon*)pItemInfo)
+	{
+		secondaryWeapon = nullptr;
+		backpack->AddItemContainerArray(pItemInfo);
+	}
 
 	pItemInfo->left = pIntSlateRect.Left;
 	pItemInfo->top = pIntSlateRect.Top;
+
+	UE_LOG(LogTemp, Warning, TEXT("is stil alive? : %d"), pItemInfo);
 
 	backpack->MoveItemPosition(pItemInfo);
 

@@ -101,7 +101,7 @@ void UItemIcon::UseItem()
 		UE_LOG(LogTemp, Warning, TEXT("Use "))
 		itemInfo->Use(controllerRef); // 여기서 consumable인지 아닌지 결정해줌.
 
-		bool isEmpty = invenRef->UseItem(itemInfo);
+		bool isEmpty = (invenRef->UseItem(itemInfo) && itemInfo->isConsumable);
 
 		if (isEmpty)
 		{
@@ -190,19 +190,50 @@ void UItemIcon::OnDropAction(FVector2D lastMousePosition)
 
 		AdjustPositionRectForItemContainer(positionIntRect, itemContainerIntRect);
 
-		//현재 아이템 위치를 일단 없앤다(한칸씩 옮기는거 가능하게끔)
-		//TODO: 주무기 또는 보조무기로 장착한 아이템이 인벤토리로 다시 옮기는 경우를 예외처리 할것
-		controllerRef->StartMoveItemPos(itemInfo);
-		//해당위치로 옮길 수 있다면 옮기고 아니면 원래 위치로 돌린다.
-		if (controllerRef->CanItemMoveTo(positionIntRect))
+		//이 아이템이 웨펀에 있던건가 아니면 인벤 내에서 옮기는 것인가?
+		if (controllerRef->IsInItemContainer(this))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Move item"))
-			controllerRef->MoveItemTo(itemInfo, positionIntRect);
+			UE_LOG(LogTemp, Warning, TEXT("IsInItemContainer"))
+			//현재 아이템 위치를 일단 없앤다(한칸씩 옮기는거 가능하게끔)
+			//TODO: 주무기 또는 보조무기로 장착한 아이템이 인벤토리로 다시 옮기는 경우를 예외처리 할것
+			controllerRef->StartMoveItemPos(itemInfo);
+			//해당위치로 옮길 수 있다면 옮기고 아니면 원래 위치로 돌린다.
+			if (controllerRef->CanItemMoveTo(positionIntRect))
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Move item"))
+				controllerRef->MoveItemTo(itemInfo, positionIntRect);
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Failed to Move item"))
+				controllerRef->FailedToMoveItemPos(itemInfo);
+			}
+		}
+		else if (controllerRef->IsInEquipmentSlot(this))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("IsInEquipmentSlot"))
+			if (controllerRef->CanItemMoveTo(positionIntRect))
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Move item"))
+				controllerRef->MoveItemTo(itemInfo, positionIntRect);
+				if (itemInfo->itemType == ItemType::WEAPON)
+				{
+					UItemWeapon* itemWeapon = (UItemWeapon*)itemInfo;
+					if (itemWeapon->weaponType == WeaponType::PRIMARY)
+					{
+						controllerRef->RemovePrimary();
+					}
+					else
+					{
+						controllerRef->RemoveSecondary();
+					}
+				}
+			}
 		}
 		else
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Failed to Move item"))
-			controllerRef->FailedToMoveItemPos(itemInfo);
+			UE_LOG(LogTemp, Warning, TEXT("WTF?"))
+			//TODO:이거 버그니 이 문제에 대해서 원인 파악 후 해결할것(아마 아이템을 버렸는데 ui에서 remove가 안되는 경우이거나 처리가 안된 경우 일 것이다)
 		}
 	}
 	else if (controllerRef->primaryWeaponContainerRect.ContainsPoint(lastMousePosition))
@@ -212,8 +243,6 @@ void UItemIcon::OnDropAction(FVector2D lastMousePosition)
 		if (weapon != nullptr && weapon->weaponType == WeaponType::PRIMARY)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("PrimaryCompleteo"))
-			//TODO: 주무기로 장착하는 과정 진행하기
-			//TODO: 여기서 AddWeapon할 때 WeaponRect로 설정
 			UseItem();
 		}
 	}
@@ -224,8 +253,6 @@ void UItemIcon::OnDropAction(FVector2D lastMousePosition)
 		if (weapon != nullptr && weapon->weaponType == WeaponType::SECONDARY)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("SeconCompleteo"))
-			//TODO: 보조무기로 장착하는 과정 진행하기
-			//TODO: 여기서 AddWeapon할 때 WeaponRect로 설정
 			UseItem();
 		}
 	}

@@ -39,7 +39,6 @@ void AAICharacter::BeginPlay()
 		//currentActiveGun->SetActorRelativeRotation(GetMesh()->GetSocketRotation(TEXT("Hand_R_Position")) + currentActiveGun->thirdPersonRotation);
 		currentActiveGun->SetOwner(this);
 
-
 		UE_LOG(LogTemp, Warning, TEXT("seg"));
 
 	}

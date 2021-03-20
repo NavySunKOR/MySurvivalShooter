@@ -184,6 +184,7 @@ void AFPPlayerController::AddItem(UItemInfo* itemInfo, UInventory* pInvenRef)
 	items.Add(uiItem);
 }
 
+//TODO:RemoveItemUI로 변경
 void AFPPlayerController::DropItem(UItemIcon* pItemIcon)
 {
 	itemContainer->RemoveChild(pItemIcon);
@@ -193,6 +194,7 @@ void AFPPlayerController::DropItem(UItemIcon* pItemIcon)
 		primaryWeaponContainer->RemoveChild(pItemIcon);
 		secondaryWeaponContainer->RemoveChild(pItemIcon);
 	}
+	UE_LOG(LogTemp,Warning,TEXT("IsDropping"))
 	items.Remove(pItemIcon);
 }
 
@@ -239,16 +241,39 @@ void AFPPlayerController::MoveItemTo(UItemInfo* pItemInfo, FSlateRect pIntSlateR
 	}
 
 
+	UE_LOG(LogTemp, Warning, TEXT("ItemInfo reference : %d , items count : %d"), pItemInfo, items.Num());
+
 	//UpdateUI
 	for (int i = 0; i < items.Num(); i++)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("ITEMS reference : %d"), items[i]->itemInfo);
 		if (items[i]->itemInfo == pItemInfo)
 		{
 			FVector2D position = FVector2D(
 				((int)pIntSlateRect.Left * UMGPublicProperites::BASIC_INVENTORY_GRID_WIDTH), ((int)pIntSlateRect.Top * UMGPublicProperites::BASIC_INVENTORY_GRID_HEIGHT)
 			);
-			UCanvasPanelSlot* panelSlot = Cast<UCanvasPanelSlot>(items[i]->Slot);
-			panelSlot->SetPosition(position);
+			
+			if (itemContainer->HasChild(items[i]))
+			{
+				UCanvasPanelSlot* panelSlot = Cast<UCanvasPanelSlot>(items[i]->Slot);
+				panelSlot->SetPosition(position);
+			}
+			else
+			{
+				if (primaryWeaponContainer->HasChild(items[i]))
+					primaryWeaponContainer->RemoveChild(items[i]);
+
+				if (secondaryWeaponContainer->HasChild(items[i]))
+					secondaryWeaponContainer->RemoveChild(items[i]);
+
+				items[i]->Slot = Cast<UCanvasPanelSlot>(itemContainer->AddChild(items[i]));
+
+				UCanvasPanelSlot* panelSlot = Cast<UCanvasPanelSlot>(items[i]->Slot);
+				panelSlot->SetPosition(position);
+				panelSlot->SetSize(FVector2D(items[i]->itemInfo->width * UMGPublicProperites::BASIC_INVENTORY_GRID_WIDTH, items[i]->itemInfo->height * UMGPublicProperites::BASIC_INVENTORY_GRID_HEIGHT));
+				UE_LOG(LogTemp, Warning, TEXT("Reset size"))
+			}
+
 			break;
 		}
 	}
@@ -263,6 +288,37 @@ void AFPPlayerController::FailedToMoveItemPos(UItemInfo* pItemInfo)
 	if (ownerPlayerCharacter != nullptr)
 	{
 		ownerPlayerCharacter->FailedToMoveItemPos(pItemInfo);
+	}
+}
+
+bool AFPPlayerController::IsInItemContainer(UItemIcon* pItemInfo) const
+{
+	FVector2D finalPosition = pItemInfo->GetCachedGeometry().GetAbsolutePosition();
+	UE_LOG(LogTemp, Warning, TEXT("Found you in item container position %s, %s"), *itemContainerRect.ToString(), *finalPosition.ToString())
+	if (itemContainerRect.ContainsPoint(finalPosition))
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+bool AFPPlayerController::IsInEquipmentSlot(UItemIcon* pItemInfo) const
+{
+	//가로만 조정한다
+	FVector2D finalPosition = pItemInfo->GetCachedGeometry().GetAbsolutePosition();
+	finalPosition.X += pItemInfo->GetCachedGeometry().GetAbsoluteSize().X / 2.f;
+	UE_LOG(LogTemp, Warning, TEXT("Found you in IsInEquipmentSlot %s, %s"), *primaryWeaponContainerRect.ToString(), *finalPosition.ToString())
+	if (primaryWeaponContainerRect.ContainsPoint(finalPosition) ||
+		secondaryWeaponContainerRect.ContainsPoint(finalPosition))
+	{
+		return true;
+	}
+	else
+	{
+		return false;
 	}
 }
 
@@ -283,9 +339,11 @@ void AFPPlayerController::AddPrimary(TSubclassOf<ABaseGun> pWeaponClass, UItemWe
 			UE_LOG(LogTemp, Warning, TEXT("AddPrimary"));
 			UCanvasPanelSlot* panelSlot = Cast<UCanvasPanelSlot>(items[i]->Slot);
 			panelSlot->SetPosition(primaryWeaponContainerSlot->GetPosition());
+
 			itemContainer->RemoveChild(items[i]);
 			items[i]->Slot = Cast<UCanvasPanelSlot>(primaryWeaponContainer->AddChild(items[i]));
 			panelSlot = Cast<UCanvasPanelSlot>(items[i]->Slot);
+
 			panelSlot->SetSize(primaryWeaponContainerSlot->GetSize());
 		}
 	}
@@ -308,8 +366,10 @@ void AFPPlayerController::AddSecondary(TSubclassOf<ABaseGun> pWeaponClass, UItem
 			UE_LOG(LogTemp, Warning, TEXT("AddSecondary"));
 			UCanvasPanelSlot* panelSlot = Cast<UCanvasPanelSlot>(items[i]->Slot);
 			panelSlot->SetPosition(secondaryWeaponContainerSlot->GetPosition());
+
 			itemContainer->RemoveChild(items[i]);
 			items[i]->Slot = Cast<UCanvasPanelSlot>(secondaryWeaponContainer->AddChild(items[i]));
+
 			panelSlot = Cast<UCanvasPanelSlot>(items[i]->Slot);
 			panelSlot->SetSize(secondaryWeaponContainerSlot->GetSize());
 		}
@@ -390,6 +450,7 @@ void AFPPlayerController::UpdateInventoryUI()
 				!items[i]->itemInfo->IsValidLowLevel() ||
 				items[i]->itemInfo->currentCapacity <= 0)
 			{
+				UE_LOG(LogTemp,Warning,TEXT("Update inven UI"))
 				itemContainer->RemoveChild(items[i]);
 				items.RemoveAt(i);
 			}

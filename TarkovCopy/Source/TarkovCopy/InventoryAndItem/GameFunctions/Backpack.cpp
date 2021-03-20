@@ -281,6 +281,7 @@ bool UBackpack::UseItem(UItemInfo* pItemInfo)
 	}
 }
 
+//TODO:신규 아이템 등록으로 이름 바꿀것
 bool UBackpack::AddItem(UItemInfo* pItemInfo,UInventory* pInventory)
 {
 	//TODO: 아이템 빈자리 찾아서 추가 
@@ -297,6 +298,11 @@ bool UBackpack::AddItem(UItemInfo* pItemInfo,UInventory* pInventory)
 	{
 		return false;
 	}
+}
+
+void UBackpack::AddItemContainerArray(UItemInfo* pItemInfo)
+{
+	itemContainers.Add(pItemInfo);
 }
 
 bool UBackpack::HasItem(UItemInfo* pItemInfo)

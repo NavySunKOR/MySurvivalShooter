@@ -81,6 +81,8 @@ protected:
 
 public:
 	UPROPERTY(EditAnywhere, Category = "EditableStatus")
+	TSubclassOf<UItemWeapon> weaponInfoForThirdPerson;
+	UPROPERTY(EditAnywhere, Category = "EditableStatus")
 	float rpm;
 	UPROPERTY(EditAnywhere, Category = "EditableStatus")
 	int maximumMagRounds;

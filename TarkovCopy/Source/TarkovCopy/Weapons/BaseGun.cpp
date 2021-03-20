@@ -126,6 +126,8 @@ void ABaseGun::SetParentMeshTPP(USkeletalMeshComponent* pMeshComp)
 	UE_LOG(LogTemp, Warning, TEXT("parentMesh : %d , and class  %d"), parentMesh, tppAnimBlueprints)
 	parentMesh->SetAnimInstanceClass(tppAnimBlueprints);
 
+	SetInfo(NewObject<UItemWeapon>(this, weaponInfoForThirdPerson));
+
 	UE_LOG(LogTemp, Warning, TEXT("SetAnimInstanceClass"))
 	weaponComponents = Cast<USceneComponent>(GetDefaultSubobjectByName(TEXT("Weapon_Root")));
 	muzzleArrow = Cast<UArrowComponent>(GetDefaultSubobjectByName(TEXT("Muzzle_Arrow")));

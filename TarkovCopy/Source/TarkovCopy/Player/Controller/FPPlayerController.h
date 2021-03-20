@@ -137,6 +137,9 @@ public:
 	void MoveItemTo(UItemInfo* pItemInfo, FSlateRect pIntSlateRect);
 	void FailedToMoveItemPos(UItemInfo* pItemInfo);
 
+	bool IsInItemContainer(UItemIcon* pItemInfo) const;
+	bool IsInEquipmentSlot(UItemIcon* pItemInfo) const;
+
 	void AddPrimary(TSubclassOf<ABaseGun> pWeaponClass,UItemWeapon* pItemWeapon);
 	void AddSecondary(TSubclassOf<ABaseGun> pWeaponClass, UItemWeapon* pItemWeapon);
 

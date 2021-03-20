@@ -37,7 +37,8 @@ public:
 	std::tuple<bool, int, int> HasEmptySpace(UItemInfo* pItemInfo);
 	bool IsIntersected(UItemInfo* pItemInfo);
 	bool UseItem(UItemInfo* pItemInfo);//return : isEmpty;
-	bool AddItem(UItemInfo* pItemInfo,UInventory* pInventory);
+	bool AddItem(UItemInfo* pItemInfo, UInventory* pInventory);
+	void AddItemContainerArray(UItemInfo* pItemInfo);
 	bool HasItem(UItemInfo* pItemInfo);
 	void RemoveItemPosition(UItemInfo* pItemInfo);
 	void MoveItemPosition(UItemInfo* pItemInfo);
