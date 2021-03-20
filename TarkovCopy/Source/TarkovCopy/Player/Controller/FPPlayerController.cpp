@@ -73,21 +73,41 @@ void AFPPlayerController::InitInvenotry()
 		ownerPlayerCharacter = Cast<APlayerCharacter>(GetPawn());
 
 	if (inventory)
+	{
 		inventory->RemoveFromViewport();
+		inventory = nullptr;
+	}
 
 	inventory = CreateWidget<UUserWidget>(this, inventoryWidget);
 	itemDetailPanel = Cast<UVerticalBox>(inventory->GetWidgetFromName(TEXT("DetailPanel")));
 	itemContainer = Cast<UCanvasPanel>(inventory->GetWidgetFromName(TEXT("ItemContainer")));
+	primaryWeaponContainer = Cast<UCanvasPanel>(inventory->GetWidgetFromName(TEXT("PrimaryWeaponContainer")));
+	secondaryWeaponContainer = Cast<UCanvasPanel>(inventory->GetWidgetFromName(TEXT("SecondaryWeaponContainer")));
+	
+	itemContainerSlot = Cast<UCanvasPanelSlot>(itemContainer->Slot);
+	primaryWeaponContainerSlot = Cast<UCanvasPanelSlot>(primaryWeaponContainer->Slot);
+	secondaryWeaponContainerSlot = Cast<UCanvasPanelSlot>(secondaryWeaponContainer->Slot);
+	
+	itemContainerSlot->SetSize(FVector2D(UMGPublicProperites::BASIC_INVENTORY_GRID_WIDTH, UMGPublicProperites::BASIC_INVENTORY_GRID_HEIGHT) * ownerPlayerCharacter->inventory->backpack->GetBackpackSize());
 
-	UCanvasPanelSlot* backgroundImage  = Cast<UCanvasPanelSlot>(inventory->GetWidgetFromName(TEXT("Background"))->Slot);
-	if (backgroundImage != nullptr && itemContainer != nullptr)
-	{
-		backgroundImage->SetSize(FVector2D(UMGPublicProperites::BASIC_INVENTORY_GRID_WIDTH, UMGPublicProperites::BASIC_INVENTORY_GRID_HEIGHT) * ownerPlayerCharacter->inventory->backpack->GetBackpackSize());
-		inventoryContainerSlot = Cast<UCanvasPanelSlot>(itemContainer->Slot);
-		if (inventoryContainerSlot != nullptr)
-			inventoryContainerSlot->SetSize(FVector2D(UMGPublicProperites::BASIC_INVENTORY_GRID_WIDTH, UMGPublicProperites::BASIC_INVENTORY_GRID_HEIGHT) * ownerPlayerCharacter->inventory->backpack->GetBackpackSize());
-	}
+	itemContainerRect.Left = itemContainerSlot->GetPosition().X;
+	itemContainerRect.Top = itemContainerSlot->GetPosition().Y;
+	itemContainerRect.Right = itemContainerRect.Left + itemContainerSlot->GetSize().X;
+	itemContainerRect.Bottom = itemContainerRect.Top + itemContainerSlot->GetSize().Y;
 
+	primaryWeaponContainerRect.Left = primaryWeaponContainerSlot->GetPosition().X;
+	primaryWeaponContainerRect.Top = primaryWeaponContainerSlot->GetPosition().Y;
+	primaryWeaponContainerRect.Right = primaryWeaponContainerRect.Left + primaryWeaponContainerSlot->GetSize().X;
+	primaryWeaponContainerRect.Bottom = primaryWeaponContainerRect.Top + primaryWeaponContainerSlot->GetSize().Y;
+
+	UE_LOG(LogTemp, Warning, TEXT("primaryWeaponContainerRect : %s"), *primaryWeaponContainerRect.ToString());
+
+	secondaryWeaponContainerRect.Left = secondaryWeaponContainerSlot->GetPosition().X;
+	secondaryWeaponContainerRect.Top = secondaryWeaponContainerSlot->GetPosition().Y;
+	secondaryWeaponContainerRect.Right = secondaryWeaponContainerRect.Left + secondaryWeaponContainerSlot->GetSize().X;
+	secondaryWeaponContainerRect.Bottom = secondaryWeaponContainerRect.Top + secondaryWeaponContainerSlot->GetSize().Y;
+
+	UE_LOG(LogTemp, Warning, TEXT("secondaryWeaponContainerRect : %s"), *secondaryWeaponContainerRect.ToString());
 }
 
 void AFPPlayerController::OpenInventory()
@@ -249,6 +269,20 @@ void AFPPlayerController::AddPrimary(TSubclassOf<ABaseGun> pWeaponClass, UItemWe
 	{
 		ownerPlayerCharacter->AddPrimary(pWeaponClass, pItemWeapon);
 	}
+
+	for (int i = 0; i < items.Num(); i++)
+	{
+		if (items[i]->itemInfo == (UItemInfo*)pItemWeapon) // 레퍼런스 찾기 용이니 임시직으로 변환해서 넣는것 TODO:만약에 예상과 결과가 다르면 int로 변환해서 넣는 방법도 고려해볼것
+		{
+			UE_LOG(LogTemp, Warning, TEXT("AddPrimary"));
+			UCanvasPanelSlot* panelSlot = Cast<UCanvasPanelSlot>(items[i]->Slot);
+			panelSlot->SetPosition(primaryWeaponContainerSlot->GetPosition());
+			itemContainer->RemoveChild(items[i]);
+			items[i]->Slot = Cast<UCanvasPanelSlot>(primaryWeaponContainer->AddChild(items[i]));
+			panelSlot = Cast<UCanvasPanelSlot>(items[i]->Slot);
+			panelSlot->SetSize(primaryWeaponContainerSlot->GetSize());
+		}
+	}
 }
 
 void AFPPlayerController::AddSecondary(TSubclassOf<ABaseGun> pWeaponClass, UItemWeapon* pItemWeapon)
@@ -259,6 +293,20 @@ void AFPPlayerController::AddSecondary(TSubclassOf<ABaseGun> pWeaponClass, UItem
 	if (ownerPlayerCharacter != nullptr)
 	{
 		ownerPlayerCharacter->AddSecondary(pWeaponClass, pItemWeapon);
+	}
+
+	for (int i = 0; i < items.Num(); i++)
+	{
+		if (items[i]->itemInfo == (UItemInfo*)pItemWeapon) // 레퍼런스 찾기 용이니 임시직으로 변환해서 넣는것 TODO:만약에 예상과 결과가 다르면 int로 변환해서 넣는 방법도 고려해볼것
+		{
+			UE_LOG(LogTemp, Warning, TEXT("AddSecondary"));
+			UCanvasPanelSlot* panelSlot = Cast<UCanvasPanelSlot>(items[i]->Slot);
+			panelSlot->SetPosition(secondaryWeaponContainerSlot->GetPosition());
+			itemContainer->RemoveChild(items[i]);
+			items[i]->Slot = Cast<UCanvasPanelSlot>(secondaryWeaponContainer->AddChild(items[i]));
+			panelSlot = Cast<UCanvasPanelSlot>(items[i]->Slot);
+			panelSlot->SetSize(secondaryWeaponContainerSlot->GetSize());
+		}
 	}
 }
 

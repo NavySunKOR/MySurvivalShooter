@@ -11,13 +11,18 @@
 /**
  * 
  */
+
+class UItemWeapon;
+
 UCLASS(Blueprintable, BlueprintType)
 class TARKOVCOPY_API UInventory : public UObject
 {
 	GENERATED_BODY()
+private :
+	UItemWeapon* primaryWeapon = nullptr;
+	UItemWeapon* secondaryWeapon = nullptr;
+
 public:
-	ABaseGun* primaryWeapon = nullptr;
-	ABaseGun* secondaryWeapon = nullptr;
 
 	APlayerCharacter* inventoryOwner = nullptr;
 	UPROPERTY(EditAnywhere)
@@ -47,6 +52,9 @@ public:
 
 	void UsePrimaryWeaponAmmo(int pUseAmmo, FString pWeaponClassName);
 	void UseSecondaryWeaponAmmo(int pUseAmmo, FString pWeaponClassName);
+
+	void SetPrimaryWeaponItem(UItemWeapon* pItemWeapon);
+	void SetSecondaryWeaponItem(UItemWeapon* pItemWeapon);
 
 	void UpdateAndCleanupBackpack();
 

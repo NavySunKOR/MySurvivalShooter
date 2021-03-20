@@ -51,7 +51,8 @@ bool UInventory::UseItem(UItemInfo* pItem)
 
 bool UInventory::DropItem(UItemInfo* pItem)
 {
-	if (backpack->HasItem(pItem))
+	//TODO:Primary Weapon, Secondary Weapon 을 버리는걸 별도로 처리 할 듯
+	if (backpack->HasItem(pItem)) 
 	{
 		APickableItem* picks = inventoryOwner->GetWorld()->SpawnActor<APickableItem>(pItem->meshToDrop); //TODO:나중에 SETVisibleOff했던 아이템을 자리로 스폰하고 visible을 킬것
 		picks->itemInfo = pItem; // 이미 먹었던 아이템을 다시 토해내는것이므로 완전 새로운 스폰이 아니고 일정 정보는 가지고 가야한다.
@@ -123,6 +124,18 @@ void UInventory::UsePrimaryWeaponAmmo(int pUseAmmo, FString pWeaponClassName)
 void UInventory::UseSecondaryWeaponAmmo(int pUseAmmo, FString pWeaponClassName)
 {
 	backpack->UseSecondaryWeaponAmmo(pUseAmmo, pWeaponClassName);
+}
+
+void UInventory::SetPrimaryWeaponItem(UItemWeapon* pItemWeapon)
+{
+	primaryWeapon = pItemWeapon;
+	RemoveItem((UItemInfo*)pItemWeapon);
+}
+
+void UInventory::SetSecondaryWeaponItem(UItemWeapon* pItemWeapon)
+{
+	secondaryWeapon = pItemWeapon;
+	RemoveItem((UItemInfo*)pItemWeapon);
 }
 
 void UInventory::UpdateAndCleanupBackpack()

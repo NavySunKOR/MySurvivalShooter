@@ -22,6 +22,7 @@ class TARKOVCOPY_API UItemIcon : public UUserWidget
 
 private:
 	bool isDragged;
+	void AdjustPositionRectForItemContainer(FSlateRect& positionIntRect, FSlateRect itemContainerIntRect);
 	
 public:
 	UPROPERTY()

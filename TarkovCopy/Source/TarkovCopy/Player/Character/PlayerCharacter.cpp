@@ -257,6 +257,7 @@ void APlayerCharacter::AddPrimary(TSubclassOf<ABaseGun> pWeaponOrigin, UItemWeap
 		primaryWeapon->SetOwner(this);
 		primaryWeapon->weaponOwnerCharacter = this;
 	}
+	inventory->SetPrimaryWeaponItem(pItemWeapon);
 	EquipPrimary();
 }
 
@@ -269,11 +270,12 @@ void APlayerCharacter::AddSecondary(TSubclassOf<ABaseGun> pWeaponOrigin, UItemWe
 	{
 		secondaryWeapon->SetInfo(pItemWeapon);
 		secondaryWeapon->SetParentMeshFPP(GetMesh());
-		secondaryWeapon->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
+		secondaryWeapon->AttachToActor(this, FAttachmentTransformRules::SnapToTargetIncludingScale);
 		secondaryWeapon->SetOwner(this);
 		secondaryWeapon->weaponOwnerCharacter = this;
 	}
 
+	inventory->SetSecondaryWeaponItem(pItemWeapon);
 	EquipSecondary();
 }
 

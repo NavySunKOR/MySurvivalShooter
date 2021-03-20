@@ -10,6 +10,15 @@
 /**
  * 
  */
+
+
+UENUM()
+enum class WeaponType :uint8
+{
+	PRIMARY UMETA(DisplayName = "Primary"),
+	SECONDARY UMETA(DisplayName = "Secondary")
+};
+
 UCLASS()
 class TARKOVCOPY_API UItemWeapon : public UItemInfo
 {
@@ -22,5 +31,7 @@ public:
 	int currentMagazineAmmo;
 	UPROPERTY(EditAnywhere)
 	int maxMagazineAmmo;
+	UPROPERTY(EditAnywhere)
+	WeaponType weaponType;
 	
 };

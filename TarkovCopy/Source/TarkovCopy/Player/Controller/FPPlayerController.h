@@ -71,6 +71,18 @@ private:
 	UUserWidget* inventory;
 	UPROPERTY()
 	UCanvasPanel* itemContainer;
+	UPROPERTY()
+	UCanvasPanelSlot* itemContainerSlot;
+	UPROPERTY()
+	UCanvasPanelSlot* primaryWeaponContainerSlot;
+	UPROPERTY()
+	UCanvasPanelSlot* secondaryWeaponContainerSlot;
+
+
+	UPROPERTY()
+	UCanvasPanel* primaryWeaponContainer;
+	UPROPERTY()
+	UCanvasPanel* secondaryWeaponContainer;
 
 	UPROPERTY()
 	UVerticalBox* itemDetailPanel;
@@ -109,9 +121,9 @@ private:
 	
 public:
 	bool isInventoryOpened= false;
-	UPROPERTY()
-	UCanvasPanelSlot* inventoryContainerSlot;
-
+	FSlateRect itemContainerRect;
+	FSlateRect primaryWeaponContainerRect;
+	FSlateRect secondaryWeaponContainerRect;
 
 	void InitInvenotry();
 	void OpenCloseInventory();
