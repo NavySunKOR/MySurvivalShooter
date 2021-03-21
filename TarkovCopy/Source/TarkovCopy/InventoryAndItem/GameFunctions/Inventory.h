@@ -21,17 +21,17 @@ class TARKOVCOPY_API UInventory : public UObject
 private :
 	UItemWeapon* primaryWeapon = nullptr;
 	UItemWeapon* secondaryWeapon = nullptr;
+	UPROPERTY()
+	UBackpack* backpack = nullptr;
 
 public:
 
 	APlayerCharacter* inventoryOwner = nullptr;
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UBackpack> backpackType;
-	UPROPERTY()
-	UBackpack* backpack = nullptr;
 
 	void Init(APlayerCharacter* pPlayer);
-	bool AddItemToInventory(UItemInfo* item);
+	bool AddNewItemToInventory(UItemInfo* item);
 	bool UseItem(UItemInfo* pItem);
 	bool DropItem(UItemInfo* pItem);
 	void RemoveItem(UItemInfo* pItem);

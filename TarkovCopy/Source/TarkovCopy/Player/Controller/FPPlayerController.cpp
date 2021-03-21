@@ -17,35 +17,35 @@ void AFPPlayerController::BeginPlay()
 {
 	bShowMouseCursor = false;
 
-	healthHud = CreateWidget<UUserWidget>(this, healthHudWidget);
-	healthHud->AddToViewport();
-	healthHudBg = healthHud->GetWidgetFromName(TEXT("Splash"));
+	healthHudUI = CreateWidget<UUserWidget>(this, healthHudWidget);
+	healthHudUI->AddToViewport();
+	healthHudBgUI = healthHudUI->GetWidgetFromName(TEXT("Splash"));
 
-	crosshair = CreateWidget<UUserWidget>(this, crosshairWidget);
-	crosshair->AddToViewport();
+	crosshairUI = CreateWidget<UUserWidget>(this, crosshairWidget);
+	crosshairUI->AddToViewport();
 	
-	alertHud = CreateWidget<UUserWidget>(this, alertHudWidget);
-	alertHud->AddToViewport();
+	alertHudUI = CreateWidget<UUserWidget>(this, alertHudWidget);
+	alertHudUI->AddToViewport();
 
-	exfilAlert = CreateWidget<UUserWidget>(this, exfilAlertWidget);
-	exfilAlert->AddToViewport();
+	exfilAlertUI = CreateWidget<UUserWidget>(this, exfilAlertWidget);
+	exfilAlertUI->AddToViewport();
 
-	youreDead = CreateWidget<UUserWidget>(this, youreDeadWidget);
-	youreDead->AddToViewport(2);
+	youreDeadUI = CreateWidget<UUserWidget>(this, youreDeadWidget);
+	youreDeadUI->AddToViewport(2);
 
-	youveEscaped = CreateWidget<UUserWidget>(this, youveEscapedWidget);
-	youveEscaped->AddToViewport(2);
+	youveEscapedUI = CreateWidget<UUserWidget>(this, youveEscapedWidget);
+	youveEscapedUI->AddToViewport(2);
 
 
-	alertHud->SetVisibility(ESlateVisibility::Hidden);
-	exfilAlert->SetVisibility(ESlateVisibility::Hidden);
-	youveEscaped->SetVisibility(ESlateVisibility::Hidden);
-	youreDead->SetVisibility(ESlateVisibility::Hidden);
+	alertHudUI->SetVisibility(ESlateVisibility::Hidden);
+	exfilAlertUI->SetVisibility(ESlateVisibility::Hidden);
+	youveEscapedUI->SetVisibility(ESlateVisibility::Hidden);
+	youreDeadUI->SetVisibility(ESlateVisibility::Hidden);
 
-	alertType = Cast<UTextBlock>(alertHud->GetWidgetFromName(TEXT("AlertType")));
-	missionObject = Cast<UTextBlock>(alertHud->GetWidgetFromName(TEXT("Object")));
-	range = Cast<UTextBlock>(alertHud->GetWidgetFromName(TEXT("Range")));
-	exfilTimer = Cast<UTextBlock>(exfilAlert->GetWidgetFromName(TEXT("ExfilTimer")));
+	alertTypeText = Cast<UTextBlock>(alertHudUI->GetWidgetFromName(TEXT("AlertType")));
+	missionObjectText = Cast<UTextBlock>(alertHudUI->GetWidgetFromName(TEXT("Object")));
+	rangeText = Cast<UTextBlock>(alertHudUI->GetWidgetFromName(TEXT("Range")));
+	exfilTimerText = Cast<UTextBlock>(exfilAlertUI->GetWidgetFromName(TEXT("ExfilTimer")));
 	
 	gameMode = GetWorld()->GetAuthGameMode<AEscapeGameMode>();
 	if(gameMode)
@@ -59,7 +59,7 @@ void AFPPlayerController::PlayerTick(float DeltaTime)
 	if (isExfiling)
 	{
 		exfilCounter += DeltaTime;
-		exfilTimer->SetText(FText::FromString(FString::FormatAsNumber(timeToExfil - exfilCounter)));
+		exfilTimerText->SetText(FText::FromString(FString::FormatAsNumber(timeToExfil - exfilCounter)));
 		if ((timeToExfil - exfilCounter) <= 0.f)
 		{
 			ExfilingComplete();
@@ -72,40 +72,40 @@ void AFPPlayerController::InitInvenotry()
 	if (ownerPlayerCharacter == nullptr)
 		ownerPlayerCharacter = Cast<APlayerCharacter>(GetPawn());
 
-	if (inventory)
+	if (inventoryUI)
 	{
-		inventory->RemoveFromViewport();
-		inventory = nullptr;
+		inventoryUI->RemoveFromViewport();
+		inventoryUI = nullptr;
 	}
 
-	inventory = CreateWidget<UUserWidget>(this, inventoryWidget);
-	itemDetailPanel = Cast<UVerticalBox>(inventory->GetWidgetFromName(TEXT("DetailPanel")));
-	itemContainer = Cast<UCanvasPanel>(inventory->GetWidgetFromName(TEXT("ItemContainer")));
-	primaryWeaponContainer = Cast<UCanvasPanel>(inventory->GetWidgetFromName(TEXT("PrimaryWeaponContainer")));
-	secondaryWeaponContainer = Cast<UCanvasPanel>(inventory->GetWidgetFromName(TEXT("SecondaryWeaponContainer")));
+	inventoryUI = CreateWidget<UUserWidget>(this, inventoryWidget);
+	itemDetailPanel = Cast<UVerticalBox>(inventoryUI->GetWidgetFromName(TEXT("DetailPanel")));
+	itemContainerUI = Cast<UCanvasPanel>(inventoryUI->GetWidgetFromName(TEXT("ItemContainer")));
+	primaryWeaponContainerUI = Cast<UCanvasPanel>(inventoryUI->GetWidgetFromName(TEXT("PrimaryWeaponContainer")));
+	secondaryWeaponContainerUI = Cast<UCanvasPanel>(inventoryUI->GetWidgetFromName(TEXT("SecondaryWeaponContainer")));
 	
-	itemContainerSlot = Cast<UCanvasPanelSlot>(itemContainer->Slot);
-	primaryWeaponContainerSlot = Cast<UCanvasPanelSlot>(primaryWeaponContainer->Slot);
-	secondaryWeaponContainerSlot = Cast<UCanvasPanelSlot>(secondaryWeaponContainer->Slot);
+	itemContainerUISlot = Cast<UCanvasPanelSlot>(itemContainerUI->Slot);
+	primaryWeaponContainerUISlot = Cast<UCanvasPanelSlot>(primaryWeaponContainerUI->Slot);
+	secondaryWeaponContainerUISlot = Cast<UCanvasPanelSlot>(secondaryWeaponContainerUI->Slot);
 	
-	itemContainerSlot->SetSize(FVector2D(UMGPublicProperites::BASIC_INVENTORY_GRID_WIDTH, UMGPublicProperites::BASIC_INVENTORY_GRID_HEIGHT) * ownerPlayerCharacter->inventory->backpack->GetBackpackSize());
+	itemContainerUISlot->SetSize(FVector2D(UMGPublicProperites::BASIC_INVENTORY_GRID_WIDTH, UMGPublicProperites::BASIC_INVENTORY_GRID_HEIGHT) * ownerPlayerCharacter->inventory->GetBackpack()->GetBackpackSize());
 
-	itemContainerRect.Left = itemContainerSlot->GetPosition().X;
-	itemContainerRect.Top = itemContainerSlot->GetPosition().Y;
-	itemContainerRect.Right = itemContainerRect.Left + itemContainerSlot->GetSize().X;
-	itemContainerRect.Bottom = itemContainerRect.Top + itemContainerSlot->GetSize().Y;
+	itemContainerRect.Left = itemContainerUISlot->GetPosition().X;
+	itemContainerRect.Top = itemContainerUISlot->GetPosition().Y;
+	itemContainerRect.Right = itemContainerRect.Left + itemContainerUISlot->GetSize().X;
+	itemContainerRect.Bottom = itemContainerRect.Top + itemContainerUISlot->GetSize().Y;
 
-	primaryWeaponContainerRect.Left = primaryWeaponContainerSlot->GetPosition().X;
-	primaryWeaponContainerRect.Top = primaryWeaponContainerSlot->GetPosition().Y;
-	primaryWeaponContainerRect.Right = primaryWeaponContainerRect.Left + primaryWeaponContainerSlot->GetSize().X;
-	primaryWeaponContainerRect.Bottom = primaryWeaponContainerRect.Top + primaryWeaponContainerSlot->GetSize().Y;
+	primaryWeaponContainerRect.Left = primaryWeaponContainerUISlot->GetPosition().X;
+	primaryWeaponContainerRect.Top = primaryWeaponContainerUISlot->GetPosition().Y;
+	primaryWeaponContainerRect.Right = primaryWeaponContainerRect.Left + primaryWeaponContainerUISlot->GetSize().X;
+	primaryWeaponContainerRect.Bottom = primaryWeaponContainerRect.Top + primaryWeaponContainerUISlot->GetSize().Y;
 
 	UE_LOG(LogTemp, Warning, TEXT("primaryWeaponContainerRect : %s"), *primaryWeaponContainerRect.ToString());
 
-	secondaryWeaponContainerRect.Left = secondaryWeaponContainerSlot->GetPosition().X;
-	secondaryWeaponContainerRect.Top = secondaryWeaponContainerSlot->GetPosition().Y;
-	secondaryWeaponContainerRect.Right = secondaryWeaponContainerRect.Left + secondaryWeaponContainerSlot->GetSize().X;
-	secondaryWeaponContainerRect.Bottom = secondaryWeaponContainerRect.Top + secondaryWeaponContainerSlot->GetSize().Y;
+	secondaryWeaponContainerRect.Left = secondaryWeaponContainerUISlot->GetPosition().X;
+	secondaryWeaponContainerRect.Top = secondaryWeaponContainerUISlot->GetPosition().Y;
+	secondaryWeaponContainerRect.Right = secondaryWeaponContainerRect.Left + secondaryWeaponContainerUISlot->GetSize().X;
+	secondaryWeaponContainerRect.Bottom = secondaryWeaponContainerRect.Top + secondaryWeaponContainerUISlot->GetSize().Y;
 
 	UE_LOG(LogTemp, Warning, TEXT("secondaryWeaponContainerRect : %s"), *secondaryWeaponContainerRect.ToString());
 }
@@ -113,7 +113,7 @@ void AFPPlayerController::InitInvenotry()
 void AFPPlayerController::OpenInventory()
 {
 	//오픈,클로즈 두개를 아예 별도로 써야되는 상황 떄문에 어쩔수 없이 openclose에서는 두번 체크함
-	if (!inventory->IsInViewport())
+	if (!inventoryUI->IsInViewport())
 	{
 		bShowMouseCursor = true;
 		bEnableClickEvents = true;
@@ -121,8 +121,8 @@ void AFPPlayerController::OpenInventory()
 		isInventoryOpened = true;
 		SetIgnoreLookInput(true);
 		SetIgnoreMoveInput(true);
-		crosshair->SetVisibility(ESlateVisibility::Hidden);
-		inventory->AddToViewport();
+		crosshairUI->SetVisibility(ESlateVisibility::Hidden);
+		inventoryUI->AddToViewport();
 		itemDetailPanel->SetVisibility(ESlateVisibility::Hidden);
 	}
 }
@@ -130,7 +130,7 @@ void AFPPlayerController::OpenInventory()
 void AFPPlayerController::CloseInventory()
 {
 	//오픈,클로즈 두개를 아예 별도로 써야되는 상황 떄문에 어쩔수 없이 openclose함수에서는 두번 체크함
-	if (inventory->IsInViewport())
+	if (inventoryUI->IsInViewport())
 	{
 		bShowMouseCursor = false;
 		bEnableClickEvents = false;
@@ -139,8 +139,8 @@ void AFPPlayerController::CloseInventory()
 		SetIgnoreMoveInput(false);
 		isInventoryOpened = false;
 
-		crosshair->SetVisibility(ESlateVisibility::Visible);
-		inventory->RemoveFromViewport();
+		crosshairUI->SetVisibility(ESlateVisibility::Visible);
+		inventoryUI->RemoveFromViewport();
 		itemDetailPanel->SetVisibility(ESlateVisibility::Hidden);
 	}
 }
@@ -148,7 +148,7 @@ void AFPPlayerController::CloseInventory()
 void AFPPlayerController::OpenCloseInventory()
 {
 	//오픈,클로즈 두 개를 아예 별도로 써야되는 상황이 존재하여, 어쩔수 없이 openclose함수에서는 두번 체크함
-	if (inventory->IsInViewport())
+	if (inventoryUI->IsInViewport())
 	{
 		CloseInventory();
 	}
@@ -172,13 +172,13 @@ void AFPPlayerController::OpenItemDetailPanel(UItemIcon* pItemIcon)
 
 void AFPPlayerController::AddItem(UItemInfo* itemInfo, UInventory* pInvenRef)
 {
-	if (inventory == nullptr || inventory->WidgetTree == nullptr || iconWidget == nullptr)
+	if (inventoryUI == nullptr || inventoryUI->WidgetTree == nullptr || iconWidget == nullptr)
 	{
 		return;
 	}
 
-	UItemIcon* uiItem = inventory->WidgetTree->ConstructWidget<UItemIcon>(iconWidget); //TODO:WidgetTree가 계속 널이 되는 경우가 있는데 이 문제를 해결해야됨.
-	UCanvasPanelSlot* panelSlotForItem = Cast<UCanvasPanelSlot>(itemContainer->AddChild(uiItem));
+	UItemIcon* uiItem = inventoryUI->WidgetTree->ConstructWidget<UItemIcon>(iconWidget); //TODO:WidgetTree가 계속 널이 되는 경우가 있는데 이 문제를 해결해야됨.
+	UCanvasPanelSlot* panelSlotForItem = Cast<UCanvasPanelSlot>(itemContainerUI->AddChild(uiItem));
 	uiItem->Slot = panelSlotForItem;
 	uiItem->Init(itemInfo, pInvenRef, this);
 	items.Add(uiItem);
@@ -187,12 +187,12 @@ void AFPPlayerController::AddItem(UItemInfo* itemInfo, UInventory* pInvenRef)
 //TODO:RemoveItemUI로 변경
 void AFPPlayerController::DropItem(UItemIcon* pItemIcon)
 {
-	itemContainer->RemoveChild(pItemIcon);
+	itemContainerUI->RemoveChild(pItemIcon);
 	//
 	if (!ownerPlayerCharacter->inventory->HasItem(pItemIcon->itemInfo))
 	{
-		primaryWeaponContainer->RemoveChild(pItemIcon);
-		secondaryWeaponContainer->RemoveChild(pItemIcon);
+		primaryWeaponContainerUI->RemoveChild(pItemIcon);
+		secondaryWeaponContainerUI->RemoveChild(pItemIcon);
 	}
 	UE_LOG(LogTemp,Warning,TEXT("IsDropping"))
 	items.Remove(pItemIcon);
@@ -253,20 +253,20 @@ void AFPPlayerController::MoveItemTo(UItemInfo* pItemInfo, FSlateRect pIntSlateR
 				((int)pIntSlateRect.Left * UMGPublicProperites::BASIC_INVENTORY_GRID_WIDTH), ((int)pIntSlateRect.Top * UMGPublicProperites::BASIC_INVENTORY_GRID_HEIGHT)
 			);
 			
-			if (itemContainer->HasChild(items[i]))
+			if (itemContainerUI->HasChild(items[i]))
 			{
 				UCanvasPanelSlot* panelSlot = Cast<UCanvasPanelSlot>(items[i]->Slot);
 				panelSlot->SetPosition(position);
 			}
 			else
 			{
-				if (primaryWeaponContainer->HasChild(items[i]))
-					primaryWeaponContainer->RemoveChild(items[i]);
+				if (primaryWeaponContainerUI->HasChild(items[i]))
+					primaryWeaponContainerUI->RemoveChild(items[i]);
 
-				if (secondaryWeaponContainer->HasChild(items[i]))
-					secondaryWeaponContainer->RemoveChild(items[i]);
+				if (secondaryWeaponContainerUI->HasChild(items[i]))
+					secondaryWeaponContainerUI->RemoveChild(items[i]);
 
-				items[i]->Slot = Cast<UCanvasPanelSlot>(itemContainer->AddChild(items[i]));
+				items[i]->Slot = Cast<UCanvasPanelSlot>(itemContainerUI->AddChild(items[i]));
 
 				UCanvasPanelSlot* panelSlot = Cast<UCanvasPanelSlot>(items[i]->Slot);
 				panelSlot->SetPosition(position);
@@ -332,19 +332,20 @@ void AFPPlayerController::AddPrimary(TSubclassOf<ABaseGun> pWeaponClass, UItemWe
 		ownerPlayerCharacter->AddPrimary(pWeaponClass, pItemWeapon);
 	}
 
+	//AddPrimary UI 업데이트 -> 위치를 itemInfo 기반으로 옮기지 않는 별도 예외
 	for (int i = 0; i < items.Num(); i++)
 	{
 		if (items[i]->itemInfo == (UItemInfo*)pItemWeapon) // 레퍼런스 찾기 용이니 임시직으로 변환해서 넣는것 TODO:만약에 예상과 결과가 다르면 int로 변환해서 넣는 방법도 고려해볼것
 		{
 			UE_LOG(LogTemp, Warning, TEXT("AddPrimary"));
 			UCanvasPanelSlot* panelSlot = Cast<UCanvasPanelSlot>(items[i]->Slot);
-			panelSlot->SetPosition(primaryWeaponContainerSlot->GetPosition());
+			panelSlot->SetPosition(primaryWeaponContainerUISlot->GetPosition());
 
-			itemContainer->RemoveChild(items[i]);
-			items[i]->Slot = Cast<UCanvasPanelSlot>(primaryWeaponContainer->AddChild(items[i]));
+			itemContainerUI->RemoveChild(items[i]);
+			items[i]->Slot = Cast<UCanvasPanelSlot>(primaryWeaponContainerUI->AddChild(items[i]));
 			panelSlot = Cast<UCanvasPanelSlot>(items[i]->Slot);
 
-			panelSlot->SetSize(primaryWeaponContainerSlot->GetSize());
+			panelSlot->SetSize(primaryWeaponContainerUISlot->GetSize());
 		}
 	}
 }
@@ -359,31 +360,32 @@ void AFPPlayerController::AddSecondary(TSubclassOf<ABaseGun> pWeaponClass, UItem
 		ownerPlayerCharacter->AddSecondary(pWeaponClass, pItemWeapon);
 	}
 
+	//AddSecondary UI 업데이트 -> 위치를 itemInfo 기반으로 옮기지 않는 별도 예외
 	for (int i = 0; i < items.Num(); i++)
 	{
 		if (items[i]->itemInfo == (UItemInfo*)pItemWeapon) // 레퍼런스 찾기 용이니 임시직으로 변환해서 넣는것 TODO:만약에 예상과 결과가 다르면 int로 변환해서 넣는 방법도 고려해볼것
 		{
 			UE_LOG(LogTemp, Warning, TEXT("AddSecondary"));
 			UCanvasPanelSlot* panelSlot = Cast<UCanvasPanelSlot>(items[i]->Slot);
-			panelSlot->SetPosition(secondaryWeaponContainerSlot->GetPosition());
+			panelSlot->SetPosition(secondaryWeaponContainerUISlot->GetPosition());
 
-			itemContainer->RemoveChild(items[i]);
-			items[i]->Slot = Cast<UCanvasPanelSlot>(secondaryWeaponContainer->AddChild(items[i]));
+			itemContainerUI->RemoveChild(items[i]);
+			items[i]->Slot = Cast<UCanvasPanelSlot>(secondaryWeaponContainerUI->AddChild(items[i]));
 
 			panelSlot = Cast<UCanvasPanelSlot>(items[i]->Slot);
-			panelSlot->SetSize(secondaryWeaponContainerSlot->GetSize());
+			panelSlot->SetSize(secondaryWeaponContainerUISlot->GetSize());
 		}
 	}
 }
 
 void AFPPlayerController::SetADS()
 {
-	crosshair->SetVisibility(ESlateVisibility::Hidden);
+	crosshairUI->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void AFPPlayerController::SetHipfire()
 {
-	crosshair->SetVisibility(ESlateVisibility::Visible);
+	crosshairUI->SetVisibility(ESlateVisibility::Visible);
 }
 
 
@@ -426,7 +428,7 @@ void AFPPlayerController::UpdateHealthHud(float pCurHealth)
 	float opacityAmount = 1.f - pCurHealth / 100.f;
 	if (opacityAmount < 0.2f)
 		opacityAmount = 0.2f;
-	healthHudBg->SetRenderOpacity(opacityAmount);
+	healthHudBgUI->SetRenderOpacity(opacityAmount);
 }
 
 void CleanupArray(TArray<UItemIcon*>& pItem)
@@ -451,7 +453,7 @@ void AFPPlayerController::UpdateInventoryUI()
 				items[i]->itemInfo->currentCapacity <= 0)
 			{
 				UE_LOG(LogTemp,Warning,TEXT("Update inven UI"))
-				itemContainer->RemoveChild(items[i]);
+				itemContainerUI->RemoveChild(items[i]);
 				items.RemoveAt(i);
 			}
 		}
@@ -460,8 +462,8 @@ void AFPPlayerController::UpdateInventoryUI()
 
 void AFPPlayerController::Dead()
 {
-	youreDead->SetVisibility(ESlateVisibility::Visible);
-	crosshair->SetVisibility(ESlateVisibility::Hidden);
+	youreDeadUI->SetVisibility(ESlateVisibility::Visible);
+	crosshairUI->SetVisibility(ESlateVisibility::Hidden);
 	CloseInventory();
 	if(gameMode)
 	gameMode->PlayerDied();//메인화면으로 가는거 넣을것.
@@ -469,16 +471,16 @@ void AFPPlayerController::Dead()
 
 void AFPPlayerController::ShowQuestInfo(FString itemName, float distance)
 {
-	alertHud->SetVisibility(ESlateVisibility::Visible);
-	alertType->SetText(FText::FromString("Quest"));
+	alertHudUI->SetVisibility(ESlateVisibility::Visible);
+	alertTypeText->SetText(FText::FromString("Quest"));
 
 	FString objectMessage = "Get the ";
 	objectMessage.Append(itemName);
-	missionObject->SetText(FText::FromString(objectMessage));
+	missionObjectText->SetText(FText::FromString(objectMessage));
 
-	FString rangeText = FString::FormatAsNumber((int)distance);
-	rangeText.Append("m");
-	range->SetText(FText::FromString(rangeText));
+	FString rangeString = FString::FormatAsNumber((int)distance);
+	rangeString.Append("m");
+	rangeText->SetText(FText::FromString(rangeString));
 
 	FTimerHandle timers;
 	GetWorldTimerManager().SetTimer(timers,this,&AFPPlayerController::CloseAlert, 3.f, false);
@@ -486,17 +488,17 @@ void AFPPlayerController::ShowQuestInfo(FString itemName, float distance)
 
 void AFPPlayerController::ShowExfilPoints(FString exfilPointsName, float distance)
 {
-	alertHud->SetVisibility(ESlateVisibility::Visible);
+	alertHudUI->SetVisibility(ESlateVisibility::Visible);
 
-	alertType->SetText(FText::FromString("Exfil"));
+	alertTypeText->SetText(FText::FromString("Exfil"));
 
 	FString objectMessage = "Get to the ";
 	objectMessage.Append(exfilPointsName);
-	missionObject->SetText(FText::FromString(objectMessage));
+	missionObjectText->SetText(FText::FromString(objectMessage));
 
-	FString rangeText = FString::FormatAsNumber((int)distance);
-	rangeText.Append("m");
-	range->SetText(FText::FromString(rangeText));
+	FString rangeString = FString::FormatAsNumber((int)distance);
+	rangeString.Append("m");
+	rangeText->SetText(FText::FromString(rangeString));
 
 	FTimerHandle timers;
 	GetWorldTimerManager().SetTimer(timers, this, &AFPPlayerController::CloseAlert, 3.f, false);
@@ -514,15 +516,15 @@ void AFPPlayerController::Exfiling()
 	{
 		isExfiling = true;
 		exfilCounter = 0.f;
-		exfilAlert->SetVisibility(ESlateVisibility::Visible);
+		exfilAlertUI->SetVisibility(ESlateVisibility::Visible);
 	}
 }
 
 void AFPPlayerController::ExfilingComplete()
 {
 	isExfiling = false;
-	exfilAlert->SetVisibility(ESlateVisibility::Hidden);
-	youveEscaped->SetVisibility(ESlateVisibility::Visible);
+	exfilAlertUI->SetVisibility(ESlateVisibility::Hidden);
+	youveEscapedUI->SetVisibility(ESlateVisibility::Visible);
 	if(gameMode)
 		gameMode->ExfilCompleted();
 }
@@ -532,7 +534,7 @@ void AFPPlayerController::CancelExfiling()
 	if (isExfiling)
 	{
 		isExfiling = false;
-		exfilAlert->SetVisibility(ESlateVisibility::Hidden);
+		exfilAlertUI->SetVisibility(ESlateVisibility::Hidden);
 	}
 }
 
@@ -549,5 +551,5 @@ void AFPPlayerController::DiscardCurrentActiveItem()
 
 void AFPPlayerController::CloseAlert()
 {
-	alertHud->SetVisibility(ESlateVisibility::Hidden);
+	alertHudUI->SetVisibility(ESlateVisibility::Hidden);
 }

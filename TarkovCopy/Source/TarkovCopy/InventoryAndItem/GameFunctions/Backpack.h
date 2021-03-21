@@ -33,17 +33,18 @@ public:
 	int capacityHeight;
 
 	void Init();
+
 	bool HasEmptySpace(FSlateRect pIntSlateRect);
 	std::tuple<bool, int, int> HasEmptySpace(UItemInfo* pItemInfo);
-	bool IsIntersected(UItemInfo* pItemInfo);
+	bool IsIntersected(UItemInfo* pItemInfo) const ;
 	bool UseItem(UItemInfo* pItemInfo);//return : isEmpty;
-	bool AddItem(UItemInfo* pItemInfo, UInventory* pInventory);
-	void AddItemContainerArray(UItemInfo* pItemInfo);
+	bool AddNewItem(UItemInfo* pItemInfo, UInventory* pInventory);
+	void AddItemContainerArray(UItemInfo* pItemInfo); // 아이템 Array를 단순 컨테이너에만 다시 옮겨 담는 동작
+	void DeleteItem(UItemInfo* pItemInfo);
 	bool HasItem(UItemInfo* pItemInfo);
-	void RemoveItemPosition(UItemInfo* pItemInfo);
-	void MoveItemPosition(UItemInfo* pItemInfo);
-	void ActualRemoveItem(UItemInfo* pItemInfo);
 	void UpdateAndCleanupBackpack();
+	void MoveItemPosition(UItemInfo* pItemInfo);
+	void RemoveItemPosition(UItemInfo* pItemInfo);
 
 	int GetAllPrimaryWeaponAmmo(FString pWeaponClassName);
 	int GetAllSecondaryWeaponAmmo(FString pWeaponClassName);

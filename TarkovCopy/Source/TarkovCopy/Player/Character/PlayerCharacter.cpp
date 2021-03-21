@@ -200,7 +200,7 @@ void APlayerCharacter::TookDamage(float damage, FHitResult pHitParts)
 
 bool APlayerCharacter::PickupItem(UItemInfo* pItemInfo)
 {
-	bool isItemAdded = inventory->AddItemToInventory(pItemInfo);
+	bool isItemAdded = inventory->AddNewItemToInventory(pItemInfo);
 	if (isItemAdded && playerController != nullptr)
 	{
 		playerController->AddItem(pItemInfo,inventory);

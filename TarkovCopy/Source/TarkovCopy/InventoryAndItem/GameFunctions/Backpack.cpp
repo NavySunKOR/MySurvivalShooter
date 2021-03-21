@@ -252,12 +252,10 @@ void UBackpack::CleanupBackpack()
 std::tuple<bool, int, int> UBackpack::HasEmptySpace(UItemInfo* pItemInfo)
 {
 	return HasEmptySpaceWidthAxis(pItemInfo); //TODO: 나중에 아이템을 세로로 기준으로 추가 하게 할건지 정해줄것
-	//return HasEmptySpaceHeightAxis(pItemInfo);
-	//return std::tuple<bool, int, int>(false, -1, -1);
 }
 
 
-bool UBackpack::IsIntersected(UItemInfo* pItemInfo)
+bool UBackpack::IsIntersected(UItemInfo* pItemInfo) const
 {
 	for (int i = 0; i < itemContainers.Num(); i++)
 	{
@@ -282,7 +280,7 @@ bool UBackpack::UseItem(UItemInfo* pItemInfo)
 }
 
 //TODO:신규 아이템 등록으로 이름 바꿀것
-bool UBackpack::AddItem(UItemInfo* pItemInfo,UInventory* pInventory)
+bool UBackpack::AddNewItem(UItemInfo* pItemInfo,UInventory* pInventory)
 {
 	//TODO: 아이템 빈자리 찾아서 추가 
 	std::tuple<bool, int, int> results = HasEmptySpace(pItemInfo); //자리 여부 , 해당 아이템의 left,top
@@ -305,6 +303,14 @@ void UBackpack::AddItemContainerArray(UItemInfo* pItemInfo)
 	itemContainers.Add(pItemInfo);
 }
 
+
+void UBackpack::DeleteItem(UItemInfo* pItemInfo)
+{
+	RemoveInvenVisualize(pItemInfo);
+	itemContainers.Remove(pItemInfo);
+}
+
+
 bool UBackpack::HasItem(UItemInfo* pItemInfo)
 {
 	bool isItemContains = (GetItemReference(pItemInfo) != nullptr);
@@ -318,9 +324,9 @@ bool UBackpack::HasItem(UItemInfo* pItemInfo)
 	}
 }
 
-void UBackpack::RemoveItemPosition(UItemInfo* pItemInfo)
+void UBackpack::UpdateAndCleanupBackpack()
 {
-	RemoveInvenVisualize(pItemInfo);
+	CleanupBackpack();
 }
 
 void UBackpack::MoveItemPosition(UItemInfo* pItemInfo)
@@ -328,15 +334,9 @@ void UBackpack::MoveItemPosition(UItemInfo* pItemInfo)
 	UpdateInvenVisualize(pItemInfo);
 }
 
-void UBackpack::ActualRemoveItem(UItemInfo* pItemInfo)
+void UBackpack::RemoveItemPosition(UItemInfo* pItemInfo)
 {
 	RemoveInvenVisualize(pItemInfo);
-	itemContainers.Remove(pItemInfo);
-}
-
-void UBackpack::UpdateAndCleanupBackpack()
-{
-	CleanupBackpack();
 }
 
 int UBackpack::GetAllPrimaryWeaponAmmo(FString pWeaponName)

@@ -7,14 +7,12 @@
 
 void UInventory::Init(APlayerCharacter* pPlayer)
 {
-	GetWorld()->ForceGarbageCollection(true);
 	inventoryOwner = pPlayer;
 	if (backpack)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Huh????? %d"), backpack)
 		backpack->ConditionalBeginDestroy();
 		backpack = nullptr;
-		GetWorld()->ForceGarbageCollection(true);
 		backpack = backpackType->GetDefaultObject<UBackpack>();
 		backpack->Init();
 	}
@@ -25,9 +23,9 @@ void UInventory::Init(APlayerCharacter* pPlayer)
 	}
 }
 
-bool UInventory::AddItemToInventory(UItemInfo* item)
+bool UInventory::AddNewItemToInventory(UItemInfo* item)
 {
-	return backpack->AddItem(item,this);
+	return backpack->AddNewItem(item,this);
 }
 
 bool UInventory::UseItem(UItemInfo* pItem)
@@ -58,7 +56,7 @@ bool UInventory::DropItem(UItemInfo* pItem)
 		picks->itemInfo = pItem; // 이미 먹었던 아이템을 다시 토해내는것이므로 완전 새로운 스폰이 아니고 일정 정보는 가지고 가야한다.
 		picks->SetActorLocation(inventoryOwner->GetActorLocation() + inventoryOwner->GetActorUpVector() * 50.f + inventoryOwner->GetActorForwardVector() * 50.f);
 		if(backpack->HasItem(pItem))
-			backpack->ActualRemoveItem(pItem);
+			backpack->DeleteItem(pItem);
 		else if(primaryWeapon == (UItemWeapon*)pItem)
 			primaryWeapon = nullptr;
 		else
@@ -73,7 +71,7 @@ bool UInventory::DropItem(UItemInfo* pItem)
 
 void UInventory::RemoveItem(UItemInfo* pItem)
 {
-	backpack->ActualRemoveItem(pItem);
+	backpack->DeleteItem(pItem);
 }
 
 bool UInventory::HasItem(UItemInfo* pItem) const
