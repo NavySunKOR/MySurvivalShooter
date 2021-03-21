@@ -281,37 +281,29 @@ void APlayerCharacter::AddSecondary(TSubclassOf<ABaseGun> pWeaponOrigin, UItemWe
 
 void APlayerCharacter::RemovePrimary()
 {
-	if (currentActiveGun == primaryWeapon)
-	{
-		if(primaryWeapon)
-			primaryWeapon->Destroy();
-		if(currentActiveGun)
-			currentActiveGun->Destroy();
+	if (primaryWeapon == currentActiveGun)
 		currentActiveGun = nullptr;
-		primaryWeapon = nullptr;
+	if(primaryWeapon)
+		primaryWeapon->Destroy();
+	primaryWeapon = nullptr;
 
-		if (secondaryWeapon)
-		{
-			EquipSecondary();
-		}
+	if (secondaryWeapon)
+	{
+		EquipSecondary();
 	}
 }
 
 void APlayerCharacter::RemoveSecondary()
 {
-	if (currentActiveGun == secondaryWeapon)
-	{
-		if (secondaryWeapon)
-			secondaryWeapon->Destroy();
-		if (currentActiveGun)
-			currentActiveGun->Destroy();
+	if (secondaryWeapon == currentActiveGun)
 		currentActiveGun = nullptr;
-		secondaryWeapon = nullptr;
+	if (secondaryWeapon)
+		secondaryWeapon->Destroy();
+	secondaryWeapon = nullptr;
 
-		if (primaryWeapon)
-		{
-			EquipPrimary();
-		}
+	if (primaryWeapon)
+	{
+		EquipPrimary();
 	}
 }
 
