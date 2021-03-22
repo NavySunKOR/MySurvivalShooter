@@ -50,17 +50,22 @@ bool UInventory::UseItem(UItemInfo* pItem)
 bool UInventory::DropItem(UItemInfo* pItem)
 {
 	//TODO:Primary Weapon, Secondary Weapon 을 버리는걸 별도로 처리 할 듯
-	if (backpack->HasItem(pItem) || primaryWeapon == (UItemWeapon*)pItem || secondaryWeapon == (UItemWeapon*)pItem)
+	if (backpack->HasItem(pItem) || 
+		primaryWeapon == (UItemWeapon*)pItem || 
+		secondaryWeapon == (UItemWeapon*)pItem || 
+		itemHelmet == (UItemHelmet*)pItem)
 	{
 		APickableItem* picks = inventoryOwner->GetWorld()->SpawnActor<APickableItem>(pItem->meshToDrop); //TODO:나중에 SETVisibleOff했던 아이템을 자리로 스폰하고 visible을 킬것
 		picks->itemInfo = pItem; // 이미 먹었던 아이템을 다시 토해내는것이므로 완전 새로운 스폰이 아니고 일정 정보는 가지고 가야한다.
 		picks->SetActorLocation(inventoryOwner->GetActorLocation() + inventoryOwner->GetActorUpVector() * 50.f + inventoryOwner->GetActorForwardVector() * 50.f);
-		if(backpack->HasItem(pItem))
+		if (backpack->HasItem(pItem))
 			backpack->DeleteItem(pItem);
-		else if(primaryWeapon == (UItemWeapon*)pItem)
+		else if (primaryWeapon == (UItemWeapon*)pItem)
 			primaryWeapon = nullptr;
-		else
+		else if (secondaryWeapon == (UItemWeapon*)pItem)
 			secondaryWeapon = nullptr;
+		else
+			itemHelmet = nullptr;
 		return true;
 	}
 	else
@@ -76,7 +81,10 @@ void UInventory::RemoveItem(UItemInfo* pItem)
 
 bool UInventory::HasItem(UItemInfo* pItem) const
 {
-	return (backpack->HasItem(pItem) || primaryWeapon == (UItemWeapon*)pItem || secondaryWeapon == (UItemWeapon*)pItem);
+	return (backpack->HasItem(pItem) || 
+		primaryWeapon == (UItemWeapon*)pItem || 
+		secondaryWeapon == (UItemWeapon*)pItem ||
+		itemHelmet == (UItemHelmet*)pItem);
 }
 
 void UInventory::StartMoveItemPos(UItemInfo* pItemInfo)
@@ -104,6 +112,11 @@ void UInventory::MoveItemTo(UItemInfo* pItemInfo, FSlateRect pIntSlateRect)
 	else if (secondaryWeapon == (UItemWeapon*)pItemInfo)
 	{
 		secondaryWeapon = nullptr;
+		backpack->AddItemContainerArray(pItemInfo);
+	}
+	else if (itemHelmet == (UItemHelmet*)pItemInfo)
+	{
+		itemHelmet = nullptr;
 		backpack->AddItemContainerArray(pItemInfo);
 	}
 
@@ -154,6 +167,22 @@ void UInventory::SetSecondaryWeaponItem(UItemWeapon* pItemWeapon)
 {
 	secondaryWeapon = pItemWeapon;
 	RemoveItem((UItemInfo*)pItemWeapon);
+}
+
+void UInventory::EquipHelmet(UItemHelmet* pItemHelmet)
+{
+	itemHelmet = pItemHelmet;
+	RemoveItem((UItemInfo*)pItemHelmet);
+}
+
+void UInventory::UnequipHelmet()
+{
+	itemHelmet = nullptr;
+}
+
+UItemHelmet* UInventory::GetEquippedHelmet()
+{
+	return itemHelmet;
 }
 
 void UInventory::UpdateAndCleanupBackpack()

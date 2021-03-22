@@ -228,6 +228,15 @@ void UItemIcon::OnDropAction(FVector2D lastMousePosition)
 						controllerRef->RemoveSecondary();
 					}
 				}
+				else if (itemInfo->itemType == ItemType::ARMOR)
+				{
+					UItemHelmet* itemHelmet = (UItemHelmet*)itemInfo;
+					if (itemHelmet != nullptr)
+					{
+						controllerRef->RemoveHelmet(itemHelmet);
+					}
+				}
+
 			}
 		}
 		else
@@ -253,6 +262,16 @@ void UItemIcon::OnDropAction(FVector2D lastMousePosition)
 		if (weapon != nullptr && weapon->weaponType == WeaponType::SECONDARY)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("SeconCompleteo"))
+			UseItem();
+		}
+	}
+	else if (controllerRef->helmetContainerRect.ContainsPoint(lastMousePosition))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Helmet"))
+		UItemHelmet* helmet = Cast<UItemHelmet>(itemInfo);
+		if (helmet != nullptr)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("HelmetCompleteo"))
 			UseItem();
 		}
 	}

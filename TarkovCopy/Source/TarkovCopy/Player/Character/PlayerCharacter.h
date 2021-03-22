@@ -14,6 +14,7 @@
 #include "PlayerCharacter.generated.h"
 
 class USpringArmComponent;
+class UStaticMeshComponent;
 UCLASS()
 class TARKOVCOPY_API APlayerCharacter : public ACharacter
 {
@@ -36,6 +37,9 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	AFPPlayerController* playerController;
+	UStaticMeshComponent* helmetMesh;
+
+
 	bool isSprinting = false;
 	bool isCrouch = false;
 
@@ -54,6 +58,7 @@ protected:
 	void SetStanding();
 	void CheckCloseToWall();
 
+	//무기 관련
 	void EquipPrimary();
 	void EquipSecondary();
 	void FireWeapon();
@@ -114,17 +119,25 @@ public:
 	void TookDamage(float damage, FHitResult pHitParts);
 	void Tilting(float pValue);
 
-
+	//아이템 이동 관련
 	bool PickupItem(UItemInfo* pItemInfo);
 	void StartMoveItemPos(UItemInfo* pItemInfo);
 	bool CanItemMoveTo(FSlateRect pIntSlateRect);
 	void MoveItemTo(UItemInfo* pItemInfo, FSlateRect pIntSlateRect);
 	void FailedToMoveItemPos(UItemInfo* pItemInfo);
 
+	//무기 관련
+
 	void AddPrimary(TSubclassOf<ABaseGun> pWeaponOrigin,UItemWeapon* pItemWeapon);
 	void AddSecondary(TSubclassOf<ABaseGun> pWeaponOrigin, UItemWeapon* pItemWeapon);
 	void RemovePrimary();
 	void RemoveSecondary();
+
+	//방어구 관련
+
+	void AddHelmet(UItemHelmet* pHelmetInfo);
+	void RemoveHelmet(UItemHelmet* pHelmetInfo);
+
 
 //BlueprintPureOnly
 protected:

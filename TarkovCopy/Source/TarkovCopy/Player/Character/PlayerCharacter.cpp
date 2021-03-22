@@ -4,6 +4,7 @@
 #include <GameFramework/SpringArmComponent.h>
 #include "TarkovCopy/Interactable/InteractableObject.h"
 #include "TarkovCopy/Interactable/InteractableComponent.h"
+#include "TarkovCopy/InventoryAndItem/ItemInfos/ItemHelmet.h"
 #include "TarkovCopy/GameMode/TarkovCopyGameModeBase.h"
 #include "TarkovCopy/Player/Controller/FPPlayerController.h"
 
@@ -20,6 +21,7 @@ APlayerCharacter::APlayerCharacter()
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+	helmetMesh = Cast<UStaticMeshComponent>(GetDefaultSubobjectByName(TEXT("Helmet")));
 	gameMode =Cast<ATarkovCopyGameModeBase>(GetWorld()->GetAuthGameMode());
 	springArm = FindComponentByClass<USpringArmComponent>();
 	springArmOrigin = GetMesh()->GetRelativeLocation();
@@ -185,6 +187,13 @@ void APlayerCharacter::TookDamage(float damage, FHitResult pHitParts)
 	if (generated < 3) // 0,1,2 중 하나 걸리니까 30퍼센트 헤드샷
 	{
 		damage *= 2.5f;
+		if (inventory->GetEquippedHelmet() != nullptr && 
+			inventory->GetEquippedHelmet()->curDurability >= inventory->GetEquippedHelmet()->damageDecreaseAmount)
+		{
+			damage -= inventory->GetEquippedHelmet()->damageDecreaseAmount;
+			inventory->GetEquippedHelmet()->curDurability -= inventory->GetEquippedHelmet()->damageDecreaseAmount;
+
+		}
 		UE_LOG(LogTemp, Warning, TEXT("Headshot!!!!!!"));
 	}
 
@@ -305,6 +314,19 @@ void APlayerCharacter::RemoveSecondary()
 	{
 		EquipPrimary();
 	}
+}
+
+void APlayerCharacter::AddHelmet(UItemHelmet* pHelmetInfo)
+{
+	//TODO: 메쉬 찾아서 켜줘
+	helmetMesh->SetVisibility(true);
+	inventory->EquipHelmet(pHelmetInfo);
+}
+
+void APlayerCharacter::RemoveHelmet(UItemHelmet* pHelmetInfo)
+{
+	helmetMesh->SetVisibility(false);
+	inventory->UnequipHelmet();
 }
 
 bool APlayerCharacter::IsWeaponEquiped()

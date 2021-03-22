@@ -20,6 +20,7 @@ enum class ItemType :uint8
 	UNDEFINED UMETA(DisplayName = "undefined"),
 	WEAPON UMETA(DisplayName = "weapon"),
 	MAGAZINE UMETA(DisplayName = "magazine"),
+	ARMOR UMETA(DisplayName = "armor"),
 	MEDIKIT UMETA(DisplayName = "medikit")
 };
 

@@ -13,6 +13,7 @@
  */
 
 class UItemWeapon;
+class UItemHelmet;
 
 UCLASS(Blueprintable, BlueprintType)
 class TARKOVCOPY_API UInventory : public UObject
@@ -21,6 +22,7 @@ class TARKOVCOPY_API UInventory : public UObject
 private :
 	UItemWeapon* primaryWeapon = nullptr;
 	UItemWeapon* secondaryWeapon = nullptr;
+	UItemHelmet* itemHelmet = nullptr;
 	UPROPERTY()
 	UBackpack* backpack = nullptr;
 
@@ -55,6 +57,11 @@ public:
 
 	void SetPrimaryWeaponItem(UItemWeapon* pItemWeapon);
 	void SetSecondaryWeaponItem(UItemWeapon* pItemWeapon);
+
+	void EquipHelmet(UItemHelmet* pItemHelmet);
+	void UnequipHelmet();
+
+	UItemHelmet* GetEquippedHelmet();
 
 	void UpdateAndCleanupBackpack();
 

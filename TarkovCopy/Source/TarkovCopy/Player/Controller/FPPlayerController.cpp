@@ -11,6 +11,7 @@
 #include <TimerManager.h>
 #include "TarkovCopy/GameMode/EscapeGameMode.h"
 #include "TarkovCopy/PublicProperty/UMGPublicProperites.h"
+#include "TarkovCopy/InventoryAndItem/ItemInfos/ItemHelmet.h"
 #include <Blueprint/WidgetLayoutLibrary.h>
 
 void AFPPlayerController::BeginPlay()
@@ -83,10 +84,12 @@ void AFPPlayerController::InitInvenotry()
 	itemContainerUI = Cast<UCanvasPanel>(inventoryUI->GetWidgetFromName(TEXT("ItemContainer")));
 	primaryWeaponContainerUI = Cast<UCanvasPanel>(inventoryUI->GetWidgetFromName(TEXT("PrimaryWeaponContainer")));
 	secondaryWeaponContainerUI = Cast<UCanvasPanel>(inventoryUI->GetWidgetFromName(TEXT("SecondaryWeaponContainer")));
+	helmetContainerUI = Cast<UCanvasPanel>(inventoryUI->GetWidgetFromName(TEXT("HelmetContainer")));
 	
 	itemContainerUISlot = Cast<UCanvasPanelSlot>(itemContainerUI->Slot);
 	primaryWeaponContainerUISlot = Cast<UCanvasPanelSlot>(primaryWeaponContainerUI->Slot);
 	secondaryWeaponContainerUISlot = Cast<UCanvasPanelSlot>(secondaryWeaponContainerUI->Slot);
+	helmetContainerUISlot = Cast<UCanvasPanelSlot>(helmetContainerUI->Slot);
 	
 	itemContainerUISlot->SetSize(FVector2D(UMGPublicProperites::BASIC_INVENTORY_GRID_WIDTH, UMGPublicProperites::BASIC_INVENTORY_GRID_HEIGHT) * ownerPlayerCharacter->inventory->GetBackpack()->GetBackpackSize());
 
@@ -108,6 +111,13 @@ void AFPPlayerController::InitInvenotry()
 	secondaryWeaponContainerRect.Bottom = secondaryWeaponContainerRect.Top + secondaryWeaponContainerUISlot->GetSize().Y;
 
 	UE_LOG(LogTemp, Warning, TEXT("secondaryWeaponContainerRect : %s"), *secondaryWeaponContainerRect.ToString());
+
+	helmetContainerRect.Left = helmetContainerUISlot->GetPosition().X;
+	helmetContainerRect.Top = helmetContainerUISlot->GetPosition().Y;
+	helmetContainerRect.Right = helmetContainerRect.Left + helmetContainerUISlot->GetSize().X;
+	helmetContainerRect.Bottom = helmetContainerRect.Top + helmetContainerUISlot->GetSize().Y;
+
+	UE_LOG(LogTemp, Warning, TEXT("helmetContainerRect : %s"), *helmetContainerRect.ToString());
 }
 
 void AFPPlayerController::OpenInventory()
@@ -193,6 +203,7 @@ void AFPPlayerController::DropItem(UItemIcon* pItemIcon)
 	{
 		primaryWeaponContainerUI->RemoveChild(pItemIcon);
 		secondaryWeaponContainerUI->RemoveChild(pItemIcon);
+		helmetContainerUI->RemoveChild(pItemIcon);
 	}
 	UE_LOG(LogTemp,Warning,TEXT("IsDropping"))
 	items.Remove(pItemIcon);
@@ -309,10 +320,13 @@ bool AFPPlayerController::IsInEquipmentSlot(UItemIcon* pItemInfo) const
 {
 	//가로만 조정한다
 	FVector2D finalPosition = pItemInfo->GetCachedGeometry().GetAbsolutePosition();
+	UE_LOG(LogTemp, Warning, TEXT("Found you in %s"), *finalPosition.ToString(), *pItemInfo->GetCachedGeometry().GetAbsoluteSize().ToString());
 	finalPosition.X += pItemInfo->GetCachedGeometry().GetAbsoluteSize().X / 2.f;
-	UE_LOG(LogTemp, Warning, TEXT("Found you in IsInEquipmentSlot %s, %s"), *primaryWeaponContainerRect.ToString(), *finalPosition.ToString())
+	finalPosition.Y += pItemInfo->GetCachedGeometry().GetAbsoluteSize().Y / 2.f;
+	UE_LOG(LogTemp, Warning, TEXT("Found you in IsInEquipmentSlot %s, %s"), *helmetContainerRect.ToString(), *finalPosition.ToString())
 	if (primaryWeaponContainerRect.ContainsPoint(finalPosition) ||
-		secondaryWeaponContainerRect.ContainsPoint(finalPosition))
+		secondaryWeaponContainerRect.ContainsPoint(finalPosition)||
+		helmetContainerRect.ContainsPoint(finalPosition))
 	{
 		return true;
 	}
@@ -409,6 +423,44 @@ void AFPPlayerController::RemoveSecondary()
 	{
 		ownerPlayerCharacter->RemoveSecondary();
 	}
+}
+
+void AFPPlayerController::AddHelmet(UItemHelmet* pHelmetInfo)
+{
+	if (ownerPlayerCharacter == nullptr)
+		ownerPlayerCharacter = Cast<APlayerCharacter>(GetPawn());
+	if (ownerPlayerCharacter != nullptr)
+	{
+		ownerPlayerCharacter->AddHelmet(pHelmetInfo);
+	}
+
+	//AddPrimary UI 업데이트 -> 위치를 itemInfo 기반으로 옮기지 않는 별도 예외
+	for (int i = 0; i < items.Num(); i++)
+	{
+		if (items[i]->itemInfo == (UItemInfo*)pHelmetInfo) // 레퍼런스 찾기 용이니 임시직으로 변환해서 넣는것 TODO:만약에 예상과 결과가 다르면 int로 변환해서 넣는 방법도 고려해볼것
+		{
+			UE_LOG(LogTemp, Warning, TEXT("AddHelmet"));
+			UCanvasPanelSlot* panelSlot = Cast<UCanvasPanelSlot>(items[i]->Slot);
+			panelSlot->SetPosition(helmetContainerUISlot->GetPosition());
+
+			itemContainerUI->RemoveChild(items[i]);
+			items[i]->Slot = Cast<UCanvasPanelSlot>(helmetContainerUI->AddChild(items[i]));
+			panelSlot = Cast<UCanvasPanelSlot>(items[i]->Slot);
+
+			panelSlot->SetSize(helmetContainerUISlot->GetSize());
+		}
+	}
+}
+
+void AFPPlayerController::RemoveHelmet(UItemHelmet* pHelmetInfo)
+{
+	if (ownerPlayerCharacter == nullptr)
+		ownerPlayerCharacter = Cast<APlayerCharacter>(GetPawn());
+	if (ownerPlayerCharacter != nullptr)
+	{
+		ownerPlayerCharacter->RemoveHelmet(pHelmetInfo);
+	}
+
 }
 
 void AFPPlayerController::HealPlayer(float pHealAmount)

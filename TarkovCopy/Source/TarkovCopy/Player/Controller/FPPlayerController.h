@@ -15,6 +15,7 @@
  */
 class AEscapeGameMode;
 class UVerticalBox;
+class UItemHelmet;
 UCLASS()
 class TARKOVCOPY_API AFPPlayerController : public APlayerController
 {
@@ -72,16 +73,20 @@ private:
 	UPROPERTY()
 	UCanvasPanel* itemContainerUI;
 	UPROPERTY()
+	UCanvasPanel* primaryWeaponContainerUI;
+	UPROPERTY()
+	UCanvasPanel* secondaryWeaponContainerUI;
+	UPROPERTY()
+	UCanvasPanel* helmetContainerUI;
+
+	UPROPERTY()
 	UCanvasPanelSlot* itemContainerUISlot;
 	UPROPERTY()
 	UCanvasPanelSlot* primaryWeaponContainerUISlot;
 	UPROPERTY()
 	UCanvasPanelSlot* secondaryWeaponContainerUISlot;
-
 	UPROPERTY()
-	UCanvasPanel* primaryWeaponContainerUI;
-	UPROPERTY()
-	UCanvasPanel* secondaryWeaponContainerUI;
+	UCanvasPanelSlot* helmetContainerUISlot;
 
 	UPROPERTY()
 	UVerticalBox* itemDetailPanel;
@@ -123,48 +128,44 @@ public:
 	FSlateRect itemContainerRect;
 	FSlateRect primaryWeaponContainerRect;
 	FSlateRect secondaryWeaponContainerRect;
+	FSlateRect helmetContainerRect;
 
 	void InitInvenotry();
 	void OpenCloseInventory();
 	void OpenItemDetailPanel(UItemIcon* pItemIcon);
 
-	//Item
-	//인터페이스로 사용
+	//Item 이동 관련
 	void AddItem(UItemInfo* itemInfo,UInventory* pInvenRef);
-	//인터페이스로 사용
 	void DropItem(UItemIcon* pItemIcon);
-	//인터페이스로 사용
 	void StartMoveItemPos(UItemInfo* pItemInfo);
-	//인터페이스로 사용
 	bool CanItemMoveTo(FSlateRect pIntSlateRect);
-	//인터페이스로 사용
 	void MoveItemTo(UItemInfo* pItemInfo, FSlateRect pIntSlateRect);
-	//인터페이스로 사용
 	void FailedToMoveItemPos(UItemInfo* pItemInfo);
 
 	bool IsInItemContainer(UItemIcon* pItemInfo) const;
 	bool IsInEquipmentSlot(UItemIcon* pItemInfo) const;
 
-	//인터페이스로 사용
+	//무기 관련
 	void AddPrimary(TSubclassOf<ABaseGun> pWeaponClass,UItemWeapon* pItemWeapon);
-	//인터페이스로 사용
 	void AddSecondary(TSubclassOf<ABaseGun> pWeaponClass, UItemWeapon* pItemWeapon);
 
 	void SetADS();
 	void SetHipfire();
 
-	//인터페이스로 사용
 	void RemovePrimary();
-	//인터페이스로 사용
 	void RemoveSecondary();
 
-	//인터페이스로 사용
+	//방어구 관련
+	void AddHelmet(UItemHelmet* pHelmetInfo);
+	void RemoveHelmet(UItemHelmet* pHelmetInfo);
+
+	//상태 관련
 	void HealPlayer(float pHealAmount);
 	void UpdateHealthHud(float pCurHealth);
 	void UpdateInventoryUI();
-
 	void Dead();
 
+	//퀘스트 관련
 	void ShowQuestInfo(FString itemName, float distance);
 	void ShowExfilPoints(FString exfilPointsName, float distance);
 	void ShowCannotExfil();
