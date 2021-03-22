@@ -16,8 +16,12 @@ bool UBTTask_MoveAndShoot::IsInRange(UBehaviorTreeComponent& OwnerComp) const
 
 EBTNodeResult::Type UBTTask_MoveAndShoot::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	if(aiCharacter == nullptr)
+	if (aiCharacter != Cast<AAICharacter>(OwnerComp.GetAIOwner()->GetPawn()))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Different!"))
 		aiCharacter = Cast<AAICharacter>(OwnerComp.GetAIOwner()->GetPawn());
+	}
+
 	if(gameMode == nullptr)
 		gameMode = Cast<ATarkovCopyGameModeBase>(GetWorld()->GetAuthGameMode());
 
@@ -26,17 +30,17 @@ EBTNodeResult::Type UBTTask_MoveAndShoot::ExecuteTask(UBehaviorTreeComponent& Ow
 		return EBTNodeResult::Failed;
 	}
 
-	if (aiCharacter->outIsPlayerDetected && aiCharacter->targetActor == nullptr && IsInRange(OwnerComp))
+
+
+	if (IsInRange(OwnerComp))
 	{
 		aiCharacter->targetActor = aiCharacter->trackingTarget;
-	}
-	else if (aiCharacter->outIsPlayerDetected && aiCharacter->targetActor != nullptr && IsInRange(OwnerComp))
-	{
 		aiCharacter->FireWeapon();
+		OwnerComp.GetAIOwner()->StopMovement();
 	}
 	else
 	{
-		if(aiCharacter->targetActor != nullptr)
+		if (aiCharacter->targetActor != nullptr)
 			OwnerComp.GetAIOwner()->MoveToLocation(aiCharacter->targetActor->GetActorLocation());
 		else
 			OwnerComp.GetAIOwner()->MoveToLocation(aiCharacter->trackingTarget->GetActorLocation());
