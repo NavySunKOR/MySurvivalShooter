@@ -7,6 +7,7 @@
 #include "TarkovCopy/InventoryAndItem/ItemInfos/ItemHelmet.h"
 #include "TarkovCopy/GameMode/TarkovCopyGameModeBase.h"
 #include "TarkovCopy/Player/Controller/FPPlayerController.h"
+#include "TarkovCopy/Weapons/HandGrenade.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -37,6 +38,8 @@ void APlayerCharacter::BeginPlay()
 
 	if (playerController != nullptr)
 		playerController->InitInvenotry();
+
+	//Pool initialize;
 }
 
 // Called every frame
@@ -128,6 +131,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAction(TEXT("Interact"), EInputEvent::IE_Pressed, this, &APlayerCharacter::Interact);
 	PlayerInputComponent->BindAction(TEXT("Inventory"), EInputEvent::IE_Pressed, this, &APlayerCharacter::Inventory);
 	PlayerInputComponent->BindAction(TEXT("InspectWeapon"), EInputEvent::IE_Pressed, this, &APlayerCharacter::InspectWeapon);
+	PlayerInputComponent->BindAction(TEXT("ThrowGrenade"), EInputEvent::IE_Pressed, this, &APlayerCharacter::ThrowGrenade);
 
 	PlayerInputComponent->BindAxis(TEXT("Tilting"), this, &APlayerCharacter::Tilting);
 	PlayerInputComponent->BindAxis(TEXT("MoveVertical"), this, &APlayerCharacter::MoveVertical);
@@ -157,18 +161,6 @@ void APlayerCharacter::CheckCloseToWall()
 		isCloseToWall = false;
 	}
 }
-
-//void APlayerCharacter::BeginDestroy()
-//{
-//	//if (playerController)
-//	//	playerController->ConditionalBeginDestroy();
-//	//if (currentActiveGun)
-//	//	currentActiveGun->ConditionalBeginDestroy();
-//	//if (primaryWeapon)
-//	//	primaryWeapon->ConditionalBeginDestroy();
-//	//if (secondaryWeapon)
-//	//	secondaryWeapon->ConditionalBeginDestroy();
-//}
 
 float APlayerCharacter::HealPlayer(float pHealAmount)
 {
@@ -678,4 +670,30 @@ void APlayerCharacter::Inventory()
 	}
 
 	playerController->OpenCloseInventory();
+}
+
+void APlayerCharacter::ThrowGrenade()
+{
+	if (handGrenadePools.Num() == 0)
+	{
+		for (int i = 0; i < 8; i++)
+		{
+			AHandGrenade* hand = GetWorld()->SpawnActor<AHandGrenade>(handGrenadeOrigin);
+			handGrenadePools.Add(hand);
+		}
+	}
+
+
+	for (int i = 0; i < handGrenadePools.Num(); i++)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("handGrenadePools[i] :  %d"), handGrenadePools[i]);
+		if (handGrenadePools[i] &&!handGrenadePools[i]->IsActive())
+		{
+			handGrenadePools[i]->ReactivateGrenade();
+			//Add Physics power
+			handGrenadePools[i]->SetActorLocation(GetActorLocation());
+			handGrenadePools[i]->ThrowGrenade(GetActorRotation().Vector());
+			break;
+		}
+	}
 }

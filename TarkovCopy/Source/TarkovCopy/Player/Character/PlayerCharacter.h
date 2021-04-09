@@ -15,6 +15,7 @@
 
 class USpringArmComponent;
 class UStaticMeshComponent;
+class AHandGrenade;
 UCLASS()
 class TARKOVCOPY_API APlayerCharacter : public ACharacter
 {
@@ -32,6 +33,11 @@ private:
 	bool isFirePressed = false; 
 	USpringArmComponent* springArm;
 	FVector springArmOrigin;
+	UPROPERTY()
+	TArray<AHandGrenade*> handGrenadePools;
+
+	UPROPERTY()
+	AHandGrenade* handGrenadePool;
 
 protected:
 	// Called when the game starts or when spawned
@@ -73,6 +79,8 @@ protected:
 	void InspectWeapon();
 	void Inventory();
 
+	//¼ö·ùÅº
+	void ThrowGrenade();
 
 
 	ABaseGun* currentActiveGun;
@@ -99,6 +107,9 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UInventory> inventoryOrigin;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AHandGrenade> handGrenadeOrigin;
 
 	class ATarkovCopyGameModeBase* gameMode;
 
