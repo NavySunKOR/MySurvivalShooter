@@ -692,7 +692,7 @@ void APlayerCharacter::ThrowGrenade()
 			handGrenadePools[i]->ReactivateGrenade();
 			//Add Physics power
 			handGrenadePools[i]->SetActorLocation(GetActorLocation());
-			handGrenadePools[i]->ThrowGrenade(GetActorRotation().Vector());
+			handGrenadePools[i]->ThrowGrenade(GetActorForwardVector(),GetActorLocation() + GetActorUpVector() * 50.f + GetActorForwardVector() * 100.f);
 			break;
 		}
 	}

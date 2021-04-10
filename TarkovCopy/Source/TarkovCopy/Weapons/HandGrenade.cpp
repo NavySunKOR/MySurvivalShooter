@@ -53,11 +53,18 @@ void AHandGrenade::DeactivateGrenade()
 }
 
 
-void AHandGrenade::ThrowGrenade(FVector pDir)
+void AHandGrenade::ThrowGrenade(FVector pDir,FVector pStartPos)
 {
-	UStaticMeshComponent* getMesh =Cast<UStaticMeshComponent>(GetDefaultSubobjectByName(TEXT("Mesh")));
-
-	getMesh->AddForce(pDir * 1000.f);
+	if(getMesh == nullptr)
+		getMesh =Cast<UStaticMeshComponent>(GetDefaultSubobjectByName(TEXT("Mesh")));
+	getMesh->SetSimulatePhysics(false);
+	getMesh->SetSimulatePhysics(true);
+	throwDir = pDir;
+	throwStartPos = pStartPos;
+	getMesh->SetPhysicsLinearVelocity(throwDir * impulseForceVal);
+	SetActorLocation(throwStartPos);
+	isGrenadeTossed = true;
+	
 }
 
 void AHandGrenade::Explode()
@@ -96,6 +103,7 @@ void AHandGrenade::Explode()
 	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), explosionParticle, GetActorLocation());
 	UGameplayStatics::SpawnSoundAtLocation(GetWorld(), explosionSound, GetActorLocation());
 	isExploded = true;
+	isGrenadeTossed = false;
 }
 
 bool AHandGrenade::IsActive()

@@ -22,7 +22,12 @@ private:
 	UPROPERTY()
 	USphereComponent* sphereCollision;
 	bool isExploded = true;
+	bool isGrenadeTossed = false;
+	FVector throwDir;
+	FVector throwStartPos;
 
+	UPROPERTY()
+	UStaticMeshComponent* getMesh;
 protected:
 	UPROPERTY(EditAnywhere)
 	float explosionDuration;
@@ -32,6 +37,8 @@ protected:
 	float explosionDamage;
 	UPROPERTY(EditAnywhere)
 	int explosionFragmentCounts;
+	UPROPERTY(EditAnywhere)
+	float impulseForceVal;
 	UPROPERTY(EditAnywhere)
 	UParticleSystem* explosionParticle; 
 	UPROPERTY(EditAnywhere)
@@ -48,7 +55,7 @@ public:
 	void DeactivateGrenade();
 	void Explode();
 
-	void ThrowGrenade(FVector pDir);
+	void ThrowGrenade(FVector pDir, FVector pStartPos);
 
 	bool IsActive();
 
