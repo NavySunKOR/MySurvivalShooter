@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Backpack.h"
+#include "TarkovCopy/InventoryAndItem/ItemInfos/ItemInfo.h"
 #include <Layout/SlateRect.h>
 
 
@@ -271,7 +272,10 @@ bool UBackpack::UseItem(UItemInfo* pItemInfo)
 	if (itemRef != nullptr)
 	{
 		itemRef->currentCapacity -= pItemInfo->consumeAmount;
-		return true;
+		if (itemRef->currentCapacity <= 0)
+			return true;
+		else
+			return false;
 	}
 	else
 	{
@@ -322,6 +326,20 @@ bool UBackpack::HasItem(UItemInfo* pItemInfo)
 	{
 		return false;
 	}
+}
+
+UItemInfo* UBackpack::HasItemType(ItemType pItemType)
+{
+	bool isItemContains = false;
+	for (int i = 0; i < itemContainers.Num(); i++)
+	{
+		if (itemContainers[i]->itemType == pItemType)
+		{
+			return itemContainers[i];
+		}
+	}
+
+	return nullptr;
 }
 
 void UBackpack::UpdateAndCleanupBackpack()

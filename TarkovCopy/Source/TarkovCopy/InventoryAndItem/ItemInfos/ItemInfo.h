@@ -21,7 +21,8 @@ enum class ItemType :uint8
 	WEAPON UMETA(DisplayName = "weapon"),
 	MAGAZINE UMETA(DisplayName = "magazine"),
 	ARMOR UMETA(DisplayName = "armor"),
-	MEDIKIT UMETA(DisplayName = "medikit")
+	MEDIKIT UMETA(DisplayName = "medikit"),
+	GRENADE UMETA(DisplayName = "grenade")
 };
 
 UCLASS(Blueprintable, BlueprintType)
@@ -47,8 +48,11 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	bool isConsumable;
+
+	UPROPERTY(EditAnywhere)
+	bool isRightClickUsable;
 	
-	int consumeAmount = 0;
+	int consumeAmount = 1;
 
 	UPROPERTY(EditAnywhere)
 	int maxCapacity;

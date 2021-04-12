@@ -38,6 +38,7 @@ public:
 	bool DropItem(UItemInfo* pItem);
 	void RemoveItem(UItemInfo* pItem);
 	bool HasItem(UItemInfo* pItem) const;
+	UItemInfo* HasItemType(ItemType pItemType);
 
 	//Drag And Drop
 	void StartMoveItemPos(UItemInfo* pItemInfo);

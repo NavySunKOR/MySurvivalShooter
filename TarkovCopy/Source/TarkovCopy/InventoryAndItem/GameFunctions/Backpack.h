@@ -42,6 +42,7 @@ public:
 	void AddItemContainerArray(UItemInfo* pItemInfo); // 아이템 Array를 단순 컨테이너에만 다시 옮겨 담는 동작
 	void DeleteItem(UItemInfo* pItemInfo);
 	bool HasItem(UItemInfo* pItemInfo);
+	UItemInfo* HasItemType(ItemType pItemType);
 	void UpdateAndCleanupBackpack();
 	void MoveItemPosition(UItemInfo* pItemInfo);
 	void RemoveItemPosition(UItemInfo* pItemInfo);

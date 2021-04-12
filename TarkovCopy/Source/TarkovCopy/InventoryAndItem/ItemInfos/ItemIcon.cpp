@@ -95,16 +95,14 @@ void UItemIcon::OpenDetailPanel()
 
 void UItemIcon::UseItem()
 {
-	UE_LOG(LogTemp,Warning,TEXT("Using items"))
-	if (invenRef->HasItem(itemInfo))
+	if (itemInfo->isRightClickUsable && invenRef->HasItem(itemInfo))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Use "))
 		itemInfo->Use(controllerRef); // 여기서 consumable인지 아닌지 결정해줌.
-
-		bool isEmpty = (invenRef->UseItem(itemInfo) && itemInfo->isConsumable);
+		bool isEmpty = invenRef->UseItem(itemInfo);
 
 		if (isEmpty)
 		{
+			UE_LOG(LogTemp, Warning, TEXT("IsEmpty"));
 			itemInfo->refInventory = nullptr;
 			invenRef->RemoveItem(itemInfo);
 			controllerRef->DropItem(this);

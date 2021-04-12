@@ -674,6 +674,12 @@ void APlayerCharacter::Inventory()
 
 void APlayerCharacter::ThrowGrenade()
 {
+	UItemInfo* itemReference = inventory->HasItemType(ItemType::GRENADE);
+	if (itemReference == nullptr)
+	{
+		return;
+	}
+
 	if (handGrenadePools.Num() == 0)
 	{
 		for (int i = 0; i < 8; i++)
@@ -692,7 +698,11 @@ void APlayerCharacter::ThrowGrenade()
 			handGrenadePools[i]->ReactivateGrenade();
 			//Add Physics power
 			handGrenadePools[i]->SetActorLocation(GetActorLocation());
-			handGrenadePools[i]->ThrowGrenade(GetActorForwardVector(),GetActorLocation() + GetActorUpVector() * 50.f + GetActorForwardVector() * 100.f);
+			handGrenadePools[i]->ThrowGrenade(GetActorForwardVector(),GetActorLocation() + GetActorUpVector() * 50.f + GetActorForwardVector() * 50.f);
+
+			inventory->UseItem(itemReference);
+			inventory->UpdateAndCleanupBackpack();
+			playerController->UpdateInventoryUI();
 			break;
 		}
 	}

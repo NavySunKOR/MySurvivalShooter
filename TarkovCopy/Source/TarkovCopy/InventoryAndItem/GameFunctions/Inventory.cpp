@@ -32,18 +32,19 @@ bool UInventory::UseItem(UItemInfo* pItem)
 {
 	if (backpack->HasItem(pItem))
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Has item"));
 		if (pItem->isConsumable)
 		{
-			if (backpack->UseItem(pItem))
-				return true;
-			else 
-				return false;
+			return backpack->UseItem(pItem);
 		}
-		return false;
+		else
+		{
+			return false;
+		}
 	}
 	else
 	{
-		return true;
+		return false;
 	}
 }
 
@@ -85,6 +86,11 @@ bool UInventory::HasItem(UItemInfo* pItem) const
 		primaryWeapon == (UItemWeapon*)pItem || 
 		secondaryWeapon == (UItemWeapon*)pItem ||
 		itemHelmet == (UItemHelmet*)pItem);
+}
+
+UItemInfo* UInventory::HasItemType(ItemType pItemType)
+{
+	return backpack->HasItemType(pItemType);
 }
 
 void UInventory::StartMoveItemPos(UItemInfo* pItemInfo)
