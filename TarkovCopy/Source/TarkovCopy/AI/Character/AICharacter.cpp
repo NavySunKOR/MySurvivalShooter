@@ -139,7 +139,8 @@ void AAICharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
 void AAICharacter::NotifyActorBeginOverlap(AActor* Other)
 {
-	if (!isDead && Other->ActorHasTag(FName("Player")))
+	
+	if (!isDead && Other != nullptr &&  Other->ActorHasTag(TEXT("Player")))
 	{
 		/*FVector targetDir = (Other->GetActorLocation() - GetActorLocation());
 		targetDir.Normalize();
@@ -157,7 +158,7 @@ void AAICharacter::NotifyActorBeginOverlap(AActor* Other)
 }
 void AAICharacter::NotifyActorEndOverlap(AActor* Other)
 {
-	if (!isDead && Other->ActorHasTag(FName("Player")))
+	if (!isDead && Other != nullptr && Other->ActorHasTag(TEXT("Player")))
 	{
 		outIsPlayerDetected = false;
 		if(aiController)
