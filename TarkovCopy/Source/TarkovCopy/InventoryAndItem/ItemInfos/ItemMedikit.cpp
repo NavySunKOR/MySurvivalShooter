@@ -6,9 +6,6 @@
 
 void UItemMedikit::Use(AFPPlayerController* pPlayerCon)
 {
-
-	UE_LOG(LogTemp, Warning, TEXT("HealingItem"));
 	pPlayerCon->HealPlayer(healAmount);
-
 	Super::Use(pPlayerCon);
 }

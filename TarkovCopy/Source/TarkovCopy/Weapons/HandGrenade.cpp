@@ -25,7 +25,6 @@ void AHandGrenade::NotifyActorBeginOverlap(AActor* Other)
 {
 	if (Other->ActorHasTag(TEXT("Enemy")) || Other->ActorHasTag(TEXT("Player")))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("grenade target object name : %s"), *Other->GetName())
 		grenadeTargets.Add(Other);
 	}
 }
@@ -79,11 +78,9 @@ void AHandGrenade::Explode()
 	int currentCount = 0;
 	for (int i = 0; i < grenadeTargets.Num(); i++)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("grenade target object name : %s"), *grenadeTargets[i]->GetName())
 		dir = (grenadeTargets[i]->GetActorLocation() - explodeStart);
 		if (GetWorld()->LineTraceSingleByChannel(hit, explodeStart, dir * explosionRadius, ECollisionChannel::ECC_Pawn))
 		{
-			UE_LOG(LogTemp,Warning,TEXT("hit object name : %s"), *hit.Actor->GetName())
 			//플레이어 인가 아니면 
 			if (hit.Actor->ActorHasTag(TEXT("Player")))
 			{

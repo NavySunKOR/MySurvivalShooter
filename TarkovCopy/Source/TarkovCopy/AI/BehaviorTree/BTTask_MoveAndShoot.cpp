@@ -18,7 +18,6 @@ EBTNodeResult::Type UBTTask_MoveAndShoot::ExecuteTask(UBehaviorTreeComponent& Ow
 {
 	if (aiCharacter != Cast<AAICharacter>(OwnerComp.GetAIOwner()->GetPawn()))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Different!"))
 		aiCharacter = Cast<AAICharacter>(OwnerComp.GetAIOwner()->GetPawn());
 	}
 

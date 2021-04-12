@@ -27,12 +27,11 @@ FString UItemInfo::GetItemAmountString() const
 
 void UItemInfo::Use(AFPPlayerController* pPlayerCon)
 {
-	UE_LOG(LogTemp,Warning,TEXT("Item!"))
+
 }
 
 void UItemInfo::DropItem(AFPPlayerController* pPlayerCon)
 {
 	/*여기서 들어갈 로직은 각 아이템마다 인벤토리 외에 실제 동작상에서 드롭을 했을때 이루어져아하는 동작들
 	(예: 무기아이템이 equip 되어있을때 주무장으로 equip 되어있으면 그걸 해제 해야함.)을 실행시킴*/
-	UE_LOG(LogTemp, Warning, TEXT("Drop!"))
 }

@@ -22,9 +22,7 @@ void ATarkovCopyGameModeBase::ReturnToMainMenu()
 void ATarkovCopyGameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
-
-	UE_LOG(LogTemp, Warning, TEXT("TarkovCopyGameModeBegin"))
-		InitalizeAI();
+	InitalizeAI();
 }
 
 void ATarkovCopyGameModeBase::InitalizeAI()
@@ -34,14 +32,9 @@ void ATarkovCopyGameModeBase::InitalizeAI()
 
 	for (AActor* spawnPoint : allSpawnPoints)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("SpawnPoint"))
 		UWorld* gatcha = GetWorld();
-
 		AAICharacter* character = gatcha->SpawnActor<AAICharacter>(aiCharacter); 
-
 		character->SetActorLocation(spawnPoint->GetActorLocation());
-
-		UE_LOG(LogTemp, Warning, TEXT("yes?"))
 		aiPlayers.Add(character);
 	}
 }
@@ -49,7 +42,6 @@ void ATarkovCopyGameModeBase::InitalizeAI()
 void ATarkovCopyGameModeBase::PlayerDied()
 {
 	isPlayerDied = true;
-	UE_LOG(LogTemp, Warning, TEXT("Died bgm"));
 	UGameplayStatics::PlaySound2D(GetWorld(), diedSound);
 	FTimerHandle timer;
 	GetWorld()->GetTimerManager().SetTimer(timer,this, &ATarkovCopyGameModeBase::ReturnToMainMenu,4.f);
@@ -63,7 +55,6 @@ void ATarkovCopyGameModeBase :: QuestCompleted(AInteractableObject* questItem)
 void ATarkovCopyGameModeBase::ExfilCompleted()
 {
 	isPlayerEscaped = true;
-	UE_LOG(LogTemp, Warning, TEXT("Exfil bgm"));
 	UGameplayStatics::PlaySound2D(GetWorld(), escapedSound);
 	FTimerHandle timer;
 	GetWorld()->GetTimerManager().SetTimer(timer, this, &ATarkovCopyGameModeBase::ReturnToMainMenu, 4.f);

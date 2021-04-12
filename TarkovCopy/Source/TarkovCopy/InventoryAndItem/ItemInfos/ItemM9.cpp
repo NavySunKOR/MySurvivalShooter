@@ -6,7 +6,6 @@
 
 void UItemM9::Use(AFPPlayerController* pPlayerCon)
 {
-	UE_LOG(LogTemp, Warning, TEXT("EquipSecondaryWeapon"))
 	pPlayerCon->AddSecondary(weaponSubclass,this);
 	Super::Use(pPlayerCon);
 }

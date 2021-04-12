@@ -23,14 +23,10 @@ void UBackpack::Init()
 	}
 
 	//백팩에서 begin destroy를 정의하고 시도해보았으나, UObject isValid 관련 assertion 에러만 나서 제거 하고 다음과 같이 작성하였다.
-
-	UE_LOG(LogTemp, Warning, TEXT("Die! %d"), itemContainers.Num());
-
 	if (itemContainers.Num() > 0)
 	{
 		for (int i = itemContainers.Num() - 1 ; i >= 0 ; i--)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Die!"));
 			itemContainers.RemoveAt(i);
 		}
 	}
@@ -218,11 +214,8 @@ void UBackpack::RemoveInvenVisualize(UItemInfo* pItemInfo)
 }
 void CleanupItemContainers(TArray<UItemInfo*>& arr)
 {
-
-	UE_LOG(LogTemp, Warning, TEXT("Numka %d"), arr.Num());
 	for (int i = arr.Num() - 1; i >= 0; i--)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("dex %d"), i);
 		if (arr[i] == nullptr)
 		{
 			arr.RemoveAt(i);
@@ -234,17 +227,14 @@ void UBackpack::CleanupBackpack()
 {
 	bool isChanged = false;
 	TArray<UItemInfo*> copyItemContainers = itemContainers;
-	UE_LOG(LogTemp, Warning, TEXT("per : %d"), copyItemContainers.Num());
 	for (int i = copyItemContainers.Num() - 1; i >= 0; i--)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("tac : %d"), i);
 		if (copyItemContainers[i]->currentCapacity <= 0)
 		{
 			RemoveInvenVisualize(copyItemContainers[i]);
 			copyItemContainers[i] = nullptr;
 		}
 	} 
-	UE_LOG(LogTemp, Warning, TEXT("DEKA"));
 	CleanupItemContainers(copyItemContainers);
 
 	itemContainers = copyItemContainers;
@@ -395,10 +385,6 @@ void UBackpack::UsePrimaryWeaponAmmo(int pUseAmmo, FString pWeaponClassName)
 			itemContainers[i]->weaponSubclass->GetName().Equals(pWeaponClassName) && 
 			itemContainers[i]->currentCapacity > 0)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Item type : %d, item weapon class : %s , item weapon param class : %s , amount : %d"), itemContainers[i]->itemType,
-				*itemContainers[i]->weaponSubclass->GetName(),
-				*pWeaponClassName,
-				itemContainers[i]->currentCapacity);
 			if (itemContainers[i]->currentCapacity >= pUseAmmo)
 			{
 				itemContainers[i]->currentCapacity -= pUseAmmo;
@@ -425,10 +411,6 @@ void UBackpack::UseSecondaryWeaponAmmo(int pUseAmmo, FString pWeaponClassName)
 			&& itemContainers[i]->weaponSubclass->GetName().Equals(pWeaponClassName) 
 			&& itemContainers[i]->currentCapacity > 0)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Item type : %d, item weapon class : %s , item weapon param class : %s , amount : %d"), itemContainers[i]->itemType,
-				*itemContainers[i]->weaponSubclass->GetName(),
-				*pWeaponClassName,
-				itemContainers[i]->currentCapacity);
 			if (itemContainers[i]->currentCapacity >= pUseAmmo)
 			{
 				itemContainers[i]->currentCapacity -= pUseAmmo;

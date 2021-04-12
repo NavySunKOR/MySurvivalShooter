@@ -103,21 +103,16 @@ void AFPPlayerController::InitInvenotry()
 	primaryWeaponContainerRect.Right = primaryWeaponContainerRect.Left + primaryWeaponContainerUISlot->GetSize().X;
 	primaryWeaponContainerRect.Bottom = primaryWeaponContainerRect.Top + primaryWeaponContainerUISlot->GetSize().Y;
 
-	UE_LOG(LogTemp, Warning, TEXT("primaryWeaponContainerRect : %s"), *primaryWeaponContainerRect.ToString());
-
 	secondaryWeaponContainerRect.Left = secondaryWeaponContainerUISlot->GetPosition().X;
 	secondaryWeaponContainerRect.Top = secondaryWeaponContainerUISlot->GetPosition().Y;
 	secondaryWeaponContainerRect.Right = secondaryWeaponContainerRect.Left + secondaryWeaponContainerUISlot->GetSize().X;
 	secondaryWeaponContainerRect.Bottom = secondaryWeaponContainerRect.Top + secondaryWeaponContainerUISlot->GetSize().Y;
-
-	UE_LOG(LogTemp, Warning, TEXT("secondaryWeaponContainerRect : %s"), *secondaryWeaponContainerRect.ToString());
 
 	helmetContainerRect.Left = helmetContainerUISlot->GetPosition().X;
 	helmetContainerRect.Top = helmetContainerUISlot->GetPosition().Y;
 	helmetContainerRect.Right = helmetContainerRect.Left + helmetContainerUISlot->GetSize().X;
 	helmetContainerRect.Bottom = helmetContainerRect.Top + helmetContainerUISlot->GetSize().Y;
 
-	UE_LOG(LogTemp, Warning, TEXT("helmetContainerRect : %s"), *helmetContainerRect.ToString());
 }
 
 void AFPPlayerController::OpenInventory()
@@ -205,7 +200,6 @@ void AFPPlayerController::DropItem(UItemIcon* pItemIcon)
 		secondaryWeaponContainerUI->RemoveChild(pItemIcon);
 		helmetContainerUI->RemoveChild(pItemIcon);
 	}
-	UE_LOG(LogTemp,Warning,TEXT("IsDropping"))
 	items.Remove(pItemIcon);
 }
 
@@ -251,13 +245,9 @@ void AFPPlayerController::MoveItemTo(UItemInfo* pItemInfo, FSlateRect pIntSlateR
 		return;
 	}
 
-
-	UE_LOG(LogTemp, Warning, TEXT("ItemInfo reference : %d , items count : %d"), pItemInfo, items.Num());
-
 	//UpdateUI
 	for (int i = 0; i < items.Num(); i++)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("ITEMS reference : %d"), items[i]->itemInfo);
 		if (items[i]->itemInfo == pItemInfo)
 		{
 			FVector2D position = FVector2D(
@@ -282,7 +272,6 @@ void AFPPlayerController::MoveItemTo(UItemInfo* pItemInfo, FSlateRect pIntSlateR
 				UCanvasPanelSlot* panelSlot = Cast<UCanvasPanelSlot>(items[i]->Slot);
 				panelSlot->SetPosition(position);
 				panelSlot->SetSize(FVector2D(items[i]->itemInfo->width * UMGPublicProperites::BASIC_INVENTORY_GRID_WIDTH, items[i]->itemInfo->height * UMGPublicProperites::BASIC_INVENTORY_GRID_HEIGHT));
-				UE_LOG(LogTemp, Warning, TEXT("Reset size"))
 			}
 
 			break;
@@ -305,7 +294,6 @@ void AFPPlayerController::FailedToMoveItemPos(UItemInfo* pItemInfo)
 bool AFPPlayerController::IsInItemContainer(UItemIcon* pItemInfo) const
 {
 	FVector2D finalPosition = pItemInfo->GetCachedGeometry().GetAbsolutePosition();
-	UE_LOG(LogTemp, Warning, TEXT("Found you in item container position %s, %s"), *itemContainerRect.ToString(), *finalPosition.ToString())
 	if (itemContainerRect.ContainsPoint(finalPosition))
 	{
 		return true;
@@ -320,10 +308,8 @@ bool AFPPlayerController::IsInEquipmentSlot(UItemIcon* pItemInfo) const
 {
 	//가로만 조정한다
 	FVector2D finalPosition = pItemInfo->GetCachedGeometry().GetAbsolutePosition();
-	UE_LOG(LogTemp, Warning, TEXT("Found you in %s"), *finalPosition.ToString(), *pItemInfo->GetCachedGeometry().GetAbsoluteSize().ToString());
 	finalPosition.X += pItemInfo->GetCachedGeometry().GetAbsoluteSize().X / 2.f;
 	finalPosition.Y += pItemInfo->GetCachedGeometry().GetAbsoluteSize().Y / 2.f;
-	UE_LOG(LogTemp, Warning, TEXT("Found you in IsInEquipmentSlot %s, %s"), *helmetContainerRect.ToString(), *finalPosition.ToString())
 	if (primaryWeaponContainerRect.ContainsPoint(finalPosition) ||
 		secondaryWeaponContainerRect.ContainsPoint(finalPosition)||
 		helmetContainerRect.ContainsPoint(finalPosition))
@@ -351,7 +337,6 @@ void AFPPlayerController::AddPrimary(TSubclassOf<ABaseGun> pWeaponClass, UItemWe
 	{
 		if (items[i]->itemInfo == (UItemInfo*)pItemWeapon) // 레퍼런스 찾기 용이니 임시직으로 변환해서 넣는것 TODO:만약에 예상과 결과가 다르면 int로 변환해서 넣는 방법도 고려해볼것
 		{
-			UE_LOG(LogTemp, Warning, TEXT("AddPrimary"));
 			UCanvasPanelSlot* panelSlot = Cast<UCanvasPanelSlot>(items[i]->Slot);
 			panelSlot->SetPosition(primaryWeaponContainerUISlot->GetPosition());
 
@@ -379,7 +364,6 @@ void AFPPlayerController::AddSecondary(TSubclassOf<ABaseGun> pWeaponClass, UItem
 	{
 		if (items[i]->itemInfo == (UItemInfo*)pItemWeapon) // 레퍼런스 찾기 용이니 임시직으로 변환해서 넣는것 TODO:만약에 예상과 결과가 다르면 int로 변환해서 넣는 방법도 고려해볼것
 		{
-			UE_LOG(LogTemp, Warning, TEXT("AddSecondary"));
 			UCanvasPanelSlot* panelSlot = Cast<UCanvasPanelSlot>(items[i]->Slot);
 			panelSlot->SetPosition(secondaryWeaponContainerUISlot->GetPosition());
 
@@ -439,7 +423,6 @@ void AFPPlayerController::AddHelmet(UItemHelmet* pHelmetInfo)
 	{
 		if (items[i]->itemInfo == (UItemInfo*)pHelmetInfo) // 레퍼런스 찾기 용이니 임시직으로 변환해서 넣는것 TODO:만약에 예상과 결과가 다르면 int로 변환해서 넣는 방법도 고려해볼것
 		{
-			UE_LOG(LogTemp, Warning, TEXT("AddHelmet"));
 			UCanvasPanelSlot* panelSlot = Cast<UCanvasPanelSlot>(items[i]->Slot);
 			panelSlot->SetPosition(helmetContainerUISlot->GetPosition());
 
@@ -504,7 +487,6 @@ void AFPPlayerController::UpdateInventoryUI()
 				!items[i]->itemInfo->IsValidLowLevel() ||
 				items[i]->itemInfo->currentCapacity <= 0)
 			{
-				UE_LOG(LogTemp,Warning,TEXT("Update inven UI"))
 				itemContainerUI->RemoveChild(items[i]);
 				items.RemoveAt(i);
 			}

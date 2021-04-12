@@ -28,25 +28,13 @@ void AAICharacter::BeginPlay()
 
 	if (currentActiveGun != nullptr)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("deg"));
 		currentActiveGun->SetParentMeshTPP(GetMesh());
 		currentActiveGun->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, TEXT("Hand_R_Position"));
 		currentActiveGun->SetActorRelativeLocation(currentActiveGun->thirdPersonPosition);
 		currentActiveGun->SetActorRotation(FRotator(0, 0, 0));
 		currentActiveGun->weaponOwnerAICharacter = this;
-
-		UE_LOG(LogTemp, Warning, TEXT("peg"));
-		//currentActiveGun->SetActorRelativeRotation(GetMesh()->GetSocketRotation(TEXT("Hand_R_Position")) + currentActiveGun->thirdPersonRotation);
 		currentActiveGun->SetOwner(this);
-
-		UE_LOG(LogTemp, Warning, TEXT("seg"));
-
 	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("HELP! HELP!"))
-	}
-
 }
 
 

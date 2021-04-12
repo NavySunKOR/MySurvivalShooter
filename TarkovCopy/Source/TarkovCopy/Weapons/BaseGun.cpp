@@ -28,7 +28,6 @@ void ABaseGun::FireWeapon(FVector start, FRotator dir)
 {
 	curMagRounds--;
 	isFiring = true;
-	UE_LOG(LogTemp, Warning, TEXT("calcBulletSpreadRadius : %f"), calcBulletSpreadRadius);
 	calcBulletSpreadRadius += bulletSpreadIncrement;
 	UGameplayStatics::SpawnSoundAttached(fireWeaponSound, weaponComponents);
 	UGameplayStatics::SpawnEmitterAttached(muzzleFireParticle, muzzleArrow);
@@ -92,43 +91,31 @@ void ABaseGun::SetParentMeshFPP(USkeletalMeshComponent* pMeshComp)
 
 	if (magazineComponents != nullptr)
 		magazineComponents->AttachToComponent(parentMesh,FAttachmentTransformRules::KeepRelativeTransform , TEXT("Mag_Position"));
-	else
-		UE_LOG(LogTemp, Warning, TEXT("magazineComponents is null"))
 
 	if (attachmentComponents != nullptr)
 		attachmentComponents->AttachToComponent(parentMesh, FAttachmentTransformRules::KeepRelativeTransform,TEXT("Weapon_Position"));
-	else
-		UE_LOG(LogTemp, Warning, TEXT("attachmentComponents is null"))
+
 	if (scopeComponents != nullptr)
 		scopeComponents->AttachToComponent(parentMesh, FAttachmentTransformRules::KeepRelativeTransform, TEXT("Weapon_Position"));
-	else
-		UE_LOG(LogTemp, Warning, TEXT("scopeComponents is null"))
+
 	if(weaponComponents != nullptr)
 		weaponComponents->AttachToComponent(parentMesh, FAttachmentTransformRules::KeepRelativeTransform, TEXT("Weapon_Position"));
-	else
-		UE_LOG(LogTemp,Warning,TEXT("weaponComponents is null"))
+
 	if (sliderComponents != nullptr)
 		sliderComponents->AttachToComponent(parentMesh, FAttachmentTransformRules::KeepRelativeTransform, TEXT("Slider_Position"));
-	else
-		UE_LOG(LogTemp, Warning, TEXT("sliderComponents is null"))
+
 	if (hammerComponents != nullptr)
 		hammerComponents->AttachToComponent(parentMesh, FAttachmentTransformRules::KeepRelativeTransform, TEXT("Hammer_Position"));
-	else
-		UE_LOG(LogTemp, Warning, TEXT("hammerComponents is null"))
 
 }
 
 void ABaseGun::SetParentMeshTPP(USkeletalMeshComponent* pMeshComp)
 {
-	UE_LOG(LogTemp, Warning, TEXT("SetParentMeshTPP"))
 	parentMesh = pMeshComp;
-
-	UE_LOG(LogTemp, Warning, TEXT("parentMesh : %d , and class  %d"), parentMesh, tppAnimBlueprints)
 	parentMesh->SetAnimInstanceClass(tppAnimBlueprints);
 
 	SetInfo(NewObject<UItemWeapon>(this, weaponInfoForThirdPerson));
 
-	UE_LOG(LogTemp, Warning, TEXT("SetAnimInstanceClass"))
 	weaponComponents = Cast<USceneComponent>(GetDefaultSubobjectByName(TEXT("Weapon_Root")));
 	muzzleArrow = Cast<UArrowComponent>(GetDefaultSubobjectByName(TEXT("Muzzle_Arrow")));
 
@@ -136,10 +123,6 @@ void ABaseGun::SetParentMeshTPP(USkeletalMeshComponent* pMeshComp)
 	{
 		muzzleStart = muzzleArrow->GetComponentLocation();
 		muzzleDir = muzzleArrow->GetForwardVector().Rotation();
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("muzzleArrow is null"))
 	}
 }
 

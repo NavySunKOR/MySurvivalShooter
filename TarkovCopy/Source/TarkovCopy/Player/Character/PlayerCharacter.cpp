@@ -31,7 +31,6 @@ void APlayerCharacter::BeginPlay()
 	curHp = maxHp;
 
 	//TODO:나중에 인벤토리 초기화 고칠것
-	UE_LOG(LogTemp, Warning, TEXT("PlayerCharacterBegin"))
 	inventory = nullptr;
 	inventory = NewObject<UInventory>(this,inventoryOrigin);
 	inventory->Init(this);
@@ -88,12 +87,10 @@ void APlayerCharacter::Tick(float DeltaTime)
 		{
 			if (currentActiveGun->isAutoFire && !isFired)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("Is Auto Fire"));
 				ActualFireWeapon();
 			}
 			else if (!isFired)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("Semi Fire"));
 				isFired = true;
 				ActualFireWeapon();
 			}
@@ -165,7 +162,6 @@ void APlayerCharacter::CheckCloseToWall()
 float APlayerCharacter::HealPlayer(float pHealAmount)
 {
 	curHp += pHealAmount;
-	UE_LOG(LogTemp, Warning, TEXT("Healing"));
 	if (curHp > maxHp)
 	{
 		curHp = maxHp;
@@ -186,7 +182,6 @@ void APlayerCharacter::TookDamage(float damage, FHitResult pHitParts)
 			inventory->GetEquippedHelmet()->curDurability -= inventory->GetEquippedHelmet()->damageDecreaseAmount;
 
 		}
-		UE_LOG(LogTemp, Warning, TEXT("Headshot!!!!!!"));
 	}
 
 
@@ -245,13 +240,11 @@ void APlayerCharacter::Tilting(float pValue)
 
 void APlayerCharacter::AddPrimary(TSubclassOf<ABaseGun> pWeaponOrigin, UItemWeapon* pItemWeapon)
 {
-	UE_LOG(LogTemp, Warning, TEXT("addprimary"));
 	if (primaryWeapon != nullptr)
 		return;
 	primaryWeapon = GetWorld()->SpawnActor<ABaseGun>(pWeaponOrigin);
 	if (primaryWeapon != nullptr)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("primaryWeapon"));
 		primaryWeapon->SetInfo(pItemWeapon);
 		primaryWeapon->SetParentMeshFPP(GetMesh());
 		primaryWeapon->AttachToActor(this, FAttachmentTransformRules::SnapToTargetIncludingScale);
@@ -445,7 +438,6 @@ void APlayerCharacter::SetStanding()
 
 void APlayerCharacter::EquipPrimary()
 {
-	UE_LOG(LogTemp, Warning, TEXT("equipprimary"));
 	if (primaryWeapon)
 	{
 		primaryWeapon->SetActorHiddenInGame(false);
@@ -482,7 +474,6 @@ void APlayerCharacter::FireWeapon()
 	{
 		return;
 	}
-	UE_LOG(LogTemp, Warning, TEXT("Tang tang tang"));
 
 	isFirePressed = true;
 }
@@ -548,7 +539,6 @@ void APlayerCharacter::SetHipfireWeapon()
 
 void APlayerCharacter::ReloadWeapon()
 {
-	UE_LOG(LogTemp, Warning, TEXT("isUsingInventory : %d"), inventory->isUsingInventory);
 	if (gameMode && (gameMode->isPlayerDied || gameMode->isPlayerEscaped))
 		return;
 
@@ -585,11 +575,9 @@ void APlayerCharacter::ReloadWeapon()
 				needAmmo = ownedAmmo;
 			}
 
-			UE_LOG(LogTemp, Warning, TEXT("Reload Start"));
 			currentActiveGun->Reload(needAmmo);
 			if (currentActiveGun == primaryWeapon)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("Reloading"));
 				inventory->UsePrimaryWeaponAmmo(needAmmo,currentActiveGun->GetClass()->GetName());
 			}
 			else
@@ -692,7 +680,6 @@ void APlayerCharacter::ThrowGrenade()
 
 	for (int i = 0; i < handGrenadePools.Num(); i++)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("handGrenadePools[i] :  %d"), handGrenadePools[i]);
 		if (handGrenadePools[i] &&!handGrenadePools[i]->IsActive())
 		{
 			handGrenadePools[i]->ReactivateGrenade();

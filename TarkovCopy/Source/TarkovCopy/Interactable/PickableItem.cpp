@@ -24,6 +24,4 @@ void APickableItem::Interact()
 		SetActorHiddenInGame(true);
 		FindComponentByClass<UBoxComponent>()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
-	else
-		UE_LOG(LogTemp, Warning, TEXT("Failed to pickup"));
 }

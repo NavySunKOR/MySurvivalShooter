@@ -102,7 +102,6 @@ void UItemIcon::UseItem()
 
 		if (isEmpty)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("IsEmpty"));
 			itemInfo->refInventory = nullptr;
 			invenRef->RemoveItem(itemInfo);
 			controllerRef->DropItem(this);
@@ -138,17 +137,13 @@ FReply UItemIcon::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPo
 	{
 		OpenDetailPanel();
 	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("OnReleased"))
-	}
+
 	return reply.NativeReply;
 }
 
 
 void UItemIcon::NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation)
 {
-	UE_LOG(LogTemp, Warning, TEXT("OnDragDetected"))
 	dragDrop = nullptr;
 	dragDrop = UWidgetBlueprintLibrary::CreateDragDropOperation(UDragDropOperation::StaticClass());
 	dragDrop->Payload = this;
@@ -166,8 +161,6 @@ void UItemIcon::NativeOnDragDetected(const FGeometry& InGeometry, const FPointer
 
 void UItemIcon::OnDropAction(FVector2D lastMousePosition)
 {
-	UE_LOG(LogTemp, Warning, TEXT("OnDropAction"))
-
 	//마우스 위치로 부터 아이템 RECT 생성 - 어느 경우에도 쓰이니까 미리 생성함.
 	FSlateRect positionIntRect;
 	positionIntRect.Left = (int)((lastMousePosition.X / UMGPublicProperites::BASIC_INVENTORY_GRID_WIDTH) - (itemInfo->width / 2));
@@ -191,28 +184,22 @@ void UItemIcon::OnDropAction(FVector2D lastMousePosition)
 		//이 아이템이 웨펀에 있던건가 아니면 인벤 내에서 옮기는 것인가?
 		if (controllerRef->IsInItemContainer(this))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("IsInItemContainer"))
 			//현재 아이템 위치를 일단 없앤다(한칸씩 옮기는거 가능하게끔)
-			//TODO: 주무기 또는 보조무기로 장착한 아이템이 인벤토리로 다시 옮기는 경우를 예외처리 할것
 			controllerRef->StartMoveItemPos(itemInfo);
 			//해당위치로 옮길 수 있다면 옮기고 아니면 원래 위치로 돌린다.
 			if (controllerRef->CanItemMoveTo(positionIntRect))
 			{
-				UE_LOG(LogTemp, Warning, TEXT("Move item"))
 				controllerRef->MoveItemTo(itemInfo, positionIntRect);
 			}
 			else
 			{
-				UE_LOG(LogTemp, Warning, TEXT("Failed to Move item"))
 				controllerRef->FailedToMoveItemPos(itemInfo);
 			}
 		}
 		else if (controllerRef->IsInEquipmentSlot(this))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("IsInEquipmentSlot"))
 			if (controllerRef->CanItemMoveTo(positionIntRect))
 			{
-				UE_LOG(LogTemp, Warning, TEXT("Move item"))
 				controllerRef->MoveItemTo(itemInfo, positionIntRect);
 				if (itemInfo->itemType == ItemType::WEAPON)
 				{
@@ -239,44 +226,36 @@ void UItemIcon::OnDropAction(FVector2D lastMousePosition)
 		}
 		else
 		{
-			UE_LOG(LogTemp, Warning, TEXT("WTF?"))
 			//TODO:이거 버그니 이 문제에 대해서 원인 파악 후 해결할것(아마 아이템을 버렸는데 ui에서 remove가 안되는 경우이거나 처리가 안된 경우 일 것이다)
 		}
 	}
 	else if (controllerRef->primaryWeaponContainerRect.ContainsPoint(lastMousePosition))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Primary"))
 		UItemWeapon* weapon = Cast<UItemWeapon>(itemInfo);
 		if (weapon != nullptr && weapon->weaponType == WeaponType::PRIMARY)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("PrimaryCompleteo"))
 			UseItem();
 		}
 	}
 	else if (controllerRef->secondaryWeaponContainerRect.ContainsPoint(lastMousePosition))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Secondary"))
 		UItemWeapon* weapon = Cast<UItemWeapon>(itemInfo);
 		if (weapon != nullptr && weapon->weaponType == WeaponType::SECONDARY)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("SeconCompleteo"))
 			UseItem();
 		}
 	}
 	else if (controllerRef->helmetContainerRect.ContainsPoint(lastMousePosition))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Helmet"))
 		UItemHelmet* helmet = Cast<UItemHelmet>(itemInfo);
 		if (helmet != nullptr)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("HelmetCompleteo"))
 			UseItem();
 		}
 	}
 	else //마우스가 인벤토리 영역 밖에 있으면
 	{
 		DropItem();
-		UE_LOG(LogTemp, Warning, TEXT("DropItem"))
 	}
 	isDragged = false;
 }

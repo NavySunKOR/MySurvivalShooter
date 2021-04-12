@@ -54,19 +54,15 @@ void AM9::FireWeapon(FVector start, FRotator dir)
 		}
 		else if (playerCharacter != nullptr)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Hit player"));
 			playerCharacter->TookDamage(damage, hit);
 		}
 		//아니면 지형처리.
 		else
 		{
 			//TODO: 나중에 지형에 코드를 삽입하고 해당 장소에 파편을 튀기는 방식으로 제작할것.
-			UE_LOG(LogTemp, Warning, TEXT("Terrain~!"));
 			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), hitTerrainParticle, hit.ImpactPoint, dir, true);
 			UGameplayStatics::SpawnSoundAtLocation(GetWorld(), hitTerrainSound, hit.ImpactPoint, dir, true);
 		}
-		
-		UE_LOG(LogTemp, Warning, TEXT("Done!"));
 	}
 
 	if (isAds)
