@@ -10,6 +10,8 @@
 
 ATarkovCopyGameModeBase::ATarkovCopyGameModeBase()
 {
+	PrimaryActorTick.bStartWithTickEnabled = true;
+	PrimaryActorTick.bCanEverTick = true;
 	static ConstructorHelpers::FClassFinder<AAICharacter> AICharacter(TEXT("Blueprint'/Game/Blueprints/AI/BP_AICharacter.BP_AICharacter_C'"));
 	if (AICharacter.Succeeded() && AICharacter.Class != NULL)
 		aiCharacter = AICharacter.Class;
@@ -19,13 +21,58 @@ void ATarkovCopyGameModeBase::ReturnToMainMenu()
 {
 	UGameplayStatics::OpenLevel(GetWorld(), TEXT("MainMenu"));
 }
+void ATarkovCopyGameModeBase::OpenPauseMenu()
+{
+	playerController->UnlockCloseUI();
+	playerController->LockOpenUI();
+	pauseMenuWidget->AddToViewport();
+}
+void ATarkovCopyGameModeBase::ClosePauseMenu()
+{
+	playerController->UnlockCloseUI();
+	pauseMenuWidget->RemoveFromViewport();
+}
 void ATarkovCopyGameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
-	InitalizeAI();
+	playerController = Cast<AFPPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	InitializeAI();
+	InitializeSystemUI();
 }
 
-void ATarkovCopyGameModeBase::InitalizeAI()
+void ATarkovCopyGameModeBase::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+	if (playerController == nullptr)
+	{
+		playerController = Cast<AFPPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	}
+
+	if (playerController->WasInputKeyJustPressed(EKeys::Tab))
+	{
+		if (optionMenuWidget->IsInViewport())
+		{
+			CloseOptionMenu();
+			ClosePauseMenu();
+		}
+		else
+		{
+			if (!pauseMenuWidget->IsInViewport())
+			{
+				//메뉴 열기
+				OpenPauseMenu();
+			}
+			else
+			{
+				//메뉴 닫기
+				ClosePauseMenu();
+			}
+		}
+
+	}
+}
+
+void ATarkovCopyGameModeBase::InitializeAI()
 {
 	TArray<AActor*> allSpawnPoints;
 	UGameplayStatics::GetAllActorsWithTag(GetWorld(), TEXT("SpawnPoints"), allSpawnPoints);
@@ -37,6 +84,12 @@ void ATarkovCopyGameModeBase::InitalizeAI()
 		character->SetActorLocation(spawnPoint->GetActorLocation());
 		aiPlayers.Add(character);
 	}
+}
+
+void ATarkovCopyGameModeBase::InitializeSystemUI()
+{
+	pauseMenuWidget = CreateWidget<UUserWidget>(playerController, pauseMenuWidgetOrigin);
+	optionMenuWidget = CreateWidget<UUserWidget>(playerController, optionMenuWidgetOrigin);
 }
 
 void ATarkovCopyGameModeBase::PlayerDied()
@@ -67,4 +120,30 @@ void ATarkovCopyGameModeBase::TryExfil()
 void ATarkovCopyGameModeBase::CancelExfil()
 {
 
+}
+
+//BlueprintCallables
+
+void ATarkovCopyGameModeBase::ResumeGame()
+{
+	UE_LOG(LogTemp,Warning,TEXT("Banze"))
+	ClosePauseMenu();
+}
+
+void ATarkovCopyGameModeBase::QuitGame()
+{
+	UGameplayStatics::OpenLevel(GetWorld(), TEXT("MainMenu"));
+}
+
+void ATarkovCopyGameModeBase::OpenOptionMenu()
+{
+	ClosePauseMenu(); 
+	playerController->LockOpenUI();
+	optionMenuWidget->AddToViewport();
+}
+
+void ATarkovCopyGameModeBase::CloseOptionMenu()
+{
+	optionMenuWidget->RemoveFromViewport();
+	OpenPauseMenu();
 }

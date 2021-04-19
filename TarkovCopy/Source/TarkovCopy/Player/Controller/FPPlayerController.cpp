@@ -120,12 +120,8 @@ void AFPPlayerController::OpenInventory()
 	//오픈,클로즈 두개를 아예 별도로 써야되는 상황 떄문에 어쩔수 없이 openclose에서는 두번 체크함
 	if (!inventoryUI->IsInViewport())
 	{
-		bShowMouseCursor = true;
-		bEnableClickEvents = true;
-		bEnableMouseOverEvents = true;
+		LockOpenUI();
 		isInventoryOpened = true;
-		SetIgnoreLookInput(true);
-		SetIgnoreMoveInput(true);
 		crosshairUI->SetVisibility(ESlateVisibility::Hidden);
 		inventoryUI->AddToViewport();
 		itemDetailPanel->SetVisibility(ESlateVisibility::Hidden);
@@ -137,13 +133,8 @@ void AFPPlayerController::CloseInventory()
 	//오픈,클로즈 두개를 아예 별도로 써야되는 상황 떄문에 어쩔수 없이 openclose함수에서는 두번 체크함
 	if (inventoryUI->IsInViewport())
 	{
-		bShowMouseCursor = false;
-		bEnableClickEvents = false;
-		bEnableMouseOverEvents = false;
-		SetIgnoreLookInput(false);
-		SetIgnoreMoveInput(false);
+		UnlockCloseUI();
 		isInventoryOpened = false;
-
 		crosshairUI->SetVisibility(ESlateVisibility::Visible);
 		inventoryUI->RemoveFromViewport();
 		itemDetailPanel->SetVisibility(ESlateVisibility::Hidden);
@@ -161,6 +152,26 @@ void AFPPlayerController::OpenCloseInventory()
 	{
 		OpenInventory();
 	}
+}
+
+void AFPPlayerController::LockOpenUI()
+{
+	bShowMouseCursor = true;
+	bEnableClickEvents = true;
+	bEnableMouseOverEvents = true;
+	SetIgnoreLookInput(true);
+	SetIgnoreMoveInput(true);
+}
+
+void AFPPlayerController::UnlockCloseUI()
+{
+	bShowMouseCursor = false;
+	bEnableClickEvents = false;
+	bEnableMouseOverEvents = false;
+	SetIgnoreLookInput(false);
+	SetIgnoreMoveInput(false);
+
+	UE_LOG(LogTemp,Warning,TEXT("Bang bang"))
 }
 
 void AFPPlayerController::OpenItemDetailPanel(UItemIcon* pItemIcon)

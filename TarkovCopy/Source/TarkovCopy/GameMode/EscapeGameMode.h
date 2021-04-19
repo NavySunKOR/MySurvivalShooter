@@ -31,8 +31,6 @@ private:
 
 	AFPPlayerController* playerCon;
 
-
-
 public:
 	void SelectQuestItems();
 	void SelectExfilPoint();

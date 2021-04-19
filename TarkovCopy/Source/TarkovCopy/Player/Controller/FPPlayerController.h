@@ -132,6 +132,8 @@ public:
 
 	void InitInvenotry();
 	void OpenCloseInventory();
+	void LockOpenUI();
+	void UnlockCloseUI();
 	void OpenItemDetailPanel(UItemIcon* pItemIcon);
 
 	//Item 이동 관련
