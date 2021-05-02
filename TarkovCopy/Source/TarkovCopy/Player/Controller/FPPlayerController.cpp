@@ -21,6 +21,7 @@ void AFPPlayerController::BeginPlay()
 	healthHudUI = CreateWidget<UUserWidget>(this, healthHudWidget);
 	healthHudUI->AddToViewport();
 	healthHudBgUI = healthHudUI->GetWidgetFromName(TEXT("Splash"));
+	flashHudBgUI = healthHudUI->GetWidgetFromName(TEXT("FlashSplash"));
 
 	crosshairUI = CreateWidget<UUserWidget>(this, crosshairWidget);
 	crosshairUI->AddToViewport();
@@ -65,6 +66,28 @@ void AFPPlayerController::PlayerTick(float DeltaTime)
 		{
 			ExfilingComplete();
 		}
+	}
+
+	if (isFlashed)
+	{
+		flashTimer += DeltaTime;
+		if (flashTimer > flashInterval / 2.f)
+		{
+			flashFadeAmount = ((flashInterval - flashTimer) / flashInterval * 2.f);
+			
+			UE_LOG(LogTemp,Warning,TEXT("Fading : %f"), flashFadeAmount)
+
+			flashHudBgUI->SetRenderOpacity(flashFadeAmount);
+		}
+
+		if (flashTimer > flashInterval)
+		{
+			isFlashed = false;
+			flashTimer = 0.f;
+			flashInterval = 0.f;
+			flashHudBgUI->SetRenderOpacity(0.f);
+		}
+
 	}
 }
 
@@ -512,6 +535,32 @@ void AFPPlayerController::Dead()
 	CloseInventory();
 	if(gameMode)
 	gameMode->PlayerDied();//메인화면으로 가는거 넣을것.
+}
+
+void AFPPlayerController::GetFlashed(float pFlashTime, FVector pFlashbangPos)
+{
+	FVector dirToFlashbang = pFlashbangPos - ownerPlayerCharacter->GetActorLocation();
+	FVector playerForward = ownerPlayerCharacter->GetActorForwardVector();
+
+	float vectorResult = FVector::DotProduct(dirToFlashbang, playerForward) / dirToFlashbang.Size() * playerForward.Size();
+	
+	//TODO: 섬광탄에 영향받는 시야각을 나중에 CONSTANT로 몰아서 정의할 것.
+	//TODO: 0.6이면 COS하면 50도 가까이 됨 - 각도로 계산하면 각도로 바꿔주는 비용이 발생하기 때문에, 그냥 COS() 값으로 계산.
+	UE_LOG(LogTemp, Warning, TEXT("GET FLASHED IN DOT PRODUCT : %f"), FVector::DotProduct(dirToFlashbang, playerForward));
+	UE_LOG(LogTemp, Warning, TEXT("GET FLASHED IN COS : %f"), vectorResult);
+	UE_LOG(LogTemp, Warning, TEXT("GET FLASHED IN ANGLE : %f"), (FMath::RadiansToDegrees(FMath::Acos(vectorResult))));
+	if (vectorResult > 0.6f)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("GET FLASHED"));
+		flashInterval = pFlashTime;
+		flashTimer = 0.f;
+		isFlashed = true;
+		//TODO: 섬광탄 스크린 효과
+		flashHudBgUI->SetRenderOpacity(1.f);
+	}
+
+
+
 }
 
 void AFPPlayerController::ShowQuestInfo(FString itemName, float distance)

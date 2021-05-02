@@ -34,6 +34,8 @@ private:
 	UUserWidget* healthHudUI;
 	UPROPERTY()
 	UWidget* healthHudBgUI;
+	UPROPERTY()
+	UWidget* flashHudBgUI;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUserWidget> crosshairWidget;
@@ -108,14 +110,17 @@ private:
 	UPROPERTY()
 	UItemIcon* currentActiveItemIcon;
 
-	UPROPERTY()
-	APlayerCharacter* ownerPlayerCharacter;
-
 
 	//Exfil°ü·Ã
 	bool isExfiling = false;
 	float timeToExfil = 5.f;
 	float exfilCounter = 0.f;
+
+	//flash °ü·Ã
+	bool isFlashed = false;
+	float flashTimer = 0.f;
+	float flashInterval = 0.f;
+	float flashFadeAmount = 0.f;
 
 
 	void CloseAlert();
@@ -129,6 +134,9 @@ public:
 	FSlateRect primaryWeaponContainerRect;
 	FSlateRect secondaryWeaponContainerRect;
 	FSlateRect helmetContainerRect;
+
+	UPROPERTY()
+	APlayerCharacter* ownerPlayerCharacter;
 
 	void InitInvenotry();
 	void OpenCloseInventory();
@@ -166,6 +174,9 @@ public:
 	void UpdateHealthHud(float pCurHealth);
 	void UpdateInventoryUI();
 	void Dead();
+
+	//¼¶±¤Åº
+	void GetFlashed(float pFlashTime,FVector pFlashbangPos);
 
 	//Äù½ºÆ® °ü·Ã
 	void ShowQuestInfo(FString itemName, float distance);

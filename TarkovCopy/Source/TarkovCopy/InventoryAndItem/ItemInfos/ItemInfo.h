@@ -22,7 +22,8 @@ enum class ItemType :uint8
 	MAGAZINE UMETA(DisplayName = "magazine"),
 	ARMOR UMETA(DisplayName = "armor"),
 	MEDIKIT UMETA(DisplayName = "medikit"),
-	GRENADE UMETA(DisplayName = "grenade")
+	GRENADE UMETA(DisplayName = "grenade"),
+	FLASHGRENADE UMETA(DisplayName = "flashGrenade")
 };
 
 UCLASS(Blueprintable, BlueprintType)

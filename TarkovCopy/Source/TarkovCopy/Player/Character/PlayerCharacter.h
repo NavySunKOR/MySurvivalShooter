@@ -35,6 +35,8 @@ private:
 	FVector springArmOrigin;
 	UPROPERTY()
 	TArray<AHandGrenade*> handGrenadePools;
+	UPROPERTY()
+	TArray<AHandGrenade*> flashGrenadePools;
 
 	UPROPERTY()
 	AHandGrenade* handGrenadePool;
@@ -42,7 +44,6 @@ private:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-	AFPPlayerController* playerController;
 	UStaticMeshComponent* helmetMesh;
 
 
@@ -82,6 +83,9 @@ protected:
 	//¼ö·ùÅº
 	void ThrowGrenade();
 
+	//¼¶±¤Åº
+	void ThrowFlashGrenade();
+
 
 	ABaseGun* currentActiveGun;
 	ABaseGun* primaryWeapon;
@@ -110,6 +114,8 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AHandGrenade> handGrenadeOrigin;
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AHandGrenade> flashGrenadeOrigin;
 
 	class ATarkovCopyGameModeBase* gameMode;
 
@@ -117,6 +123,8 @@ protected:
 public:	
 	UPROPERTY()
 	UInventory* inventory;
+	AFPPlayerController* playerController;
+
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

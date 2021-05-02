@@ -7,7 +7,7 @@
 #include "TarkovCopy/InventoryAndItem/ItemInfos/ItemHelmet.h"
 #include "TarkovCopy/GameMode/TarkovCopyGameModeBase.h"
 #include "TarkovCopy/Player/Controller/FPPlayerController.h"
-#include "TarkovCopy/Weapons/HandGrenade.h"
+#include "TarkovCopy/Weapons/FlashGrenade.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -129,6 +129,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAction(TEXT("Inventory"), EInputEvent::IE_Pressed, this, &APlayerCharacter::Inventory);
 	PlayerInputComponent->BindAction(TEXT("InspectWeapon"), EInputEvent::IE_Pressed, this, &APlayerCharacter::InspectWeapon);
 	PlayerInputComponent->BindAction(TEXT("ThrowGrenade"), EInputEvent::IE_Pressed, this, &APlayerCharacter::ThrowGrenade);
+	PlayerInputComponent->BindAction(TEXT("ThrowFlashGrenade"), EInputEvent::IE_Pressed, this, &APlayerCharacter::ThrowFlashGrenade);
 
 	PlayerInputComponent->BindAxis(TEXT("Tilting"), this, &APlayerCharacter::Tilting);
 	PlayerInputComponent->BindAxis(TEXT("MoveVertical"), this, &APlayerCharacter::MoveVertical);
@@ -233,7 +234,7 @@ void APlayerCharacter::Tilting(float pValue)
 	springArm->SetRelativeRotation(GetMesh()->GetRelativeRotation());
 
 	FVector originVec = springArmOrigin;
-	originVec.Y = springArmOrigin.Y + pValue * 15.f;
+	originVec.Y = springArmOrigin.Y + pValue * 75.f;
 	GetMesh()->SetRelativeLocation(originVec);
 
 }
@@ -686,6 +687,43 @@ void APlayerCharacter::ThrowGrenade()
 			//Add Physics power
 			handGrenadePools[i]->SetActorLocation(GetActorLocation());
 			handGrenadePools[i]->ThrowGrenade(GetActorForwardVector(),GetActorLocation() + GetActorUpVector() * 50.f + GetActorForwardVector() * 50.f);
+
+			inventory->UseItem(itemReference);
+			inventory->UpdateAndCleanupBackpack();
+			playerController->UpdateInventoryUI();
+			break;
+		}
+	}
+}
+
+void APlayerCharacter::ThrowFlashGrenade()
+{
+	UItemInfo* itemReference = inventory->HasItemType(ItemType::FLASHGRENADE);
+	if (itemReference == nullptr)
+	{
+		return;
+	}
+
+	UE_LOG(LogTemp,Warning,TEXT("Flash"))
+
+	if (flashGrenadePools.Num() == 0)
+	{
+		for (int i = 0; i < 8; i++)
+		{
+			AFlashGrenade* flash = GetWorld()->SpawnActor<AFlashGrenade>(flashGrenadeOrigin);
+			flashGrenadePools.Add(flash);
+		}
+	}
+
+
+	for (int i = 0; i < flashGrenadePools.Num(); i++)
+	{
+		if (flashGrenadePools[i] && !flashGrenadePools[i]->IsActive())
+		{
+			flashGrenadePools[i]->ReactivateGrenade();
+			//Add Physics power
+			flashGrenadePools[i]->SetActorLocation(GetActorLocation());
+			flashGrenadePools[i]->ThrowGrenade(GetActorForwardVector(), GetActorLocation() + GetActorUpVector() * 50.f + GetActorForwardVector() * 50.f);
 
 			inventory->UseItem(itemReference);
 			inventory->UpdateAndCleanupBackpack();

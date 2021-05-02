@@ -4,6 +4,7 @@
 #include "HandGrenade.h"
 #include "TarkovCopy/AI/Character/AICharacter.h"
 #include "TarkovCopy/Player/Character/PlayerCharacter.h"
+#include "TarkovCopy/GameMode/TarkovCopyGameModeBase.h"
 #include <Kismet/GameplayStatics.h>
 
 // Sets default values
@@ -119,7 +120,7 @@ void AHandGrenade::Tick(float DeltaTime)
 	if (!isExploded)
 	{
 		explosionTimer += DeltaTime;
-		if (explosionTimer > 4.f)
+		if (explosionTimer > explosionDuration)
 		{
 			explosionTimer = 0.f;
 			Explode();

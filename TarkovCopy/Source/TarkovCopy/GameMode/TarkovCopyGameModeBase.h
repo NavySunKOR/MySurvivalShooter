@@ -39,9 +39,6 @@ public:
 private:
 	TArray<AAICharacter*> aiPlayers;
 	TSubclassOf<AAICharacter> aiCharacter;
-	UPROPERTY()
-	AFPPlayerController* playerController;
-
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUserWidget> pauseMenuWidgetOrigin;
@@ -88,7 +85,9 @@ public:
 	UPROPERTY(EditAnywhere)
 	USoundBase* escapedSound;
 
-	
+
+	UPROPERTY()
+	AFPPlayerController* playerController;
 
 
 	UPROPERTY(EditAnywhere)

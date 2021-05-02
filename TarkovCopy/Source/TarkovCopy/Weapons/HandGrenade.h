@@ -18,17 +18,19 @@ public:
 	AHandGrenade();
 private:
 	float explosionTimer;
-	TArray<AActor*> grenadeTargets;
-	UPROPERTY()
-	USphereComponent* sphereCollision;
-	bool isExploded = true;
-	bool isGrenadeTossed = false;
 	FVector throwDir;
 	FVector throwStartPos;
 
 	UPROPERTY()
 	UStaticMeshComponent* getMesh;
 protected:
+	TArray<AActor*> grenadeTargets;
+	USphereComponent* sphereCollision;
+
+	UPROPERTY()
+	bool isExploded = true;
+	bool isGrenadeTossed = false;
+
 	UPROPERTY(EditAnywhere)
 	float explosionDuration;
 	UPROPERTY(EditAnywhere)
@@ -53,7 +55,7 @@ public:
 	AActor* grenadeOwner;
 	void ReactivateGrenade();
 	void DeactivateGrenade();
-	void Explode();
+	virtual void Explode();
 
 	void ThrowGrenade(FVector pDir, FVector pStartPos);
 
