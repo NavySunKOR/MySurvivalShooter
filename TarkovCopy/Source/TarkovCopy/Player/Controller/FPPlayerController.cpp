@@ -38,6 +38,10 @@ void AFPPlayerController::BeginPlay()
 	youveEscapedUI = CreateWidget<UUserWidget>(this, youveEscapedWidget);
 	youveEscapedUI->AddToViewport(2);
 
+	hitIndicatorUI = CreateWidget<UUserWidget>(this, hitIndicatorWidget);
+	hitIndicatorUI->AddToViewport();
+	hitIndicatorActualUI = hitIndicatorUI->GetWidgetFromName(TEXT("HitIndicator"));
+
 
 	alertHudUI->SetVisibility(ESlateVisibility::Hidden);
 	exfilAlertUI->SetVisibility(ESlateVisibility::Hidden);
@@ -73,7 +77,7 @@ void AFPPlayerController::PlayerTick(float DeltaTime)
 		flashTimer += DeltaTime;
 		if (flashTimer > flashInterval / 2.f)
 		{
-			flashFadeAmount = ((flashInterval - flashTimer) / flashInterval * 2.f);
+			flashFadeAmount = ((flashInterval - flashTimer) / (flashInterval * 2.f));
 			
 			UE_LOG(LogTemp,Warning,TEXT("Fading : %f"), flashFadeAmount)
 
@@ -87,7 +91,45 @@ void AFPPlayerController::PlayerTick(float DeltaTime)
 			flashInterval = 0.f;
 			flashHudBgUI->SetRenderOpacity(0.f);
 		}
+	}
 
+	if (isHit)
+	{
+		hitIndicatorTimer += DeltaTime;
+
+		//각도 적용
+
+		FVector characterForward = ownerPlayerCharacter->GetActorForwardVector();
+		FVector hitDir = (hitFromPos - ownerPlayerCharacter->GetActorLocation());
+		float angle = FMath::RadiansToDegrees(FMath::Acos(FVector::DotProduct(characterForward, hitDir) / (characterForward.Size() * hitDir.Size())));
+		float crossAngle = FVector::DotProduct(FVector::CrossProduct(characterForward, hitDir),FVector::UpVector);
+
+		UE_LOG(LogTemp, Warning, TEXT("Hit angle : %f , is left or right : %f"), angle, crossAngle);
+
+		if (crossAngle < 0)
+		{
+			angle = -angle;
+		}
+
+
+		if (angle > 180.f)
+		{
+			angle -= 180.f;
+		}
+		hitIndicatorActualUI->SetRenderTransformAngle(angle);
+
+		if (hitIndicatorTimer > hitIndicatorInterval / 2.f)
+		{
+			hitIndicatorFadeAmount = ((hitIndicatorInterval - hitIndicatorTimer) / (hitIndicatorInterval * 2.f));
+			hitIndicatorActualUI->SetRenderOpacity(hitIndicatorFadeAmount);
+		}
+
+		if (hitIndicatorTimer > hitIndicatorInterval)
+		{
+			isHit = false;
+			hitIndicatorTimer = 0.f;
+			hitIndicatorActualUI->SetRenderOpacity(0.f);
+		}
 	}
 }
 
@@ -531,7 +573,8 @@ void AFPPlayerController::UpdateInventoryUI()
 void AFPPlayerController::Dead()
 {
 	youreDeadUI->SetVisibility(ESlateVisibility::Visible);
-	crosshairUI->SetVisibility(ESlateVisibility::Hidden);
+	crosshairUI->RemoveFromViewport();
+	hitIndicatorUI->RemoveFromViewport();
 	CloseInventory();
 	if(gameMode)
 	gameMode->PlayerDied();//메인화면으로 가는거 넣을것.
@@ -560,6 +603,14 @@ void AFPPlayerController::GetFlashed(float pFlashTime, FVector pFlashbangPos)
 	}
 
 
+
+}
+
+void AFPPlayerController::ShowHitIndicator(FVector pHitFrom)
+{
+	hitFromPos = pHitFrom;
+	isHit = true;
+	hitIndicatorActualUI->SetRenderOpacity(1.f);
 
 }
 

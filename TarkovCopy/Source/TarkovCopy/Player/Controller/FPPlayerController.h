@@ -30,6 +30,7 @@ public:
 private:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUserWidget> healthHudWidget;
+	//Status Render
 	UPROPERTY()
 	UUserWidget* healthHudUI;
 	UPROPERTY()
@@ -37,11 +38,14 @@ private:
 	UPROPERTY()
 	UWidget* flashHudBgUI;
 
+	//Crosshair Render
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUserWidget> crosshairWidget;
 	UPROPERTY()
 	UUserWidget* crosshairUI;
 
+
+	//Mission and notify
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUserWidget> alertHudWidget;
 	UPROPERTY()
@@ -61,6 +65,12 @@ private:
 	TSubclassOf<UUserWidget> youveEscapedWidget;
 	UPROPERTY()
 	UUserWidget* youveEscapedUI;
+
+	//Hit Indicator
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UUserWidget> hitIndicatorWidget;
+	UUserWidget* hitIndicatorUI;
+	UWidget* hitIndicatorActualUI;
 
 
 	//TODO: UI관련, 추 후에 컨트롤러로 옮길것
@@ -122,6 +132,13 @@ private:
 	float flashInterval = 0.f;
 	float flashFadeAmount = 0.f;
 
+	//hitIndicator 관련
+	bool isHit = false;
+	float hitIndicatorTimer = 0.f;
+	float hitIndicatorInterval = 4.f;
+	float hitIndicatorFadeAmount = 0.f;
+	FVector hitFromPos;
+
 
 	void CloseAlert();
 
@@ -177,6 +194,9 @@ public:
 
 	//섬광탄
 	void GetFlashed(float pFlashTime,FVector pFlashbangPos);
+
+	//피격
+	void ShowHitIndicator(FVector pHitDir);
 
 	//퀘스트 관련
 	void ShowQuestInfo(FString itemName, float distance);

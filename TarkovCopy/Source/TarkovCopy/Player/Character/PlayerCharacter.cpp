@@ -184,7 +184,7 @@ void APlayerCharacter::TookDamage(float damage, FHitResult pHitParts)
 
 		}
 	}
-
+	 
 
 	curHp -= damage;
 	if (curHp <= 0)
@@ -193,6 +193,7 @@ void APlayerCharacter::TookDamage(float damage, FHitResult pHitParts)
 		playerController->Dead();
 	}
 	playerController->UpdateHealthHud(curHp);
+	playerController->ShowHitIndicator(pHitParts.ImpactPoint);
 }
 
 bool APlayerCharacter::PickupItem(UItemInfo* pItemInfo)
