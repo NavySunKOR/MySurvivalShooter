@@ -86,7 +86,7 @@ void AHandGrenade::Explode()
 			if (hit.Actor->ActorHasTag(TEXT("Player")))
 			{
 				APlayerCharacter* playerCharacter = Cast<APlayerCharacter>(hit.GetActor());
-				playerCharacter->TookDamage(explosionDamage, hit);
+				playerCharacter->TookDamage(explosionDamage, hit, GetActorLocation());
 			}
 			//에너미인가
 			else if (hit.Actor->ActorHasTag(TEXT("Enemy")))

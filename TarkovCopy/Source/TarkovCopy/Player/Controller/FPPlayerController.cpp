@@ -610,6 +610,7 @@ void AFPPlayerController::ShowHitIndicator(FVector pHitFrom)
 {
 	hitFromPos = pHitFrom;
 	isHit = true;
+	hitIndicatorTimer = 0.f;
 	hitIndicatorActualUI->SetRenderOpacity(1.f);
 
 }

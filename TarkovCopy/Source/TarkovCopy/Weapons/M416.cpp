@@ -59,7 +59,8 @@ void AM416::FireWeapon(FVector start,FRotator dir)
 		//아니면 지형처리.
 		else if (playerCharacter != nullptr)
 		{
-			playerCharacter->TookDamage(damage, hit);
+			FVector actorLoc = (weaponOwnerCharacter) ? weaponOwnerCharacter->GetActorLocation() : weaponOwnerAICharacter->GetActorLocation();
+			playerCharacter->TookDamage(damage, hit, actorLoc);
 			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), hitEnemyParticle, hit.ImpactPoint);
 			UGameplayStatics::SpawnSoundAtLocation(GetWorld(), hitEnemySound, hit.ImpactPoint, hit.ImpactNormal.Rotation());
 		}

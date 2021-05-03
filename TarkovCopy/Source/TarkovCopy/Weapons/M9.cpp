@@ -54,7 +54,8 @@ void AM9::FireWeapon(FVector start, FRotator dir)
 		}
 		else if (playerCharacter != nullptr)
 		{
-			playerCharacter->TookDamage(damage, hit);
+			FVector shooterPos = (weaponOwnerCharacter) ? weaponOwnerCharacter->GetActorLocation() : weaponOwnerAICharacter->GetActorLocation();
+			playerCharacter->TookDamage(damage, hit, shooterPos);
 		}
 		//아니면 지형처리.
 		else

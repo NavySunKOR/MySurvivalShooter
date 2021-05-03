@@ -170,7 +170,7 @@ float APlayerCharacter::HealPlayer(float pHealAmount)
 	return curHp;
 }
 
-void APlayerCharacter::TookDamage(float damage, FHitResult pHitParts)
+void APlayerCharacter::TookDamage(float damage, FHitResult pHitParts, FVector pShooterPos)
 {
 	int generated = rand() % 10;
 	if (generated < 3) // 0,1,2 중 하나 걸리니까 30퍼센트 헤드샷
@@ -193,7 +193,7 @@ void APlayerCharacter::TookDamage(float damage, FHitResult pHitParts)
 		playerController->Dead();
 	}
 	playerController->UpdateHealthHud(curHp);
-	playerController->ShowHitIndicator(pHitParts.ImpactPoint);
+	playerController->ShowHitIndicator(pShooterPos);
 }
 
 bool APlayerCharacter::PickupItem(UItemInfo* pItemInfo)

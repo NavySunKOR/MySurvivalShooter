@@ -135,7 +135,7 @@ public:
 	//virtual void BeginDestroy();
 
 	float HealPlayer(float pHealAmount);
-	void TookDamage(float damage, FHitResult pHitParts);
+	void TookDamage(float damage, FHitResult pHitParts,FVector pShooterPos);
 	void Tilting(float pValue);
 
 	//아이템 이동 관련
