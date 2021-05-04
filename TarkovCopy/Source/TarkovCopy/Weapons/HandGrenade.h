@@ -18,8 +18,6 @@ public:
 	AHandGrenade();
 private:
 	float explosionTimer;
-	FVector throwDir;
-	FVector throwStartPos;
 
 	UPROPERTY()
 	UStaticMeshComponent* getMesh;

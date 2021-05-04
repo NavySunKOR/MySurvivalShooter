@@ -6,6 +6,7 @@
 #include "TarkovCopy/AI/Controller/UserCreatedAIController.h"
 #include "TarkovCopy/Player/Character/PlayerCharacter.h"
 #include "TarkovCopy/GameMode/TarkovCopyGameModeBase.h"
+#include "TarkovCopy/Weapons/BulletProjectile.h"
 
 // Sets default values
 AAICharacter::AAICharacter()
@@ -192,3 +193,27 @@ void AAICharacter::FireWeapon()
 	}
 }
 
+void AAICharacter::FireProjectile(float pDamage, float pVelocity, float pMass, FVector pFireStartPos, FVector pShootDir)
+{
+	bool isProjectileFired = false;
+	for (int i = 0; i < bulletProjectilePools.Num(); i++)
+	{
+		if (!bulletProjectilePools[i]->IsFired())
+		{
+			bulletProjectilePools[i]->ReactivateProjectile(pDamage, pVelocity, pMass,Cast<APawn>(this), pShootDir);
+			bulletProjectilePools[i]->SetActorLocation(pFireStartPos);
+			bulletProjectilePools[i]->LaunchProjectile();
+			isProjectileFired = true;
+			break;
+		}
+	}
+
+	if (!isProjectileFired)
+	{
+		bulletProjectilePools.Add(GetWorld()->SpawnActor<ABulletProjectile>(bulletProjectileOrigin));
+		bulletProjectilePools[bulletProjectilePools.Num() -1]->ReactivateProjectile(pDamage, pVelocity, pMass,Cast<APawn>(this), pShootDir);
+		bulletProjectilePools[bulletProjectilePools.Num() - 1]->SetActorLocation(pFireStartPos);
+		bulletProjectilePools[bulletProjectilePools.Num() - 1]->LaunchProjectile();
+		isProjectileFired = true;
+	}
+}

@@ -78,9 +78,6 @@ void AFPPlayerController::PlayerTick(float DeltaTime)
 		if (flashTimer > flashInterval / 2.f)
 		{
 			flashFadeAmount = ((flashInterval - flashTimer) / (flashInterval * 2.f));
-			
-			UE_LOG(LogTemp,Warning,TEXT("Fading : %f"), flashFadeAmount)
-
 			flashHudBgUI->SetRenderOpacity(flashFadeAmount);
 		}
 
@@ -103,8 +100,6 @@ void AFPPlayerController::PlayerTick(float DeltaTime)
 		FVector hitDir = (hitFromPos - ownerPlayerCharacter->GetActorLocation());
 		float angle = FMath::RadiansToDegrees(FMath::Acos(FVector::DotProduct(characterForward, hitDir) / (characterForward.Size() * hitDir.Size())));
 		float crossAngle = FVector::DotProduct(FVector::CrossProduct(characterForward, hitDir),FVector::UpVector);
-
-		UE_LOG(LogTemp, Warning, TEXT("Hit angle : %f , is left or right : %f"), angle, crossAngle);
 
 		if (crossAngle < 0)
 		{

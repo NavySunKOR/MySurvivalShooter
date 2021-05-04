@@ -2,6 +2,10 @@
 
 
 #include "BulletProjectile.h"
+#include "TarkovCopy/AI/Character/AICharacter.h"
+#include "TarkovCopy/Player/Character/PlayerCharacter.h"
+#include <Components/SphereComponent.h>
+#include <Kismet/GameplayStatics.h>
 
 // Sets default values
 ABulletProjectile::ABulletProjectile()
@@ -11,33 +15,73 @@ ABulletProjectile::ABulletProjectile()
 
 }
 
-void ABulletProjectile::ReactivateProjectile(float pDamage, float pVelocity, float pMass, FVector pLastShooterPos,FVector pShootDir)
+void ABulletProjectile::LaunchProjectile()
 {
-	if (mesh == nullptr)
-		mesh = Cast<UStaticMeshComponent>(GetDefaultSubobjectByName(TEXT("Mesh")));
+	getMesh->SetSimulatePhysics(false);
+	getMesh->SetSimulatePhysics(true);
+	getMesh->SetPhysicsLinearVelocity(shootDir * velocity);
+}
+
+void ABulletProjectile::ReactivateProjectile(float pDamage, float pVelocity, float pMass,APawn* pShooter,FVector pShootDir)
+{
+	isFired = true;
 	damage = pDamage;
 	velocity = pVelocity;
 	mass = pMass;
-	lastShooterPos = pLastShooterPos;
+	lastShooterPos = pShooter->GetActorLocation();
+	bulletOwner = pShooter;
+	shootDir = pShootDir;
 	SetActorHiddenInGame(false);
 	SetActorEnableCollision(true);
-	mesh->SetSimulatePhysics(true);
-	mesh->SetPhysicsLinearVelocity(pShootDir * pVelocity);
 }
 
 void ABulletProjectile::DeactivateProjectile()
 {
+	isFired = false;
+	getMesh->SetSimulatePhysics(false);
 	SetActorHiddenInGame(true);
 	SetActorEnableCollision(false);
-	SetActorHiddenInGame(true);
-	SetActorEnableCollision(false);
-	mesh->SetSimulatePhysics(false);
+}
+
+bool ABulletProjectile::IsFired()
+{
+	return isFired;
 }
 
 // Called when the game starts or when spawned
 void ABulletProjectile::BeginPlay()
 {
 	Super::BeginPlay();
+	getMesh = Cast<UStaticMeshComponent>(GetDefaultSubobjectByName(TEXT("BulletMesh")));
+	DeactivateProjectile();
+}
+
+void ABulletProjectile::NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit)
+{
+	if (bulletOwner->GetName().Equals(Other->GetName()))
+		return;
+	AAICharacter* aiCharacter = Cast<AAICharacter>(Hit.GetActor());
+	APlayerCharacter* playerCharacter = Cast<APlayerCharacter>(Hit.GetActor());
+	if (aiCharacter != nullptr)
+	{
+		//TODO: 총알의 오너는 플레이어 또는 AI의 캐릭터로 설정 해 줄것.
+		aiCharacter->TookDamage(damage, Hit, GetOwner());
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), hitEnemyParticle, Hit.ImpactPoint);
+		UGameplayStatics::SpawnSoundAtLocation(GetWorld(), hitEnemySound, Hit.ImpactPoint, Hit.ImpactNormal.Rotation());
+	}
+	//아니면 지형처리.
+	else if (playerCharacter != nullptr)
+	{
+		playerCharacter->TookDamage(damage, Hit, lastShooterPos);
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), hitEnemyParticle, Hit.ImpactPoint);
+		UGameplayStatics::SpawnSoundAtLocation(GetWorld(), hitEnemySound, Hit.ImpactPoint, Hit.ImpactNormal.Rotation());
+	}
+	else
+	{
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), hitTerrainParticle, Hit.ImpactPoint);
+		UGameplayStatics::SpawnSoundAtLocation(GetWorld(), hitTerrainSound, Hit.ImpactPoint, Hit.ImpactNormal.Rotation());
+	}
+
 	DeactivateProjectile();
 }
 
@@ -45,6 +89,5 @@ void ABulletProjectile::BeginPlay()
 void ABulletProjectile::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 

@@ -16,6 +16,7 @@
 class USpringArmComponent;
 class UStaticMeshComponent;
 class AHandGrenade;
+class ABulletProjectile;
 UCLASS()
 class TARKOVCOPY_API APlayerCharacter : public ACharacter
 {
@@ -30,13 +31,15 @@ private:
 	float moveHorizontalValue = 0.f;
 	float maxWalkValue = 0.f;
 	bool isFired = false; // for semi auto mode only
-	bool isFirePressed = false; 
+	bool isFirePressed = false;
 	USpringArmComponent* springArm;
 	FVector springArmOrigin;
 	UPROPERTY()
 	TArray<AHandGrenade*> handGrenadePools;
 	UPROPERTY()
 	TArray<AHandGrenade*> flashGrenadePools;
+	UPROPERTY()
+	TArray<ABulletProjectile*> bulletProjectilePools;
 
 	UPROPERTY()
 	AHandGrenade* handGrenadePool;
@@ -116,6 +119,8 @@ protected:
 	TSubclassOf<AHandGrenade> handGrenadeOrigin;
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AHandGrenade> flashGrenadeOrigin;
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<ABulletProjectile> bulletProjectileOrigin;
 
 	class ATarkovCopyGameModeBase* gameMode;
 
@@ -146,14 +151,13 @@ public:
 	void FailedToMoveItemPos(UItemInfo* pItemInfo);
 
 	//公扁 包访
-
 	void AddPrimary(TSubclassOf<ABaseGun> pWeaponOrigin,UItemWeapon* pItemWeapon);
 	void AddSecondary(TSubclassOf<ABaseGun> pWeaponOrigin, UItemWeapon* pItemWeapon);
 	void RemovePrimary();
 	void RemoveSecondary();
+	void FireProjectile(float pDamage, float pVelocity, float pMass, FVector pFireStartPos, FVector pShootDir);
 
 	//规绢备 包访
-
 	void AddHelmet(UItemHelmet* pHelmetInfo);
 	void RemoveHelmet(UItemHelmet* pHelmetInfo);
 

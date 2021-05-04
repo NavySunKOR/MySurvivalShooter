@@ -8,6 +8,7 @@
 #include "TarkovCopy/GameMode/TarkovCopyGameModeBase.h"
 #include "TarkovCopy/Player/Controller/FPPlayerController.h"
 #include "TarkovCopy/Weapons/FlashGrenade.h"
+#include "TarkovCopy/Weapons/BulletProjectile.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -103,9 +104,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 				currentActiveGun->EmptyFireWeapon();
 			}
 		}
-	
 	}
-
 }
 
 // Called to bind functionality to input
@@ -181,7 +180,6 @@ void APlayerCharacter::TookDamage(float damage, FHitResult pHitParts, FVector pS
 		{
 			damage -= inventory->GetEquippedHelmet()->damageDecreaseAmount;
 			inventory->GetEquippedHelmet()->curDurability -= inventory->GetEquippedHelmet()->damageDecreaseAmount;
-
 		}
 	}
 	 
@@ -301,6 +299,35 @@ void APlayerCharacter::RemoveSecondary()
 	{
 		EquipPrimary();
 	}
+}
+
+
+void APlayerCharacter::FireProjectile(float pDamage, float pVelocity, float pMass, FVector pFireStartPos, FVector pShootDir)
+{
+	bool isProjectileFired = false;
+	for (int i = 0; i < bulletProjectilePools.Num(); i++)
+	{
+		if (bulletProjectilePools[i] && !bulletProjectilePools[i]->IsFired())
+		{
+			bulletProjectilePools[i]->ReactivateProjectile(pDamage, pVelocity, pMass, Cast<APawn>(this), pShootDir);
+			bulletProjectilePools[i]->LaunchProjectile();
+			bulletProjectilePools[i]->SetActorLocation(pFireStartPos);
+			isProjectileFired = true;
+			break;
+		}
+	}
+
+
+	if (!isProjectileFired)
+	{
+		bulletProjectilePools.Add(GetWorld()->SpawnActor<ABulletProjectile>(bulletProjectileOrigin, pFireStartPos, pShootDir.Rotation()));
+		bulletProjectilePools[bulletProjectilePools.Num() - 1]->ReactivateProjectile(pDamage, pVelocity, pMass,  Cast<APawn>(this), pShootDir);
+		bulletProjectilePools[bulletProjectilePools.Num() - 1]->LaunchProjectile();
+		bulletProjectilePools[bulletProjectilePools.Num() - 1]->SetActorLocation(pFireStartPos);
+		isProjectileFired = true;
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("Check count : %d"), bulletProjectilePools.Num());
 }
 
 void APlayerCharacter::AddHelmet(UItemHelmet* pHelmetInfo)
@@ -426,14 +453,12 @@ void APlayerCharacter::SetCrouch()
 		SetWalking();
 	}
 	Crouch();
-	//springArm->TargetOffset = originalSpringArmPos - FVector(0, 0, 500.f);
 	isCrouch = true;
 }
 
 void APlayerCharacter::SetStanding()
 {
 	UnCrouch();
-	//springArm->TargetOffset = originalSpringArmPos;
 	isCrouch = false;
 }
 
@@ -486,13 +511,19 @@ void APlayerCharacter::ActualFireWeapon()
 {
 	FVector start;
 	FRotator dir;
-	if (!IsAds())
-		GetController()->GetPlayerViewPoint(start, dir);
+
+	currentActiveGun->UpdateMuzzleInfo();
+	start = currentActiveGun->muzzleStart;
+	if (IsAds())
+	{
+		dir = currentActiveGun->muzzleDir;
+	}
 	else
 	{
-		currentActiveGun->UpdateMuzzleInfo();
-		start = currentActiveGun->muzzleStart;
-		dir = currentActiveGun->muzzleDir;
+		FVector viewpointPos;
+		FRotator viewpointRotation;
+		GetController()->GetPlayerViewPoint(viewpointPos, viewpointRotation);
+		dir = ((viewpointPos +(viewpointRotation.Vector()*250.f)) - start).Rotation();
 	}
 
 	currentActiveGun->FireWeapon(start, dir);
@@ -670,16 +701,8 @@ void APlayerCharacter::ThrowGrenade()
 		return;
 	}
 
-	if (handGrenadePools.Num() == 0)
-	{
-		for (int i = 0; i < 8; i++)
-		{
-			AHandGrenade* hand = GetWorld()->SpawnActor<AHandGrenade>(handGrenadeOrigin);
-			handGrenadePools.Add(hand);
-		}
-	}
-
-
+	UE_LOG(LogTemp, Warning, TEXT("Check count : %d"), handGrenadePools.Num());
+	bool isThrowing = false;
 	for (int i = 0; i < handGrenadePools.Num(); i++)
 	{
 		if (handGrenadePools[i] &&!handGrenadePools[i]->IsActive())
@@ -687,13 +710,33 @@ void APlayerCharacter::ThrowGrenade()
 			handGrenadePools[i]->ReactivateGrenade();
 			//Add Physics power
 			handGrenadePools[i]->SetActorLocation(GetActorLocation());
-			handGrenadePools[i]->ThrowGrenade(GetActorForwardVector(),GetActorLocation() + GetActorUpVector() * 50.f + GetActorForwardVector() * 50.f);
+			handGrenadePools[i]->ThrowGrenade(GetActorForwardVector(),GetActorLocation() + GetActorUpVector() * 100.f + GetActorForwardVector() * 100.f);
 
 			inventory->UseItem(itemReference);
 			inventory->UpdateAndCleanupBackpack();
 			playerController->UpdateInventoryUI();
+			isThrowing = true;
 			break;
 		}
+	}
+
+	if (!isThrowing)
+	{
+		AHandGrenade* hand = GetWorld()->SpawnActor<AHandGrenade>(handGrenadeOrigin);
+		handGrenadePools.Add(hand);
+
+		handGrenadePools[handGrenadePools.Num() - 1]->ReactivateGrenade();
+		//Add Physics power
+		handGrenadePools[handGrenadePools.Num() - 1]->SetActorLocation(GetActorLocation());
+		handGrenadePools[handGrenadePools.Num() - 1]->ThrowGrenade(GetActorForwardVector(), GetActorLocation() + GetActorUpVector() * 100.f + GetActorForwardVector() * 100.f);
+
+		inventory->UseItem(itemReference);
+		inventory->UpdateAndCleanupBackpack();
+		playerController->UpdateInventoryUI();
+
+
+		UE_LOG(LogTemp, Warning, TEXT("New Grenade"));
+		isThrowing = true;
 	}
 }
 
@@ -707,15 +750,7 @@ void APlayerCharacter::ThrowFlashGrenade()
 
 	UE_LOG(LogTemp,Warning,TEXT("Flash"))
 
-	if (flashGrenadePools.Num() == 0)
-	{
-		for (int i = 0; i < 8; i++)
-		{
-			AFlashGrenade* flash = GetWorld()->SpawnActor<AFlashGrenade>(flashGrenadeOrigin);
-			flashGrenadePools.Add(flash);
-		}
-	}
-
+	bool isThrowing = false;
 
 	for (int i = 0; i < flashGrenadePools.Num(); i++)
 	{
@@ -724,12 +759,29 @@ void APlayerCharacter::ThrowFlashGrenade()
 			flashGrenadePools[i]->ReactivateGrenade();
 			//Add Physics power
 			flashGrenadePools[i]->SetActorLocation(GetActorLocation());
-			flashGrenadePools[i]->ThrowGrenade(GetActorForwardVector(), GetActorLocation() + GetActorUpVector() * 50.f + GetActorForwardVector() * 50.f);
+			flashGrenadePools[i]->ThrowGrenade(GetActorForwardVector(), GetActorLocation() + GetActorUpVector() * 100.f + GetActorForwardVector() * 100.f);
 
 			inventory->UseItem(itemReference);
 			inventory->UpdateAndCleanupBackpack();
 			playerController->UpdateInventoryUI();
+			isThrowing = true;
 			break;
 		}
+	}
+
+	if (!isThrowing)
+	{
+		AFlashGrenade* flash = GetWorld()->SpawnActor<AFlashGrenade>(flashGrenadeOrigin);
+		flashGrenadePools.Add(flash);
+
+		flashGrenadePools[flashGrenadePools.Num() - 1]->ReactivateGrenade();
+		//Add Physics power
+		flashGrenadePools[flashGrenadePools.Num() - 1]->SetActorLocation(GetActorLocation());
+		flashGrenadePools[flashGrenadePools.Num() - 1]->ThrowGrenade(GetActorForwardVector(), GetActorLocation() + GetActorUpVector() * 100.f + GetActorForwardVector() * 100.f);
+
+		inventory->UseItem(itemReference);
+		inventory->UpdateAndCleanupBackpack();
+		playerController->UpdateInventoryUI();
+		isThrowing = true;
 	}
 }

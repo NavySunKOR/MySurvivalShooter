@@ -9,6 +9,7 @@
 #include "AICharacter.generated.h"
 
 class AUserCreatedAIController;
+class ABulletProjectile;
 UCLASS()
 class TARKOVCOPY_API AAICharacter : public ACharacter
 {
@@ -30,6 +31,7 @@ private:
 	USphereComponent* detectTrigger;
 	ABaseGun* currentActiveGun;
 	AUserCreatedAIController* aiController;
+	TArray<ABulletProjectile*> bulletProjectilePools;
 
 
 	virtual void NotifyActorBeginOverlap(AActor* Other) override;
@@ -47,11 +49,15 @@ public:
 	UPROPERTY()
 	AActor* targetActor; //실제 육안으로 적을 발견 후 조준 후 발사 할때 사용
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<ABulletProjectile> bulletProjectileOrigin;
+
 	virtual void Tick(float DeltaTime) override;
 	void TookDamage(float pDamageAmount, FHitResult pHitParts, AActor* pShooter);
 	void SetActiveFalse();
 	float GetCurrentWeaponRange();
 	void FireWeapon();
+	void FireProjectile(float pDamage, float pVelocity, float pMass, FVector pFireStartPos, FVector pShootDir);
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;

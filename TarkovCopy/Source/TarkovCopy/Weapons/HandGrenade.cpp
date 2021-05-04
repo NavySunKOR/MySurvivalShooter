@@ -61,10 +61,8 @@ void AHandGrenade::ThrowGrenade(FVector pDir,FVector pStartPos)
 		getMesh =Cast<UStaticMeshComponent>(GetDefaultSubobjectByName(TEXT("Mesh")));
 	getMesh->SetSimulatePhysics(false);
 	getMesh->SetSimulatePhysics(true);
-	throwDir = pDir;
-	throwStartPos = pStartPos;
-	getMesh->SetPhysicsLinearVelocity(throwDir * impulseForceVal);
-	SetActorLocation(throwStartPos);
+	getMesh->SetPhysicsLinearVelocity(pDir * impulseForceVal);
+	SetActorLocation(pStartPos);
 	isGrenadeTossed = true;
 	
 }

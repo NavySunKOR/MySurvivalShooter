@@ -45,32 +45,45 @@ void AM416::FireWeapon(FVector start,FRotator dir)
 	{
 		endPoint += FVector(FMath::RandRange(-calcBulletSpreadRadius, calcBulletSpreadRadius), 0.f, FMath::RandRange(-calcBulletSpreadRadius, calcBulletSpreadRadius));
 	} 
-	if (GetWorld()->LineTraceSingleByChannel(hit, start, endPoint, ECollisionChannel::ECC_Pawn , param))
-	{
-		//맞은 hit가 캐릭터면
-		AAICharacter* aiCharacter = Cast<AAICharacter>(hit.GetActor());
-		APlayerCharacter* playerCharacter = Cast<APlayerCharacter>(hit.GetActor());
-		if (aiCharacter != nullptr)
-		{
-			aiCharacter->TookDamage(damage, hit,GetOwner());
-			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), hitEnemyParticle, hit.ImpactPoint);
-			UGameplayStatics::SpawnSoundAtLocation(GetWorld(), hitEnemySound, hit.ImpactPoint,hit.ImpactNormal.Rotation());
-		}
-		//아니면 지형처리.
-		else if (playerCharacter != nullptr)
-		{
-			FVector actorLoc = (weaponOwnerCharacter) ? weaponOwnerCharacter->GetActorLocation() : weaponOwnerAICharacter->GetActorLocation();
-			playerCharacter->TookDamage(damage, hit, actorLoc);
-			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), hitEnemyParticle, hit.ImpactPoint);
-			UGameplayStatics::SpawnSoundAtLocation(GetWorld(), hitEnemySound, hit.ImpactPoint, hit.ImpactNormal.Rotation());
-		}
-		else
-		{
-			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), hitTerrainParticle, hit.ImpactPoint);
-			UGameplayStatics::SpawnSoundAtLocation(GetWorld(), hitTerrainSound, hit.ImpactPoint, hit.ImpactNormal.Rotation());
 
-		}
+
+	FVector directionToFly = (endPoint - start).GetSafeNormal();
+
+	if (weaponOwnerCharacter)
+	{
+		weaponOwnerCharacter->FireProjectile(damage, bulletVelocity, bulletMass,start, directionToFly);
 	}
+	else
+	{
+		weaponOwnerAICharacter->FireProjectile(damage, bulletVelocity, bulletMass, start, directionToFly);
+	}
+
+	//if (GetWorld()->LineTraceSingleByChannel(hit, start, endPoint, ECollisionChannel::ECC_Pawn , param))
+	//{
+	//	//맞은 hit가 캐릭터면
+	//	AAICharacter* aiCharacter = Cast<AAICharacter>(hit.GetActor());
+	//	APlayerCharacter* playerCharacter = Cast<APlayerCharacter>(hit.GetActor());
+	//	if (aiCharacter != nullptr)
+	//	{
+	//		aiCharacter->TookDamage(damage, hit,GetOwner());
+	//		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), hitEnemyParticle, hit.ImpactPoint);
+	//		UGameplayStatics::SpawnSoundAtLocation(GetWorld(), hitEnemySound, hit.ImpactPoint,hit.ImpactNormal.Rotation());
+	//	}
+	//	//아니면 지형처리.
+	//	else if (playerCharacter != nullptr)
+	//	{
+	//		FVector actorLoc = (weaponOwnerCharacter) ? weaponOwnerCharacter->GetActorLocation() : weaponOwnerAICharacter->GetActorLocation();
+	//		playerCharacter->TookDamage(damage, hit, actorLoc);
+	//		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), hitEnemyParticle, hit.ImpactPoint);
+	//		UGameplayStatics::SpawnSoundAtLocation(GetWorld(), hitEnemySound, hit.ImpactPoint, hit.ImpactNormal.Rotation());
+	//	}
+	//	else
+	//	{
+	//		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), hitTerrainParticle, hit.ImpactPoint);
+	//		UGameplayStatics::SpawnSoundAtLocation(GetWorld(), hitTerrainSound, hit.ImpactPoint, hit.ImpactNormal.Rotation());
+
+	//	}
+	//}
 
 
 	if (isAds)

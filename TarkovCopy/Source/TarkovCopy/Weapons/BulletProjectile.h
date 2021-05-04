@@ -6,7 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "BulletProjectile.generated.h"
 
-
+class UStaticMeshComponent;
 UCLASS()
 class TARKOVCOPY_API ABulletProjectile : public AActor
 {
@@ -15,18 +15,32 @@ private:
 	float damage;
 	float velocity;
 	float mass;
+	bool isFired = false;
 	FVector lastShooterPos;
+	FVector shootDir;
 	UPROPERTY()
-	UStaticMeshComponent* mesh;
+	APawn* bulletOwner;
+	UPROPERTY()
+	UStaticMeshComponent* getMesh;
+	UPROPERTY(EditAnywhere, Category = "Particles")
+	UParticleSystem* hitTerrainParticle;
+	UPROPERTY(EditAnywhere, Category = "Particles")
+	UParticleSystem* hitEnemyParticle;
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	USoundBase* hitTerrainSound;
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	USoundBase* hitEnemySound;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
+	virtual void NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit) override;
 public:	
 	// Called every frame
 	ABulletProjectile();
-	void ReactivateProjectile(float pDamage, float pVelocity,float pMass, FVector pLastShooterPos, FVector pShootDir);
+	void LaunchProjectile();
+	void ReactivateProjectile(float pDamage, float pVelocity,float pMass, APawn* pShooter, FVector pShootDir);
 	void DeactivateProjectile();
+	bool IsFired();
 	virtual void Tick(float DeltaTime) override;
 
 };

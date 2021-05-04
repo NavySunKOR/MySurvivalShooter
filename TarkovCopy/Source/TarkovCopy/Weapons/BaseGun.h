@@ -91,6 +91,10 @@ public:
 	UPROPERTY(EditAnywhere, Category = "EditableStatus")
 	float range;
 	UPROPERTY(EditAnywhere, Category = "EditableStatus")
+	float bulletVelocity;
+	UPROPERTY(EditAnywhere, Category = "EditableStatus")
+	float bulletMass;
+	UPROPERTY(EditAnywhere, Category = "EditableStatus")
 	int itemCode;
 	UPROPERTY(EditAnywhere, Category = "EditableStatus")
 	float initBulletSpreadRadius;
