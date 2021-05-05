@@ -24,6 +24,7 @@ void ABulletProjectile::LaunchProjectile()
 
 void ABulletProjectile::ReactivateProjectile(float pDamage, float pVelocity, float pMass,APawn* pShooter,FVector pShootDir)
 {
+	isHitted = false;
 	isFired = true;
 	damage = pDamage;
 	velocity = pVelocity;
@@ -53,10 +54,11 @@ void ABulletProjectile::BeginPlay()
 {
 	Super::BeginPlay();
 	getMesh = Cast<UStaticMeshComponent>(GetDefaultSubobjectByName(TEXT("BulletMesh")));
+	rayCheckInterval = 1.f / rayCheckFrame;
 	DeactivateProjectile();
 }
 
-void ABulletProjectile::NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit)
+void ABulletProjectile::ObjectHit(AActor* Other, FHitResult Hit)
 {
 	if (bulletOwner->GetName().Equals(Other->GetName()))
 		return;
@@ -85,9 +87,44 @@ void ABulletProjectile::NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UP
 	DeactivateProjectile();
 }
 
+void ABulletProjectile::NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit)
+{
+	if (!isHitted)
+	{
+		isHitted = true;
+		UE_LOG(LogTemp, Warning, TEXT("Object Hit with collision : %s"), *HitLocation.ToString());
+		ObjectHit(Other, Hit);
+	}
+}
+
 // Called every frame
 void ABulletProjectile::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	//CCD로도 프로젝타일이 지형을 뚫고 가는 현상이 발생. Raycast로 추가 체크
+	if (isFired)
+	{
+		rayCheckTimer += DeltaTime;
+		if (rayCheckTimer > rayCheckInterval)
+		{
+			rayCheckParam.ClearIgnoredActors();
+			rayCheckParam.AddIgnoredActor(this);
+			rayCheckParam.AddIgnoredActor(bulletOwner);
+			rayCheckTimer = 0.f;
+			rayCheckStartPos = GetActorLocation();
+			rayCheckEndPos = rayCheckStartPos + shootDir * rayCheckLength;
+			DrawDebugLine(GetWorld(), rayCheckStartPos, rayCheckEndPos, FColor::Orange);
+			if (GetWorld()->LineTraceSingleByChannel(rayCheckHitResult, rayCheckStartPos, rayCheckEndPos, ECollisionChannel::ECC_Pawn, rayCheckParam))
+			{
+				if (!isHitted)
+				{
+					isHitted = true;
+					UE_LOG(LogTemp, Warning, TEXT("Object Hit with raycast pos:  %s"), *rayCheckHitResult.ImpactPoint.ToString());
+					ObjectHit(rayCheckHitResult.GetActor(), rayCheckHitResult);
+				}
+			}
+		}
+	}
 }
 

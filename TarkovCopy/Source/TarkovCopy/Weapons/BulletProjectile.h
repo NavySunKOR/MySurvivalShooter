@@ -16,6 +16,7 @@ private:
 	float velocity;
 	float mass;
 	bool isFired = false;
+	bool isHitted = false;
 	FVector lastShooterPos;
 	FVector shootDir;
 	UPROPERTY()
@@ -30,6 +31,22 @@ private:
 	USoundBase* hitTerrainSound;
 	UPROPERTY(EditAnywhere, Category = "Sound")
 	USoundBase* hitEnemySound;
+
+	UPROPERTY(EditAnywhere, Category="Collision")
+	float rayCheckFrame;
+
+	float rayCheckLength = 150.f;
+	float rayCheckInterval = 0.f;
+	float rayCheckTimer = 0.f;
+	
+	FVector rayCheckStartPos;
+	FVector rayCheckEndPos;
+	FCollisionQueryParams rayCheckParam;
+	FHitResult rayCheckHitResult;
+
+	void ObjectHit(AActor* Other, FHitResult Hit);
+
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

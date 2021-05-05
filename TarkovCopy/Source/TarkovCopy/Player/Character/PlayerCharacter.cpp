@@ -523,7 +523,7 @@ void APlayerCharacter::ActualFireWeapon()
 		FVector viewpointPos;
 		FRotator viewpointRotation;
 		GetController()->GetPlayerViewPoint(viewpointPos, viewpointRotation);
-		dir = ((viewpointPos +(viewpointRotation.Vector()*250.f)) - start).Rotation();
+		dir = ((viewpointPos +(viewpointRotation.Vector()*500.f)) - start).Rotation();
 	}
 
 	currentActiveGun->FireWeapon(start, dir);
