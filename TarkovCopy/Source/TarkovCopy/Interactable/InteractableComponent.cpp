@@ -24,7 +24,7 @@ void UInteractableComponent::BeginPlay()
 }
 
 
-void UInteractableComponent::Interact()
+void UInteractableComponent::Interact(FVector pInteractFrom)
 {
 
 }

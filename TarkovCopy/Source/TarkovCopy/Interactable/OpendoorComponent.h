@@ -18,12 +18,13 @@ private:
 	float openDoorAngle = 90.f;
 	FQuat originRotation;
 	FQuat targetRotation;
-	class AActor* myOwnComponent;
+	AActor* myOwnComponent;
+	FVector directionFrom;
 
 protected:
 	virtual void BeginPlay() override;
 public:
-	virtual void Interact() override;
+	virtual void Interact(FVector pInteractFrom) override;
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	

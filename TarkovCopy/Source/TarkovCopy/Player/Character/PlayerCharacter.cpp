@@ -664,7 +664,7 @@ void APlayerCharacter::Interact()
 			UInteractableComponent* interComp = hitActor->FindComponentByClass<UInteractableComponent>();
 			if (interComp != nullptr)
 			{
-				interComp->Interact();
+				interComp->Interact(GetActorLocation());
 			}
 		}
 	}

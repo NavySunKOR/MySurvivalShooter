@@ -22,7 +22,7 @@ protected:
 
 public:	
 	// Called every frame
-	virtual void Interact();
+	virtual void Interact(FVector pInteractFrom);
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 		
