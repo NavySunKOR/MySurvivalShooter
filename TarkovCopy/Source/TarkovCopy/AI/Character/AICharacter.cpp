@@ -184,9 +184,9 @@ void AAICharacter::FireWeapon()
 {
 	if (currentActiveGun->CanFireWeapon())
 	{
-		FVector start = GetActorLocation();
-		FVector dir = (targetActor->GetActorLocation() - GetActorLocation());
-		currentActiveGun->FireWeapon(GetActorLocation(), dir.Rotation());
+		FVector start = GetActorLocation() + GetActorForwardVector() * 150.f;
+		FVector dir = (targetActor->GetActorLocation() - start);
+		currentActiveGun->FireWeapon(start, dir.Rotation());
 	}
 	else if (currentActiveGun->curMagRounds <= 0 && !currentActiveGun->isReloading){
 		currentActiveGun->Reload(currentActiveGun->maximumMagRounds - currentActiveGun->curMagRounds);
@@ -201,8 +201,8 @@ void AAICharacter::FireProjectile(float pDamage, float pVelocity, float pMass, F
 		if (!bulletProjectilePools[i]->IsFired())
 		{
 			bulletProjectilePools[i]->ReactivateProjectile(pDamage, pVelocity, pMass,Cast<APawn>(this), pShootDir);
-			bulletProjectilePools[i]->SetActorLocation(pFireStartPos);
 			bulletProjectilePools[i]->LaunchProjectile();
+			bulletProjectilePools[i]->SetActorLocation(pFireStartPos);
 			isProjectileFired = true;
 			break;
 		}
@@ -212,8 +212,8 @@ void AAICharacter::FireProjectile(float pDamage, float pVelocity, float pMass, F
 	{
 		bulletProjectilePools.Add(GetWorld()->SpawnActor<ABulletProjectile>(bulletProjectileOrigin));
 		bulletProjectilePools[bulletProjectilePools.Num() -1]->ReactivateProjectile(pDamage, pVelocity, pMass,Cast<APawn>(this), pShootDir);
-		bulletProjectilePools[bulletProjectilePools.Num() - 1]->SetActorLocation(pFireStartPos);
 		bulletProjectilePools[bulletProjectilePools.Num() - 1]->LaunchProjectile();
+		bulletProjectilePools[bulletProjectilePools.Num() - 1]->SetActorLocation(pFireStartPos);
 		isProjectileFired = true;
 	}
 }

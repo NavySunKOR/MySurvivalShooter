@@ -24,7 +24,7 @@ void AEscapeGameMode::SelectQuestItems()
 	playerCon = Cast<AFPPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 	if (playerCon != nullptr)
 	{
-		playerCon->ShowQuestInfo(activeQuestItem->GetName(), (activeQuestItem->GetActorLocation() - playerCon->GetPawn()->GetActorLocation()).Size());
+		playerCon->ShowQuestInfo(activeQuestItem->GetName(), (activeQuestItem->GetActorLocation() - playerCon->GetPawn()->GetActorLocation()).Size() / 100.f);
 	}
 
 }
