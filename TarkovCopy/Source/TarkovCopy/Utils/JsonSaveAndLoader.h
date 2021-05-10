@@ -13,6 +13,8 @@ static class TARKOVCOPY_API JsonSaveAndLoader
 
 private: 
 	static TSharedPtr<FJsonObject> GetJsonObjectFromItem(UItemInfo* pItemInfo);
+	static UItemInfo* GetItemFromJsonObject(TSharedPtr<FJsonObject>* pJsonObject);
+	static FString inventoryJsonFilePath;
 
 public:
 	JsonSaveAndLoader();
