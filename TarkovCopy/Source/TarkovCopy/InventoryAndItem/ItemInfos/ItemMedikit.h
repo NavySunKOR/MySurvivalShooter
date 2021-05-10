@@ -19,4 +19,5 @@ public:
 	float healAmount;
 
 	virtual void Use(AFPPlayerController* pPlayerCon) override;
+	virtual TSharedPtr<FJsonObject> GetJsonObject() override;
 };

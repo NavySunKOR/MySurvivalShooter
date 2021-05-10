@@ -13,3 +13,10 @@ void UItemHelmet::DropItem(AFPPlayerController* pPlayerCon)
 	pPlayerCon->RemoveHelmet(this);
 	Super::DropItem(pPlayerCon);
 }
+
+TSharedPtr<FJsonObject> UItemHelmet::GetJsonObject()
+{
+	TSharedPtr<FJsonObject> jsonObject = Super::GetJsonObject();
+	jsonObject->SetStringField("itemName", GetClass()->GetName());
+	return jsonObject;
+}

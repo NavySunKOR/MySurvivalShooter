@@ -17,3 +17,10 @@ void UItemM416::DropItem(AFPPlayerController* pPlayerCon)
 	Super::DropItem(pPlayerCon);
 
 }
+
+TSharedPtr<FJsonObject> UItemM416::GetJsonObject()
+{
+	TSharedPtr<FJsonObject> jsonObject = Super::GetJsonObject();
+	jsonObject->SetStringField("itemName", GetClass()->GetName());
+	return jsonObject;
+}

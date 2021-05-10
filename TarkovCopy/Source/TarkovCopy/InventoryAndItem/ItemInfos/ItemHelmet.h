@@ -16,5 +16,6 @@ class TARKOVCOPY_API UItemHelmet : public UItemArmor
 public:
 	virtual void Use(AFPPlayerController* pPlayerCon) override; // Return : isEmpty
 	virtual void DropItem(AFPPlayerController* pPlayerCon) override;
+	virtual TSharedPtr<FJsonObject> GetJsonObject() override;
 
 };

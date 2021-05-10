@@ -8,3 +8,10 @@ void UItem556Magazine::Use(AFPPlayerController* pPlayerCon)
 {
 
 }
+
+TSharedPtr<FJsonObject> UItem556Magazine::GetJsonObject()
+{
+    TSharedPtr<FJsonObject> jsonObject = Super::GetJsonObject();
+    jsonObject->SetStringField("itemName", GetClass()->GetName());
+    return jsonObject;
+}

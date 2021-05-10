@@ -30,12 +30,11 @@ UCLASS(Blueprintable, BlueprintType)
 class TARKOVCOPY_API UItemInfo : public UObject
 {
 	GENERATED_BODY()
+private:
+
+	FString GetItemTypeEnumString() const;
+	void SetItemTypeEnumString(FString pString);
 public:
-
-	//UItemInfo();
-	//UItemInfo(float leftPos, float topPos, float width, float height);
-	//virtual ~UItemInfo();
-
 	UPROPERTY(EditAnywhere)
 	ItemType itemType;
 
@@ -77,6 +76,8 @@ public:
 	virtual void DropItem(AFPPlayerController* pPlayerCon);
 	virtual void InitRect(float pLeft, float pTop);
 	virtual FString GetItemAmountString() const;
+	virtual TSharedPtr<FJsonObject> GetJsonObject();
+	virtual void SetJsonObject(TSharedPtr<FJsonObject> pJsonObject);
 
 	/*UItemInfo operator=(UItemInfo &other);*/
 

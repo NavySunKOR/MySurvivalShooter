@@ -33,5 +33,9 @@ public:
 	int maxMagazineAmmo;
 	UPROPERTY(EditAnywhere)
 	WeaponType weaponType;
+
+
+	virtual TSharedPtr<FJsonObject> GetJsonObject() override;
+	virtual void SetJsonObject(TSharedPtr<FJsonObject> pJsonObject) override;
 	
 };

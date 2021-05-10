@@ -9,3 +9,8 @@ void UItemMedikit::Use(AFPPlayerController* pPlayerCon)
 	pPlayerCon->HealPlayer(healAmount);
 	Super::Use(pPlayerCon);
 }
+
+TSharedPtr<FJsonObject> UItemMedikit::GetJsonObject()
+{
+	return TSharedPtr<FJsonObject>();
+}

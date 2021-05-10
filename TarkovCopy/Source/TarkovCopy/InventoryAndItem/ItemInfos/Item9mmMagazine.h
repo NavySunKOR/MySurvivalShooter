@@ -17,4 +17,5 @@ class TARKOVCOPY_API UItem9mmMagazine : public UItemInfo
 	GENERATED_BODY()
 public:
 	virtual void Use(AFPPlayerController* pPlayerCon) override;
+	virtual TSharedPtr<FJsonObject> GetJsonObject() override;
 };

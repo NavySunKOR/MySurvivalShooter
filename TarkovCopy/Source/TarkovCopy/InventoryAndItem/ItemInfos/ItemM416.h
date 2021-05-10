@@ -19,4 +19,5 @@ class TARKOVCOPY_API UItemM416 : public UItemWeapon
 public:
 	virtual void Use(AFPPlayerController* pPlayerCon) override; // Return : isConsumable
 	virtual void DropItem(AFPPlayerController* pPlayerCon) override;
+	virtual TSharedPtr<FJsonObject> GetJsonObject() override;
 };

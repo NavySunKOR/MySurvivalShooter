@@ -21,4 +21,6 @@ public:
 	UPROPERTY(EditAnywhere)
 	float damageDecreaseAmount;
 	virtual FString GetItemAmountString() const override;
+	virtual TSharedPtr<FJsonObject> GetJsonObject() override;
+	virtual void SetJsonObject(TSharedPtr<FJsonObject> pJsonObject) override;
 };

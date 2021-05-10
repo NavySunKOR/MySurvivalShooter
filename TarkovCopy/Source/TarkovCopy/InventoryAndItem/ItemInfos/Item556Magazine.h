@@ -16,4 +16,6 @@ class TARKOVCOPY_API UItem556Magazine : public UItemInfo
 
 public:
 	virtual void Use(AFPPlayerController* pPlayerCon) override;
+	virtual TSharedPtr<FJsonObject> GetJsonObject() override;
+
 };

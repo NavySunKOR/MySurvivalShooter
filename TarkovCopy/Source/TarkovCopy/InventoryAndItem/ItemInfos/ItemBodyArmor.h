@@ -13,5 +13,6 @@ UCLASS()
 class TARKOVCOPY_API UItemBodyArmor : public UItemArmor
 {
 	GENERATED_BODY()
-	
+public:
+	virtual TSharedPtr<FJsonObject> GetJsonObject() override;
 };

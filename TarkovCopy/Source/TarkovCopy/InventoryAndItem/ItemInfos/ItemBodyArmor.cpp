@@ -3,3 +3,9 @@
 
 #include "ItemBodyArmor.h"
 
+TSharedPtr<FJsonObject> UItemBodyArmor::GetJsonObject()
+{
+    TSharedPtr<FJsonObject> jsonObject = Super::GetJsonObject();
+    jsonObject->SetStringField("itemName", GetClass()->GetName());
+    return jsonObject;
+}

@@ -13,5 +13,7 @@ UCLASS()
 class TARKOVCOPY_API UItemFlashGrenade : public UItemGrenade
 {
 	GENERATED_BODY()
+public:
+	virtual TSharedPtr<FJsonObject> GetJsonObject() override;
 	
 };

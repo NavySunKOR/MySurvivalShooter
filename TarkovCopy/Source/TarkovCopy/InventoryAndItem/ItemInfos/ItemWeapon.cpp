@@ -21,3 +21,16 @@ FString  UItemWeapon::GetItemAmountString() const
 	message.AppendInt(maxMagazineAmmo);
 	return message;
 }
+
+TSharedPtr<FJsonObject> UItemWeapon::GetJsonObject()
+{
+	TSharedPtr<FJsonObject> jsonObj = Super::GetJsonObject();
+	jsonObj->SetNumberField("currentMagazineAmmo", currentMagazineAmmo);
+	return jsonObj;
+}
+
+void UItemWeapon::SetJsonObject(TSharedPtr<FJsonObject> pJsonObject)
+{
+	currentMagazineAmmo = pJsonObject->GetNumberField("currentMagazineAmmo");
+	Super::SetJsonObject(pJsonObject);
+}

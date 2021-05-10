@@ -14,3 +14,11 @@ void UItemM9::DropItem(AFPPlayerController* pPlayerCon)
 	pPlayerCon->RemoveSecondary();
 	Super::DropItem(pPlayerCon);
 }
+
+
+TSharedPtr<FJsonObject> UItemM9::GetJsonObject()
+{
+	TSharedPtr<FJsonObject> jsonObject = Super::GetJsonObject();
+	jsonObject->SetStringField("itemName", GetClass()->GetName());
+	return jsonObject;
+}
