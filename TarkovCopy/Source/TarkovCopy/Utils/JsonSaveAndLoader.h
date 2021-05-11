@@ -8,6 +8,9 @@
  * 
  */
 class UItemInfo;
+class UItemHelmet;
+class UItemWeapon;
+
 static class TARKOVCOPY_API JsonSaveAndLoader
 {
 
@@ -19,6 +22,8 @@ public:
 	JsonSaveAndLoader();
 	~JsonSaveAndLoader();
 	static TArray<UItemInfo*> LoadBackpackItemContainers(UWorld* pWorldContext);
+	static std::tuple<UItemWeapon*, UItemWeapon*, UItemHelmet*> LoadEquipments();
 	static void SaveBackpackItemContainers(TArray<UItemInfo*> pItemSave);
+	static void SaveEquipments(UItemWeapon* pPrimaryWeapon, UItemWeapon* pSecondaryWeapon,UItemHelmet* pHelmet);
 
 };

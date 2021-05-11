@@ -185,7 +185,7 @@ TArray<UItemInfo*> JsonSaveAndLoader::LoadBackpackItemContainers(UWorld* pWorldC
 		TSharedPtr<FJsonObject> fullPackage;
 		if (FJsonSerializer::Deserialize(reader, fullPackage))
 		{
-			TArray<TSharedPtr<FJsonValue>> getInventoryContents = fullPackage->GetArrayField("inventory");
+			TArray<TSharedPtr<FJsonValue>> getInventoryContents = fullPackage->GetArrayField("itemContainer");
 			for (int i = 0; i < getInventoryContents.Num(); i++)
 			{
 				const TSharedPtr<FJsonObject>* element;
@@ -198,6 +198,11 @@ TArray<UItemInfo*> JsonSaveAndLoader::LoadBackpackItemContainers(UWorld* pWorldC
 	}
 
 	return returnArray;
+}
+
+std::tuple<UItemWeapon*, UItemWeapon*, UItemHelmet*> JsonSaveAndLoader::LoadEquipments()
+{
+	return std::tuple<UItemWeapon*, UItemWeapon*, UItemHelmet*>();
 }
 
 void JsonSaveAndLoader::SaveBackpackItemContainers(TArray<UItemInfo*> pItemSave)
@@ -213,12 +218,15 @@ void JsonSaveAndLoader::SaveBackpackItemContainers(TArray<UItemInfo*> pItemSave)
 	{
 		TSharedPtr<FJsonObject> jsonObject = GetJsonObjectFromItem(pItemSave[i]);
 		TSharedRef<FJsonValueObject> jsonValue = MakeShareable(new FJsonValueObject(jsonObject));
-
 		jsonArray.Add(jsonValue);
 	}
 
-	lastWriter->SetArrayField("inventory", jsonArray);
+	lastWriter->SetArrayField("itemContainer", jsonArray);
 	FJsonSerializer::Serialize(lastWriter.ToSharedRef(), writer);
 	FFileHelper::SaveStringToFile(outputString, *inventoryJsonFilePath);
 
+}
+
+void JsonSaveAndLoader::SaveEquipments(UItemWeapon* pPrimaryWeapon, UItemWeapon* pSecondaryWeapon, UItemHelmet* pHelmet)
+{
 }
