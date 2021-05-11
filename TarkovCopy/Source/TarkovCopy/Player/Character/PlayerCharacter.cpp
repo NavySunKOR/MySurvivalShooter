@@ -9,6 +9,7 @@
 #include "TarkovCopy/Player/Controller/FPPlayerController.h"
 #include "TarkovCopy/Weapons/FlashGrenade.h"
 #include "TarkovCopy/Weapons/BulletProjectile.h"
+#include "TarkovCopy/Utils/JsonSaveAndLoader.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -33,12 +34,26 @@ void APlayerCharacter::BeginPlay()
 
 	//TODO:나중에 인벤토리 초기화 고칠것
 	inventory = nullptr;
-	inventory = NewObject<UInventory>(this,inventoryOrigin);
+	inventory = NewObject<UInventory>(GetWorld(),inventoryOrigin);
 	inventory->Init(this);
+
+
+	TArray<UItemInfo*> tempContainers = JsonSaveAndLoader::LoadBackpackItemContainers(GetWorld());
+	if (tempContainers.Num() > 0)
+	{
+		for (int i = 0; i < tempContainers.Num(); i++)
+		{
+			if (tempContainers[i])
+			{
+				inventory->AddNewItemToInventory(tempContainers[i]);
+				playerController->AddItem(tempContainers[i], inventory);
+			}
+		}
+	}
+
 
 	if (playerController != nullptr)
 		playerController->InitInvenotry();
-
 	//Pool initialize;
 }
 

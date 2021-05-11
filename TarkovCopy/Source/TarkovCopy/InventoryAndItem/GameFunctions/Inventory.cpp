@@ -14,12 +14,12 @@ void UInventory::Init(APlayerCharacter* pPlayer)
 		backpack->ConditionalBeginDestroy();
 		backpack = nullptr;
 		backpack = backpackType->GetDefaultObject<UBackpack>();
-		backpack->Init();
+		backpack->Init(this);
 	}
 	else
 	{
 		backpack = backpackType->GetDefaultObject<UBackpack>();
-		backpack->Init();
+		backpack->Init(this);
 	}
 }
 

@@ -155,6 +155,9 @@ public:
 	UPROPERTY()
 	APlayerCharacter* ownerPlayerCharacter;
 
+	//플레이어의 인터페이스 뚫기
+	TArray<UItemInfo*> GetItemContainers();
+
 	void InitInvenotry();
 	void OpenCloseInventory();
 	void LockOpenUI();

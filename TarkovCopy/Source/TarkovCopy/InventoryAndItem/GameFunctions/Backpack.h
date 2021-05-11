@@ -18,6 +18,7 @@ class TARKOVCOPY_API UBackpack : public UObject
 private:
 	bool** invenVisualize;
 	TArray<UItemInfo*> itemContainers;
+	UInventory* parentInventory;
 	std::tuple<bool, int, int> HasEmptySpaceWidthAxis(UItemInfo* pItemInfo);
 	std::tuple<bool, int, int> HasEmptySpaceHeightAxis(UItemInfo* pItemInfo);
 	void UpdateInvenVisualize(UItemInfo* pItemInfo);
@@ -32,7 +33,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	int capacityHeight;
 
-	void Init();
+	void Init(UInventory* pParentInventory);
 
 	bool HasEmptySpace(FSlateRect pIntSlateRect);
 	std::tuple<bool, int, int> HasEmptySpace(UItemInfo* pItemInfo);
@@ -53,5 +54,7 @@ public:
 	void UseSecondaryWeaponAmmo(int pUseAmmo, FString pWeaponClassName);
 
 	UItemInfo* GetItemReference(UItemInfo* pItemPtr);
+	TArray<UItemInfo*> GetItemContainers() const;
+	void InitItemContainersUI();
 	FVector2D GetBackpackSize();
 };

@@ -57,6 +57,7 @@ void AFPPlayerController::BeginPlay()
 	if(gameMode)
 		gameMode->SelectQuestItems();
 
+
 }
 
 void AFPPlayerController::PlayerTick(float DeltaTime)
@@ -128,6 +129,11 @@ void AFPPlayerController::PlayerTick(float DeltaTime)
 	}
 }
 
+TArray<UItemInfo*> AFPPlayerController::GetItemContainers()
+{
+	return ownerPlayerCharacter->inventory->GetBackpack()->GetItemContainers();
+}
+
 void AFPPlayerController::InitInvenotry()
 {
 	if (ownerPlayerCharacter == nullptr)
@@ -172,6 +178,19 @@ void AFPPlayerController::InitInvenotry()
 	helmetContainerRect.Top = helmetContainerUISlot->GetPosition().Y;
 	helmetContainerRect.Right = helmetContainerRect.Left + helmetContainerUISlot->GetSize().X;
 	helmetContainerRect.Bottom = helmetContainerRect.Top + helmetContainerUISlot->GetSize().Y;
+
+
+	TArray<UItemInfo*> itemContainers = ownerPlayerCharacter->inventory->GetBackpack()->GetItemContainers();
+	if (itemContainers.Num() > 0)
+	{
+		for (int i = 0; i < itemContainers.Num(); i++)
+		{
+			if (itemContainers[i])
+			{
+				AddItem(itemContainers[i], ownerPlayerCharacter->inventory);
+			}
+		}
+	}
 
 }
 

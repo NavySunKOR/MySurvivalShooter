@@ -97,6 +97,8 @@ void UItemInfo::SetJsonObject(TSharedPtr<FJsonObject> pJsonObject)
 	SetItemTypeEnumString(pJsonObject->GetStringField("itemType"));
 	width = pJsonObject->GetNumberField("width");
 	height = pJsonObject->GetNumberField("height");
+	left = pJsonObject->GetNumberField("left");
+	top = pJsonObject->GetNumberField("top");
 	rect.Left = pJsonObject->GetNumberField("left");
 	rect.Top = pJsonObject->GetNumberField("top");
 	currentCapacity = pJsonObject->GetNumberField("currentCapacity");

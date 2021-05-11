@@ -5,8 +5,9 @@
 #include <Layout/SlateRect.h>
 
 
-void UBackpack::Init()
+void UBackpack::Init(UInventory* pParentInventory)
 {
+	parentInventory = pParentInventory;
 	invenVisualize = new bool* [capacityWidth];
 	for (int i = 0; i < capacityWidth; i++)
 	{
@@ -30,6 +31,8 @@ void UBackpack::Init()
 			itemContainers.RemoveAt(i);
 		}
 	}
+
+
 }
 
 bool  UBackpack::HasEmptySpace(FSlateRect pIntSlateRect)
@@ -438,6 +441,11 @@ UItemInfo* UBackpack::GetItemReference(UItemInfo* pItemPtr)
 		}
 	}
 	return nullptr;
+}
+
+TArray<UItemInfo*> UBackpack::GetItemContainers() const
+{
+	return itemContainers;
 }
 
 FVector2D UBackpack::GetBackpackSize()

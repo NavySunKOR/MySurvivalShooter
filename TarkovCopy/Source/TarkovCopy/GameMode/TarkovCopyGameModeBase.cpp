@@ -6,6 +6,7 @@
 #include <EngineUtils.h>
 #include <Kismet/GameplayStatics.h>
 #include <TimerManager.h>
+#include "TarkovCopy/Utils/JsonSaveAndLoader.h"
 
 
 ATarkovCopyGameModeBase::ATarkovCopyGameModeBase()
@@ -98,6 +99,7 @@ void ATarkovCopyGameModeBase::PlayerDied()
 	UGameplayStatics::PlaySound2D(GetWorld(), diedSound);
 	FTimerHandle timer;
 	GetWorld()->GetTimerManager().SetTimer(timer,this, &ATarkovCopyGameModeBase::ReturnToMainMenu,4.f);
+	JsonSaveAndLoader::SaveBackpackItemContainers(TArray<UItemInfo*>());
 }
 
 void ATarkovCopyGameModeBase :: QuestCompleted(AInteractableObject* questItem)
@@ -111,6 +113,7 @@ void ATarkovCopyGameModeBase::ExfilCompleted()
 	UGameplayStatics::PlaySound2D(GetWorld(), escapedSound);
 	FTimerHandle timer;
 	GetWorld()->GetTimerManager().SetTimer(timer, this, &ATarkovCopyGameModeBase::ReturnToMainMenu, 4.f);
+
 }
 
 void ATarkovCopyGameModeBase::TryExfil()
@@ -126,13 +129,13 @@ void ATarkovCopyGameModeBase::CancelExfil()
 
 void ATarkovCopyGameModeBase::ResumeGame()
 {
-	UE_LOG(LogTemp,Warning,TEXT("Banze"))
 	ClosePauseMenu();
 }
 
 void ATarkovCopyGameModeBase::QuitGame()
 {
 	UGameplayStatics::OpenLevel(GetWorld(), TEXT("MainMenu"));
+	JsonSaveAndLoader::SaveBackpackItemContainers(playerController->GetItemContainers());
 }
 
 void ATarkovCopyGameModeBase::OpenOptionMenu()
