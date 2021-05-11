@@ -21,7 +21,7 @@ private:
 	TSubclassOf<UItemInfo> initItem;
 
 public:
-	UPROPERTY(EditAnywhere)
+	UPROPERTY()
 	UItemInfo* itemInfo;
 
 	USceneComponent* root;

@@ -58,18 +58,15 @@ TSharedPtr<FJsonObject> JsonSaveAndLoader::GetJsonObjectFromItem(UItemInfo* pIte
 UItemInfo* JsonSaveAndLoader::GetItemFromJsonObject(const TSharedPtr<FJsonObject>* pJsonObject, UWorld* pWorldContext)
 {
 	FString itemTypeName = (*pJsonObject)->GetStringField("itemType");
-	UE_LOG(LogTemp,Warning,TEXT("HAHO : %s"), *itemTypeName)
 
 	if (itemTypeName.Equals("Armor"))
 	{
 		FString itemName = (*pJsonObject)->GetStringField("itemName");
-		UE_LOG(LogTemp, Warning, TEXT("HAHO name : %s"), *itemName)
 		if (itemName.Equals("BP_ItemHelmet_C"))
 		{
-
 			const FString path = "/Game/Blueprints/InvenotryAndItem/ItemInfos/BP_ItemHelmet.BP_ItemHelmet_C";
 			TSubclassOf<UItemHelmet> uitemSub = LoadClass<UItemHelmet>(pWorldContext, *path);
-			UItemInfo* itemInfo = NewObject<UItemHelmet>(uitemSub);
+			UItemHelmet* itemInfo = NewObject<UItemHelmet>(pWorldContext,uitemSub);
 			UE_LOG(LogTemp, Warning, TEXT("UItemHelmet : %d"), itemInfo);
 			if(itemInfo)
 			itemInfo->SetJsonObject((*pJsonObject));
@@ -82,7 +79,7 @@ UItemInfo* JsonSaveAndLoader::GetItemFromJsonObject(const TSharedPtr<FJsonObject
 	{
 		const FString path = "/Game/Blueprints/InvenotryAndItem/ItemInfos/BP_FlashGrenade.BP_FlashGrenade_C";
 		TSubclassOf<UItemFlashGrenade> uitemSub = LoadClass<UItemFlashGrenade>(pWorldContext, *path);
-		UItemInfo* itemInfo = NewObject<UItemFlashGrenade>(uitemSub);
+		UItemFlashGrenade* itemInfo = NewObject<UItemFlashGrenade>(pWorldContext, uitemSub);
 		UE_LOG(LogTemp, Warning, TEXT("UItemFlashGrenade : %d"), itemInfo);
 		if(itemInfo)
 		itemInfo->SetJsonObject((*pJsonObject));
@@ -94,7 +91,7 @@ UItemInfo* JsonSaveAndLoader::GetItemFromJsonObject(const TSharedPtr<FJsonObject
 	{
 		const FString path = "/Game/Blueprints/InvenotryAndItem/ItemInfos/BP_HandGrenade.BP_HandGrenade_C";
 		TSubclassOf<UItemGrenade> uitemSub = LoadClass<UItemGrenade>(pWorldContext, *path);
-		UItemInfo* itemInfo = NewObject<UItemGrenade>(uitemSub);
+		UItemGrenade* itemInfo = NewObject<UItemGrenade>(pWorldContext,uitemSub);
 		UE_LOG(LogTemp, Warning, TEXT("UItemGrenade : %d"), itemInfo);
 		if(itemInfo)
 		itemInfo->SetJsonObject((*pJsonObject));
@@ -108,7 +105,7 @@ UItemInfo* JsonSaveAndLoader::GetItemFromJsonObject(const TSharedPtr<FJsonObject
 		{
 			const FString path = "/Game/Blueprints/InvenotryAndItem/ItemInfos/BP_9mmMagazine.BP_9mmMagazine_C";
 			TSubclassOf<UItem9mmMagazine> uitemSub = LoadClass<UItem9mmMagazine>(pWorldContext, *path);
-			UItemInfo* itemInfo = NewObject<UItem9mmMagazine>(uitemSub);
+			UItem9mmMagazine* itemInfo = NewObject<UItem9mmMagazine>(pWorldContext,uitemSub);
 			UE_LOG(LogTemp, Warning, TEXT("UItem9mmMagazine : %d"), itemInfo);
 			if(itemInfo)
 			itemInfo->SetJsonObject((*pJsonObject));
@@ -118,7 +115,7 @@ UItemInfo* JsonSaveAndLoader::GetItemFromJsonObject(const TSharedPtr<FJsonObject
 		{
 			const FString path = "/Game/Blueprints/InvenotryAndItem/ItemInfos/BP_556Magazine.BP_556Magazine_C";
 			TSubclassOf<UItem556Magazine> uitemSub = LoadClass<UItem556Magazine>(pWorldContext, *path);
-			UItemInfo* itemInfo = NewObject<UItem556Magazine>(uitemSub);
+			UItem556Magazine* itemInfo = NewObject<UItem556Magazine>(pWorldContext, uitemSub);
 			UE_LOG(LogTemp, Warning, TEXT("UItem556Magazine : %d"), itemInfo);
 			if(itemInfo)
 			itemInfo->SetJsonObject((*pJsonObject));
@@ -130,7 +127,7 @@ UItemInfo* JsonSaveAndLoader::GetItemFromJsonObject(const TSharedPtr<FJsonObject
 	{
 		const FString path = "/Game/Blueprints/InvenotryAndItem/ItemInfos/BP_ItemMedikit.BP_ItemMedikit";
 		TSubclassOf<UItemMedikit> uitemSub = LoadClass<UItemMedikit>(pWorldContext, *path);
-		UItemInfo* itemInfo = NewObject<UItemMedikit>(uitemSub);
+		UItemMedikit* itemInfo = NewObject<UItemMedikit>(pWorldContext, uitemSub);
 		UE_LOG(LogTemp, Warning, TEXT("UItemMedikit : %d"), itemInfo);
 		if(itemInfo)
 		itemInfo->SetJsonObject((*pJsonObject));
@@ -144,7 +141,7 @@ UItemInfo* JsonSaveAndLoader::GetItemFromJsonObject(const TSharedPtr<FJsonObject
 		{
 			const FString path = "/Game/Blueprints/InvenotryAndItem/ItemInfos/BP_WeaponM9.BP_WeaponM9_C";
 			TSubclassOf<UItemM9> uitemSub = LoadClass<UItemM9>(pWorldContext, *path);
-			UItemInfo* itemInfo = NewObject<UItemM9>(uitemSub);
+			UItemM9* itemInfo = NewObject<UItemM9>(pWorldContext, uitemSub);
 			UE_LOG(LogTemp, Warning, TEXT("UItemM9 : %d"), itemInfo);
 			if(itemInfo)
 			itemInfo->SetJsonObject((*pJsonObject));
@@ -154,7 +151,7 @@ UItemInfo* JsonSaveAndLoader::GetItemFromJsonObject(const TSharedPtr<FJsonObject
 		{
 			const FString path = "/Game/Blueprints/InvenotryAndItem/ItemInfos/BP_WeaponM416.BP_WeaponM416_C";
 			TSubclassOf<UItemM416> uitemSub = LoadClass<UItemM416>(pWorldContext, *path);
-			UItemInfo* itemInfo = NewObject<UItemM416>(uitemSub);
+			UItemM416* itemInfo = NewObject<UItemM416>(pWorldContext, uitemSub);
 			UE_LOG(LogTemp, Warning, TEXT("UItemM416 : %d"), itemInfo);
 			if(itemInfo)
 			itemInfo->SetJsonObject((*pJsonObject));
@@ -195,8 +192,7 @@ TArray<UItemInfo*> JsonSaveAndLoader::LoadBackpackItemContainers(UWorld* pWorldC
 				getInventoryContents[i]->TryGetObject(element);
 
 				//함수 만들어줘
-				UItemInfo* item = GetItemFromJsonObject(element, pWorldContext);
-				returnArray.Add(item);
+				returnArray.Add(GetItemFromJsonObject(element, pWorldContext));
 			}
 		}
 	}

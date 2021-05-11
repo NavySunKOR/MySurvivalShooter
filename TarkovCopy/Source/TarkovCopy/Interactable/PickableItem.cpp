@@ -12,7 +12,7 @@ void APickableItem::BeginPlay()
 
 void APickableItem::Initalize(TSubclassOf<UItemInfo> pItemInfo)
 {
-	itemInfo = NewObject<UItemInfo>(pItemInfo);
+	itemInfo = NewObject<UItemInfo>(this,pItemInfo);
 }
 
 void APickableItem::Interact()
