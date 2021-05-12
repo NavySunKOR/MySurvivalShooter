@@ -209,6 +209,9 @@ public:
 	void ExfilingComplete();
 	void CancelExfiling();
 
+	//파일저장
+	void SaveEquipments();
+
 
 
 	//BlueprintUsable

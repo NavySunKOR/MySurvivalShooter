@@ -112,6 +112,8 @@ void ATarkovCopyGameModeBase::ExfilCompleted()
 	isPlayerEscaped = true;
 	UGameplayStatics::PlaySound2D(GetWorld(), escapedSound);
 	FTimerHandle timer;
+	JsonSaveAndLoader::SaveBackpackItemContainers(playerController->GetItemContainers());
+	playerController->SaveEquipments();
 	GetWorld()->GetTimerManager().SetTimer(timer, this, &ATarkovCopyGameModeBase::ReturnToMainMenu, 4.f);
 
 }
@@ -136,6 +138,7 @@ void ATarkovCopyGameModeBase::QuitGame()
 {
 	UGameplayStatics::OpenLevel(GetWorld(), TEXT("MainMenu"));
 	JsonSaveAndLoader::SaveBackpackItemContainers(playerController->GetItemContainers());
+	playerController->SaveEquipments();
 }
 
 void ATarkovCopyGameModeBase::OpenOptionMenu()

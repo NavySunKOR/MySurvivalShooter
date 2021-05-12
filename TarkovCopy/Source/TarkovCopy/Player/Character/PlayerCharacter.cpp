@@ -9,7 +9,6 @@
 #include "TarkovCopy/Player/Controller/FPPlayerController.h"
 #include "TarkovCopy/Weapons/FlashGrenade.h"
 #include "TarkovCopy/Weapons/BulletProjectile.h"
-#include "TarkovCopy/Utils/JsonSaveAndLoader.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -50,7 +49,6 @@ void APlayerCharacter::BeginPlay()
 			}
 		}
 	}
-
 
 	if (playerController != nullptr)
 		playerController->InitInvenotry();
@@ -341,8 +339,6 @@ void APlayerCharacter::FireProjectile(float pDamage, float pVelocity, float pMas
 		bulletProjectilePools[bulletProjectilePools.Num() - 1]->SetActorLocation(pFireStartPos);
 		isProjectileFired = true;
 	}
-
-	UE_LOG(LogTemp, Warning, TEXT("Check count : %d"), bulletProjectilePools.Num());
 }
 
 void APlayerCharacter::AddHelmet(UItemHelmet* pHelmetInfo)
@@ -356,6 +352,11 @@ void APlayerCharacter::RemoveHelmet(UItemHelmet* pHelmetInfo)
 {
 	helmetMesh->SetVisibility(false);
 	inventory->UnequipHelmet();
+}
+
+void APlayerCharacter::SaveEquipments()
+{
+	inventory->SaveEquipments();
 }
 
 bool APlayerCharacter::IsWeaponEquiped()
@@ -716,7 +717,6 @@ void APlayerCharacter::ThrowGrenade()
 		return;
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("Check count : %d"), handGrenadePools.Num());
 	bool isThrowing = false;
 	for (int i = 0; i < handGrenadePools.Num(); i++)
 	{
@@ -749,8 +749,6 @@ void APlayerCharacter::ThrowGrenade()
 		inventory->UpdateAndCleanupBackpack();
 		playerController->UpdateInventoryUI();
 
-
-		UE_LOG(LogTemp, Warning, TEXT("New Grenade"));
 		isThrowing = true;
 	}
 }
@@ -762,8 +760,6 @@ void APlayerCharacter::ThrowFlashGrenade()
 	{
 		return;
 	}
-
-	UE_LOG(LogTemp,Warning,TEXT("Flash"))
 
 	bool isThrowing = false;
 

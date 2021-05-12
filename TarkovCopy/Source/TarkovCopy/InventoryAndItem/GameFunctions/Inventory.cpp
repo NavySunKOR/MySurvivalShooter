@@ -3,6 +3,7 @@
 #include "Inventory.h"
 #include "TarkovCopy/Player/Character/PlayerCharacter.h"
 #include "TarkovCopy/Interactable/PickableItem.h"
+#include "TarkovCopy/Utils/JsonSaveAndLoader.h"
 #include <Kismet/GameplayStatics.h>
 
 void UInventory::Init(APlayerCharacter* pPlayer)
@@ -10,7 +11,6 @@ void UInventory::Init(APlayerCharacter* pPlayer)
 	inventoryOwner = pPlayer;
 	if (backpack)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Huh????? %d"), backpack)
 		backpack->ConditionalBeginDestroy();
 		backpack = nullptr;
 		backpack = backpackType->GetDefaultObject<UBackpack>();
@@ -32,7 +32,6 @@ bool UInventory::UseItem(UItemInfo* pItem)
 {
 	if (backpack->HasItem(pItem))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Has item"));
 		if (pItem->isConsumable)
 		{
 			return backpack->UseItem(pItem);
@@ -129,8 +128,6 @@ void UInventory::MoveItemTo(UItemInfo* pItemInfo, FSlateRect pIntSlateRect)
 	pItemInfo->left = pIntSlateRect.Left;
 	pItemInfo->top = pIntSlateRect.Top;
 
-	UE_LOG(LogTemp, Warning, TEXT("is stil alive? : %d"), pItemInfo);
-
 	backpack->MoveItemPosition(pItemInfo);
 
 	//move to pIntSlateRect
@@ -199,4 +196,9 @@ void UInventory::UpdateAndCleanupBackpack()
 UBackpack* UInventory::GetBackpack()
 {
 	return backpack;
+}
+
+void UInventory::SaveEquipments()
+{
+	JsonSaveAndLoader::SaveEquipments(primaryWeapon, secondaryWeapon, itemHelmet);
 }

@@ -24,7 +24,6 @@ void UOpendoorComponent::Interact(FVector pInteractFrom)
 			float doorDir = FVector::DotProduct(directionFrom, myOwnComponent->GetActorForwardVector()) / directionFrom.Size() * myOwnComponent->GetActorForwardVector().Size();
 			//플레이어 기준으로 문을 밀어서 열때 어느 방향에서 여는지 체크(예: 건물 밖 - 안 또는 건물 안 - 밖)
 			float playerDir = FVector::DotProduct(FVector::CrossProduct(directionFrom, myOwnComponent->GetActorForwardVector()), FVector::UpVector);
-			UE_LOG(LogTemp, Warning, TEXT("Print out door dir : %f , playerDir : %f"), doorDir, playerDir);
 			float doorOrigin = 0.f;
 			//dir이 크면 여는문 dir이 작으면 닫는 문
 			doorOrigin = (doorDir >= 0)? 1.f:-1.f;

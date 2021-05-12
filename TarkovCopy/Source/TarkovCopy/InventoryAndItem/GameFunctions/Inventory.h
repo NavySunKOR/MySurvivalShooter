@@ -61,10 +61,11 @@ public:
 
 	void EquipHelmet(UItemHelmet* pItemHelmet);
 	void UnequipHelmet();
-
 	UItemHelmet* GetEquippedHelmet();
 
 	void UpdateAndCleanupBackpack();
+
+	void SaveEquipments();
 
 	UFUNCTION(BlueprintPure)
 	UBackpack* GetBackpack();

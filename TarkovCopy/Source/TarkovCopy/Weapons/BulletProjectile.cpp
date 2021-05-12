@@ -92,7 +92,6 @@ void ABulletProjectile::NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UP
 	if (!isHitted)
 	{
 		isHitted = true;
-		UE_LOG(LogTemp, Warning, TEXT("Shooter collides %s owner position %s"), *Hit.Actor->GetName(), *bulletOwner->GetActorLocation().ToString());
 		ObjectHit(Other, Hit);
 	}
 }
@@ -120,7 +119,6 @@ void ABulletProjectile::Tick(float DeltaTime)
 				if (!isHitted)
 				{
 					isHitted = true;
-					UE_LOG(LogTemp, Warning, TEXT("Shooter hits %s owner position %s"), *rayCheckHitResult.Actor->GetName(), *bulletOwner->GetActorLocation().ToString());
 					ObjectHit(rayCheckHitResult.GetActor(), rayCheckHitResult);
 				}
 			}

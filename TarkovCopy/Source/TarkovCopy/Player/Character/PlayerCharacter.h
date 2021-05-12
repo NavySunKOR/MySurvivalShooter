@@ -161,6 +161,9 @@ public:
 	void AddHelmet(UItemHelmet* pHelmetInfo);
 	void RemoveHelmet(UItemHelmet* pHelmetInfo);
 
+	//저장 관련
+	void SaveEquipments();
+
 
 //BlueprintPureOnly
 protected:

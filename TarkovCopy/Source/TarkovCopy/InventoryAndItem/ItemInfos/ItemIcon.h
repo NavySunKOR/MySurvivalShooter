@@ -33,6 +33,8 @@ public:
 	UInventory* invenRef;
 	UPROPERTY()
 	AFPPlayerController* controllerRef;
+	UPROPERTY()
+	UCanvasPanelSlot* canvasSlot;
 
 	void Init(UItemInfo* pItemInfo, UInventory* pInven, AFPPlayerController* pController);
 	void OpenDetailPanel();

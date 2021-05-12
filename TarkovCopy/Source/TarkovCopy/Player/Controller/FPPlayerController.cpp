@@ -12,6 +12,8 @@
 #include "TarkovCopy/GameMode/EscapeGameMode.h"
 #include "TarkovCopy/PublicProperty/UMGPublicProperites.h"
 #include "TarkovCopy/InventoryAndItem/ItemInfos/ItemHelmet.h"
+#include "TarkovCopy/InventoryAndItem/ItemInfos/ItemWeapon.h"
+#include "TarkovCopy/Utils/JsonSaveAndLoader.h"
 #include <Blueprint/WidgetLayoutLibrary.h>
 
 void AFPPlayerController::BeginPlay()
@@ -192,6 +194,27 @@ void AFPPlayerController::InitInvenotry()
 		}
 	}
 
+	std::tuple<UItemWeapon*, UItemWeapon*, UItemArmor*> equipments = JsonSaveAndLoader::LoadEquipments(GetWorld());
+	UItemWeapon* loadedPrimaryWeapon = std::get<0>(equipments);
+	UItemWeapon* loadedSecondaryWeapon = std::get<1>(equipments);
+	UItemHelmet* loadedHelmet = Cast<UItemHelmet>(std::get<2>(equipments));
+
+	if (loadedSecondaryWeapon)
+	{
+		AddItem(loadedSecondaryWeapon, ownerPlayerCharacter->inventory);
+		AddSecondary(loadedSecondaryWeapon->weaponSubclass, loadedSecondaryWeapon);
+	}
+	if (loadedPrimaryWeapon)
+	{
+		AddItem(loadedPrimaryWeapon, ownerPlayerCharacter->inventory);
+		AddPrimary(loadedPrimaryWeapon->weaponSubclass, loadedPrimaryWeapon);
+	}
+	if (loadedHelmet)
+	{
+		AddItem(loadedHelmet, ownerPlayerCharacter->inventory);
+		AddHelmet(loadedHelmet);
+	}
+
 }
 
 void AFPPlayerController::OpenInventory()
@@ -249,8 +272,6 @@ void AFPPlayerController::UnlockCloseUI()
 	bEnableMouseOverEvents = false;
 	SetIgnoreLookInput(false);
 	SetIgnoreMoveInput(false);
-
-	UE_LOG(LogTemp,Warning,TEXT("Bang bang"))
 }
 
 void AFPPlayerController::OpenItemDetailPanel(UItemIcon* pItemIcon)
@@ -383,7 +404,7 @@ void AFPPlayerController::FailedToMoveItemPos(UItemInfo* pItemInfo)
 
 bool AFPPlayerController::IsInItemContainer(UItemIcon* pItemInfo) const
 {
-	FVector2D finalPosition = pItemInfo->GetCachedGeometry().GetAbsolutePosition();
+	FVector2D finalPosition = pItemInfo->canvasSlot->GetPosition();
 	if (itemContainerRect.ContainsPoint(finalPosition))
 	{
 		return true;
@@ -397,9 +418,10 @@ bool AFPPlayerController::IsInItemContainer(UItemIcon* pItemInfo) const
 bool AFPPlayerController::IsInEquipmentSlot(UItemIcon* pItemInfo) const
 {
 	//가로만 조정한다
-	FVector2D finalPosition = pItemInfo->GetCachedGeometry().GetAbsolutePosition();
-	finalPosition.X += pItemInfo->GetCachedGeometry().GetAbsoluteSize().X / 2.f;
-	finalPosition.Y += pItemInfo->GetCachedGeometry().GetAbsoluteSize().Y / 2.f;
+	FVector2D finalPosition = pItemInfo->canvasSlot->GetPosition();
+	finalPosition.X += pItemInfo->canvasSlot->GetSize().X / 2.f;
+	finalPosition.Y += pItemInfo->canvasSlot->GetSize().Y / 2.f;
+
 	if (primaryWeaponContainerRect.ContainsPoint(finalPosition) ||
 		secondaryWeaponContainerRect.ContainsPoint(finalPosition)||
 		helmetContainerRect.ContainsPoint(finalPosition))
@@ -603,12 +625,8 @@ void AFPPlayerController::GetFlashed(float pFlashTime, FVector pFlashbangPos)
 	
 	//TODO: 섬광탄에 영향받는 시야각을 나중에 CONSTANT로 몰아서 정의할 것.
 	//TODO: 0.6이면 COS하면 50도 가까이 됨 - 각도로 계산하면 각도로 바꿔주는 비용이 발생하기 때문에, 그냥 COS() 값으로 계산.
-	UE_LOG(LogTemp, Warning, TEXT("GET FLASHED IN DOT PRODUCT : %f"), FVector::DotProduct(dirToFlashbang, playerForward));
-	UE_LOG(LogTemp, Warning, TEXT("GET FLASHED IN COS : %f"), vectorResult);
-	UE_LOG(LogTemp, Warning, TEXT("GET FLASHED IN ANGLE : %f"), (FMath::RadiansToDegrees(FMath::Acos(vectorResult))));
 	if (vectorResult > 0.6f)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("GET FLASHED"));
 		flashInterval = pFlashTime;
 		flashTimer = 0.f;
 		isFlashed = true;
@@ -696,6 +714,11 @@ void AFPPlayerController::CancelExfiling()
 		isExfiling = false;
 		exfilAlertUI->SetVisibility(ESlateVisibility::Hidden);
 	}
+}
+
+void AFPPlayerController::SaveEquipments()
+{
+	ownerPlayerCharacter->SaveEquipments();
 }
 
 void AFPPlayerController::UseCurrentActiveItem()

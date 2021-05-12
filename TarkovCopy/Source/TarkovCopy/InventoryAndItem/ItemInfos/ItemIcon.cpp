@@ -61,12 +61,12 @@ void UItemIcon::Init(UItemInfo* pItemInfo, UInventory* pInven, AFPPlayerControll
 	iconImage->SetBrushFromTexture(pItemInfo->spriteToUse);
 	WidgetTree->RootWidget = GetWidgetFromName(TEXT("Parent"));
 
-	UCanvasPanelSlot* canvas = Cast<UCanvasPanelSlot>(Slot);
+	canvasSlot = Cast<UCanvasPanelSlot>(Slot);
 
-	if (canvas != nullptr)
+	if (canvasSlot != nullptr)
 	{
-		canvas->SetSize(FVector2D(itemInfo->width * UMGPublicProperites::BASIC_INVENTORY_GRID_WIDTH, itemInfo->height * UMGPublicProperites::BASIC_INVENTORY_GRID_HEIGHT));
-		canvas->SetPosition(FVector2D(itemInfo->left * UMGPublicProperites::BASIC_INVENTORY_GRID_WIDTH, itemInfo->top * UMGPublicProperites::BASIC_INVENTORY_GRID_HEIGHT));
+		canvasSlot->SetSize(FVector2D(itemInfo->width * UMGPublicProperites::BASIC_INVENTORY_GRID_WIDTH, itemInfo->height * UMGPublicProperites::BASIC_INVENTORY_GRID_HEIGHT));
+		canvasSlot->SetPosition(FVector2D(itemInfo->left * UMGPublicProperites::BASIC_INVENTORY_GRID_WIDTH, itemInfo->top * UMGPublicProperites::BASIC_INVENTORY_GRID_HEIGHT));
 	
 		UOverlaySlot* imageOverlay = Cast<UOverlaySlot>(iconImage->Slot);
 		if (imageOverlay)
@@ -167,7 +167,6 @@ void UItemIcon::OnDropAction(FVector2D lastMousePosition)
 	positionIntRect.Top = (int)((lastMousePosition.Y / UMGPublicProperites::BASIC_INVENTORY_GRID_HEIGHT) - (itemInfo->height / 2));
 	positionIntRect.Right = (int)(positionIntRect.Left + itemInfo->width);
 	positionIntRect.Bottom = (int)(positionIntRect.Top + itemInfo->height);
-
 
 	//마우스가 인벤토리 안에 있다면
 	if (controllerRef->itemContainerRect.ContainsPoint(lastMousePosition))
