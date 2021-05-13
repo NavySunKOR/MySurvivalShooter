@@ -57,9 +57,28 @@ void AAICharacter::Tick(float DeltaTime)
 		{
 			outPlayerLocation = trackingTarget->GetActorLocation();
 			aiController->SetFocus(trackingTarget);
+			UE_LOG(LogTemp,Warning,TEXT("Tracking bogey"))
 			outIsPlayerDetected = true;
 		}
 	}
+
+	if (isFlashed)
+	{
+		aiController->ClearFocus(EAIFocusPriority::LastFocusPriority);
+		flashTimer += DeltaTime;
+		if (flashTimer > flashInterval)
+		{
+			isFlashed = false;
+			aiController->SetFocus(trackingTarget);
+		}
+	}
+}
+
+void AAICharacter::GetFlashed(float pFlashDuration)
+{
+	flashInterval = pFlashDuration;
+	flashTimer = 0.f;
+	isFlashed = true;
 }
 
 void CalculateDamageAmount(float& pDamage,FHitResult& pHitParts)
@@ -140,7 +159,11 @@ void AAICharacter::NotifyActorBeginOverlap(AActor* Other)
 		if (aiController->LineOfSightTo(trackingTarget))
 		{
 			outPlayerLocation = trackingTarget->GetActorLocation();
-			aiController->SetFocus(Other);
+			if (!isFlashed)
+			{
+				aiController->SetFocus(Other);
+				UE_LOG(LogTemp, Warning, TEXT("Tracking bogey in detection"))
+			}
 			outIsPlayerDetected = true;
 		}
 	}
@@ -151,7 +174,7 @@ void AAICharacter::NotifyActorEndOverlap(AActor* Other)
 	{
 		outIsPlayerDetected = false;
 		if(aiController)
-			aiController->ClearFocus(EAIFocusPriority::Default);
+			aiController->ClearFocus(EAIFocusPriority::LastFocusPriority);
 		trackingTarget = nullptr;
 	}
 }
@@ -182,6 +205,7 @@ void AAICharacter::SetActiveFalse()
 
 void AAICharacter::FireWeapon()
 {
+
 	if (currentActiveGun->CanFireWeapon())
 	{
 		FVector start = GetActorLocation() + GetActorForwardVector() * 150.f;

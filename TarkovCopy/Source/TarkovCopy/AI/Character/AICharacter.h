@@ -43,6 +43,9 @@ public:
 	FVector outPlayerLocation;
 	bool outIsPlayerDetected = false;
 	bool isDead = false;
+	bool isFlashed = false;
+	float flashInterval = 0.f;
+	float flashTimer = 0.f;
 	
 	UPROPERTY()
 	AActor* trackingTarget; // 추적 할때 사용(발소리 듣고 해당 현장으로 이동)
@@ -53,6 +56,7 @@ public:
 	TSubclassOf<ABulletProjectile> bulletProjectileOrigin;
 
 	virtual void Tick(float DeltaTime) override;
+	void GetFlashed(float pFlashDuration);
 	void TookDamage(float pDamageAmount, FHitResult pHitParts, AActor* pShooter);
 	void SetActiveFalse();
 	float GetCurrentWeaponRange();

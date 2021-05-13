@@ -30,19 +30,21 @@ EBTNodeResult::Type UBTTask_MoveAndShoot::ExecuteTask(UBehaviorTreeComponent& Ow
 	}
 
 
-
-	if (IsInRange(OwnerComp))
+	if (!aiCharacter->isFlashed)
 	{
-		aiCharacter->targetActor = aiCharacter->trackingTarget;
-		aiCharacter->FireWeapon();
-		OwnerComp.GetAIOwner()->StopMovement();
-	}
-	else
-	{
-		if (aiCharacter->targetActor != nullptr)
-			OwnerComp.GetAIOwner()->MoveToLocation(aiCharacter->targetActor->GetActorLocation());
+		if (IsInRange(OwnerComp))
+		{
+			aiCharacter->targetActor = aiCharacter->trackingTarget;
+			aiCharacter->FireWeapon();
+			OwnerComp.GetAIOwner()->StopMovement();
+		}
 		else
-			OwnerComp.GetAIOwner()->MoveToLocation(aiCharacter->trackingTarget->GetActorLocation());
+		{
+			if (aiCharacter->targetActor != nullptr)
+				OwnerComp.GetAIOwner()->MoveToLocation(aiCharacter->targetActor->GetActorLocation());
+			else
+				OwnerComp.GetAIOwner()->MoveToLocation(aiCharacter->trackingTarget->GetActorLocation());
+		}
 	}
 
 	return EBTNodeResult::Succeeded;

@@ -49,7 +49,7 @@ void ATarkovCopyGameModeBase::Tick(float DeltaSeconds)
 		playerController = Cast<AFPPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 	}
 
-	if (playerController->WasInputKeyJustPressed(EKeys::Tab))
+	if (playerController->WasInputKeyJustPressed(EKeys::Escape))
 	{
 		if (optionMenuWidget->IsInViewport())
 		{
@@ -136,9 +136,8 @@ void ATarkovCopyGameModeBase::ResumeGame()
 
 void ATarkovCopyGameModeBase::QuitGame()
 {
-	UGameplayStatics::OpenLevel(GetWorld(), TEXT("MainMenu"));
 	JsonSaveAndLoader::SaveBackpackItemContainers(playerController->GetItemContainers());
-	playerController->SaveEquipments();
+	UGameplayStatics::OpenLevel(GetWorld(), TEXT("MainMenu"));
 }
 
 void ATarkovCopyGameModeBase::OpenOptionMenu()

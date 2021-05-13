@@ -9,6 +9,7 @@
 #include "TarkovCopy/Player/Controller/FPPlayerController.h"
 #include "TarkovCopy/Weapons/FlashGrenade.h"
 #include "TarkovCopy/Weapons/BulletProjectile.h"
+#include "TarkovCopy/Utils/JsonSaveAndLoader.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -45,7 +46,7 @@ void APlayerCharacter::BeginPlay()
 			if (tempContainers[i])
 			{
 				inventory->AddNewItemToInventory(tempContainers[i]);
-				playerController->AddItem(tempContainers[i], inventory);
+				playerController->AddItem(inventory->GetBackpack()->GetItemContainers()[inventory->GetBackpack()->GetItemContainers().Num()-1], inventory);
 			}
 		}
 	}

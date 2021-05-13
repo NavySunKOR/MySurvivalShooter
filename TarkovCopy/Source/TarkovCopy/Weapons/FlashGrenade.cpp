@@ -35,6 +35,7 @@ void AFlashGrenade::Explode()
 			{
 				//AI에게 적용할 사항
 				AAICharacter* aiCharacter = Cast<AAICharacter>(hit.GetActor());
+				aiCharacter->GetFlashed(flashDuration);
 				//aiCharacter->TookDamage(explosionDamage, hit, grenadeOwner);
 			}
 			currentCount++;
