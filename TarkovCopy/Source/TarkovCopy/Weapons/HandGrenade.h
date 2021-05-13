@@ -36,8 +36,6 @@ protected:
 	UPROPERTY(EditAnywhere)
 	float explosionDamage;
 	UPROPERTY(EditAnywhere)
-	int explosionFragmentCounts;
-	UPROPERTY(EditAnywhere)
 	float impulseForceVal;
 	UPROPERTY(EditAnywhere)
 	UParticleSystem* explosionParticle; 

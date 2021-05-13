@@ -74,7 +74,6 @@ void AHandGrenade::Explode()
 	FHitResult hit;
 	FCollisionQueryParams param;
 	param.AddIgnoredActor(this);
-	int currentCount = 0;
 	for (int i = 0; i < grenadeTargets.Num(); i++)
 	{
 		dir = (grenadeTargets[i]->GetActorLocation() - explodeStart);
@@ -92,11 +91,7 @@ void AHandGrenade::Explode()
 				AAICharacter* aiCharacter = Cast<AAICharacter>(hit.GetActor());
 				aiCharacter->TookDamage(explosionDamage, hit, grenadeOwner);
 			}
-			currentCount++;
 		}
-
-		if (explosionFragmentCounts <= currentCount)
-			break;
 	}
 	SetActorHiddenInGame(true);
 	sphereCollision->SetActive(false);

@@ -136,7 +136,6 @@ void ATarkovCopyGameModeBase::ResumeGame()
 
 void ATarkovCopyGameModeBase::QuitGame()
 {
-	JsonSaveAndLoader::SaveBackpackItemContainers(playerController->GetItemContainers());
 	UGameplayStatics::OpenLevel(GetWorld(), TEXT("MainMenu"));
 }
 

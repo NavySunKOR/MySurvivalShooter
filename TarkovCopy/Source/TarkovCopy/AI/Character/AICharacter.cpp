@@ -45,6 +45,9 @@ void AAICharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (isDead)
+		return;
+
 	if (outIsPlayerDetected)
 	{
 		outPlayerLocation = trackingTarget->GetActorLocation();

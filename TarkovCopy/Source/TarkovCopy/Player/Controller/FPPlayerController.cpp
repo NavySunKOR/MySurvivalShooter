@@ -65,6 +65,10 @@ void AFPPlayerController::BeginPlay()
 void AFPPlayerController::PlayerTick(float DeltaTime)
 {
 	Super::PlayerTick(DeltaTime);
+	
+	if (gameMode && (gameMode->isPlayerDied || gameMode->isPlayerEscaped))
+		return;
+
 	if (isExfiling)
 	{
 		exfilCounter += DeltaTime;
