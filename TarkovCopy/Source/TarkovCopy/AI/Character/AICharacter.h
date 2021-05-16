@@ -3,13 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Character.h"
-#include <Components/SphereComponent.h>
-#include <TarkovCopy/Weapons/BaseGun.h>
+#include <GameFramework/Character.h>
 #include "AICharacter.generated.h"
 
 class AUserCreatedAIController;
 class ABulletProjectile;
+class ABaseGun;
+class USphereComponent;
+class ACharacter;
+
 UCLASS()
 class TARKOVCOPY_API AAICharacter : public ACharacter
 {

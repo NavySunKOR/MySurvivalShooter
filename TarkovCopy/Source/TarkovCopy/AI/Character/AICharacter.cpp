@@ -1,12 +1,15 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "AICharacter.h"
-#include <Components/SphereComponent.h>
-#include <Components/CapsuleComponent.h>
 #include "TarkovCopy/AI/Controller/UserCreatedAIController.h"
 #include "TarkovCopy/Player/Character/PlayerCharacter.h"
 #include "TarkovCopy/GameMode/TarkovCopyGameModeBase.h"
 #include "TarkovCopy/Weapons/BulletProjectile.h"
+#include <Components/SphereComponent.h>
+#include <TarkovCopy/Weapons/BaseGun.h>
+#include <Components/SphereComponent.h>
+#include <Components/CapsuleComponent.h>
+#include <GameFramework/CharacterMovementComponent.h>
 
 // Sets default values
 AAICharacter::AAICharacter()

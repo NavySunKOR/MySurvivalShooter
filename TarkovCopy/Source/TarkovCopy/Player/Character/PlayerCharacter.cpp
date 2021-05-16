@@ -2,13 +2,19 @@
 
 #include "PlayerCharacter.h"
 #include <GameFramework/SpringArmComponent.h>
+#include <GameFramework/CharacterMovementComponent.h>
+#include <Blueprint/UserWidget.h>
+#include <DrawDebugHelpers.h>
+#include "TarkovCopy/InventoryAndItem/ItemInfos/ItemInfo.h"
+#include "TarkovCopy/InventoryAndItem/ItemInfos/ItemHelmet.h"
+#include "TarkovCopy/InventoryAndItem/GameFunctions/Inventory.h"
 #include "TarkovCopy/Interactable/InteractableObject.h"
 #include "TarkovCopy/Interactable/InteractableComponent.h"
-#include "TarkovCopy/InventoryAndItem/ItemInfos/ItemHelmet.h"
 #include "TarkovCopy/GameMode/TarkovCopyGameModeBase.h"
 #include "TarkovCopy/Player/Controller/FPPlayerController.h"
 #include "TarkovCopy/Weapons/FlashGrenade.h"
 #include "TarkovCopy/Weapons/BulletProjectile.h"
+#include "TarkovCopy/Weapons/BaseGun.h"
 #include "TarkovCopy/Utils/JsonSaveAndLoader.h"
 
 // Sets default values

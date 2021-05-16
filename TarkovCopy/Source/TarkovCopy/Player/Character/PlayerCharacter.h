@@ -3,20 +3,23 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Character.h"
-#include <GameFramework/CharacterMovementComponent.h>
-#include <Blueprint/UserWidget.h>
-#include <DrawDebugHelpers.h>
-#include "TarkovCopy/InventoryAndItem/ItemInfos/ItemInfo.h"
-#include "TarkovCopy/InventoryAndItem/GameFunctions/Inventory.h"
-#include "TarkovCopy/Player/Controller/FPPlayerController.h"
-#include "TarkovCopy/Weapons/BaseGun.h"
+#include <GameFramework/Character.h>
 #include "PlayerCharacter.generated.h"
 
 class USpringArmComponent;
 class UStaticMeshComponent;
 class AHandGrenade;
+class ACharacter;
 class ABulletProjectile;
+class ABaseGun;
+class UItemInfo;
+class UItemHelmet;
+class UItemWeapon;
+class UInventory;
+class AFPPlayerController;
+class ATarkovCopyGameModeBase;
+class FSlateRect;
+
 UCLASS()
 class TARKOVCOPY_API APlayerCharacter : public ACharacter
 {
@@ -122,7 +125,7 @@ protected:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<ABulletProjectile> bulletProjectileOrigin;
 
-	class ATarkovCopyGameModeBase* gameMode;
+	ATarkovCopyGameModeBase* gameMode;
 
 
 public:	
