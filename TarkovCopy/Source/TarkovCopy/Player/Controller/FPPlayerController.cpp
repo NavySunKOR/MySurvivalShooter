@@ -626,6 +626,8 @@ void AFPPlayerController::GetFlashed(float pFlashTime, FVector pFlashbangPos)
 	FVector playerForward = ownerPlayerCharacter->GetActorForwardVector();
 
 	float vectorResult = FVector::DotProduct(dirToFlashbang, playerForward) / dirToFlashbang.Size() * playerForward.Size();
+	float angle = FMath::RadiansToDegrees(FMath::Acos(vectorResult)) ;
+	UE_LOG(LogTemp,Warning,TEXT("Value :%f"), angle)
 	
 	//TODO: 섬광탄에 영향받는 시야각을 나중에 CONSTANT로 몰아서 정의할 것.
 	//TODO: 0.6이면 COS하면 50도 가까이 됨 - 각도로 계산하면 각도로 바꿔주는 비용이 발생하기 때문에, 그냥 COS() 값으로 계산.

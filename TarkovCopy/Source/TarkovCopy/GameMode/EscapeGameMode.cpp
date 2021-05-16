@@ -44,7 +44,7 @@ void AEscapeGameMode::SelectExfilPoint()
 
 	if (playerCon != nullptr)
 	{
-		playerCon->ShowExfilPoints(activeExfilPoint->GetName(), (activeExfilPoint->GetActorLocation() - playerCon->GetPawn()->GetActorLocation()).Size());
+		playerCon->ShowExfilPoints(activeExfilPoint->GetName(), (activeExfilPoint->GetActorLocation() - playerCon->GetPawn()->GetActorLocation()).Size() / 100.f);
 	}
 }
 void AEscapeGameMode::StartPlay()

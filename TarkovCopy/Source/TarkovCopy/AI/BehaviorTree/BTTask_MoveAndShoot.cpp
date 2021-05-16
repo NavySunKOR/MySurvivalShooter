@@ -30,7 +30,7 @@ EBTNodeResult::Type UBTTask_MoveAndShoot::ExecuteTask(UBehaviorTreeComponent& Ow
 	}
 
 
-	if (!aiCharacter->isFlashed)
+	if (!aiCharacter->isFlashed && aiCharacter->trackingTarget)
 	{
 		if (IsInRange(OwnerComp))
 		{

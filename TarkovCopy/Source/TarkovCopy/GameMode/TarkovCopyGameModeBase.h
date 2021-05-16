@@ -97,6 +97,7 @@ public:
 	
 	bool isPlayerDied = false;
 	bool isPlayerEscaped = false;
+	bool isPauseMenuOpened = false;
 
 	virtual void PlayerDied();
 	virtual void QuestCompleted(AInteractableObject* questItem);

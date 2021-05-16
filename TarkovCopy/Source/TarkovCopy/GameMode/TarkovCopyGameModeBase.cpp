@@ -24,12 +24,14 @@ void ATarkovCopyGameModeBase::ReturnToMainMenu()
 }
 void ATarkovCopyGameModeBase::OpenPauseMenu()
 {
+	isPauseMenuOpened = true;
 	playerController->UnlockCloseUI();
 	playerController->LockOpenUI();
 	pauseMenuWidget->AddToViewport();
 }
 void ATarkovCopyGameModeBase::ClosePauseMenu()
 {
+	isPauseMenuOpened = false;
 	playerController->UnlockCloseUI();
 	pauseMenuWidget->RemoveFromViewport();
 }
@@ -49,7 +51,7 @@ void ATarkovCopyGameModeBase::Tick(float DeltaSeconds)
 		playerController = Cast<AFPPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 	}
 
-	if (playerController->WasInputKeyJustPressed(EKeys::Escape))
+	if (playerController->WasInputKeyJustPressed(EKeys::Tab))
 	{
 		if (optionMenuWidget->IsInViewport())
 		{
@@ -142,12 +144,15 @@ void ATarkovCopyGameModeBase::QuitGame()
 void ATarkovCopyGameModeBase::OpenOptionMenu()
 {
 	ClosePauseMenu(); 
+
+	isPauseMenuOpened = true;
 	playerController->LockOpenUI();
 	optionMenuWidget->AddToViewport();
 }
 
 void ATarkovCopyGameModeBase::CloseOptionMenu()
 {
+	isPauseMenuOpened = false;
 	optionMenuWidget->RemoveFromViewport();
 	OpenPauseMenu();
 }

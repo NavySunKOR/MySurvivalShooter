@@ -514,7 +514,7 @@ void APlayerCharacter::EquipSecondary()
 
 void APlayerCharacter::FireWeapon()
 {
-	if (playerController->isInventoryOpened || gameMode->isPlayerDied || gameMode->isPlayerEscaped)
+	if (playerController->isInventoryOpened || gameMode->isPlayerDied || gameMode->isPlayerEscaped || gameMode->isPauseMenuOpened)
 	{
 		return;
 	}
@@ -566,7 +566,7 @@ void APlayerCharacter::SetADSWeapon()
 		return;
 	}
 
-	if (gameMode && (gameMode->isPlayerDied || gameMode->isPlayerEscaped))
+	if (gameMode && (gameMode->isPlayerDied || gameMode->isPlayerEscaped || gameMode->isPauseMenuOpened))
 		return;
 
 	if (currentActiveGun && !IsCloseToWall())
@@ -578,7 +578,7 @@ void APlayerCharacter::SetADSWeapon()
 
 void APlayerCharacter::SetHipfireWeapon()
 {
-	if (gameMode && (gameMode->isPlayerDied || gameMode->isPlayerEscaped))
+	if (gameMode && (gameMode->isPlayerDied || gameMode->isPlayerEscaped || gameMode->isPauseMenuOpened))
 		return;
 	if (currentActiveGun)
 	{
@@ -589,7 +589,7 @@ void APlayerCharacter::SetHipfireWeapon()
 
 void APlayerCharacter::ReloadWeapon()
 {
-	if (gameMode && (gameMode->isPlayerDied || gameMode->isPlayerEscaped))
+	if (gameMode && (gameMode->isPlayerDied || gameMode->isPlayerEscaped || gameMode->isPauseMenuOpened))
 		return;
 
 
@@ -653,7 +653,7 @@ void APlayerCharacter::SetWeaponSelector()
 
 void APlayerCharacter::Interact()
 {
-	if (playerController->isInventoryOpened || gameMode->isPlayerDied || gameMode->isPlayerEscaped)
+	if (playerController->isInventoryOpened || gameMode->isPlayerDied || gameMode->isPlayerEscaped || gameMode->isPauseMenuOpened)
 	{
 		return;
 	}
@@ -689,7 +689,7 @@ void APlayerCharacter::Interact()
 
 void APlayerCharacter::InspectWeapon()
 {
-	if (gameMode && (gameMode->isPlayerDied || gameMode->isPlayerEscaped))
+	if (gameMode && (gameMode->isPlayerDied || gameMode->isPlayerEscaped || gameMode->isPauseMenuOpened))
 		return;
 
 	if (currentActiveGun && !IsReloading() && !IsSprinting() && !IsAds() && !IsFiring())
@@ -700,7 +700,7 @@ void APlayerCharacter::InspectWeapon()
 
 void APlayerCharacter::Inventory()
 {
-	if (gameMode && (gameMode->isPlayerDied || gameMode->isPlayerEscaped))
+	if (gameMode && (gameMode->isPlayerDied || gameMode->isPlayerEscaped || gameMode->isPauseMenuOpened))
 		return;
 	if (IsAds())
 	{
@@ -712,6 +712,8 @@ void APlayerCharacter::Inventory()
 
 void APlayerCharacter::ThrowGrenade()
 {
+	if (gameMode && (gameMode->isPlayerDied || gameMode->isPlayerEscaped || gameMode->isPauseMenuOpened))
+		return;
 	UItemInfo* itemReference = inventory->HasItemType(ItemType::GRENADE);
 	if (itemReference == nullptr)
 	{
@@ -756,6 +758,8 @@ void APlayerCharacter::ThrowGrenade()
 
 void APlayerCharacter::ThrowFlashGrenade()
 {
+	if (gameMode && (gameMode->isPlayerDied || gameMode->isPlayerEscaped || gameMode->isPauseMenuOpened))
+		return;
 	UItemInfo* itemReference = inventory->HasItemType(ItemType::FLASHGRENADE);
 	if (itemReference == nullptr)
 	{

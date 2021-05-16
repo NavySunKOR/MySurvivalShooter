@@ -54,9 +54,9 @@ void AAICharacter::Tick(float DeltaTime)
 	}
 
 	//탐지 범위 내에는 들어왔는데 건물 안이거나 아니면 벽에 가려져있을때 파악
-	if (trackingTarget != nullptr && !outIsPlayerDetected)
+	if (!outIsPlayerDetected)
 	{
-		if (aiController != nullptr && aiController->LineOfSightTo(trackingTarget))
+		if (trackingTarget && aiController && aiController->LineOfSightTo(trackingTarget))
 		{
 			outPlayerLocation = trackingTarget->GetActorLocation();
 			aiController->SetFocus(trackingTarget);
@@ -67,11 +67,13 @@ void AAICharacter::Tick(float DeltaTime)
 
 	if (isFlashed)
 	{
-		aiController->ClearFocus(EAIFocusPriority::LastFocusPriority);
+		if(aiController)
+			aiController->ClearFocus(EAIFocusPriority::LastFocusPriority);
 		flashTimer += DeltaTime;
 		if (flashTimer > flashInterval)
 		{
 			isFlashed = false;
+			if(trackingTarget)
 			aiController->SetFocus(trackingTarget);
 		}
 	}
@@ -153,11 +155,6 @@ void AAICharacter::NotifyActorBeginOverlap(AActor* Other)
 	
 	if (!isDead && Other != nullptr &&  Other->ActorHasTag(TEXT("Player")))
 	{
-		/*FVector targetDir = (Other->GetActorLocation() - GetActorLocation());
-		targetDir.Normalize();
-		float angleCos = FVector::DotProduct(GetOwner()->GetActorForwardVector(), targetDir) / GetOwner()->GetActorForwardVector().Size() * targetDir.Size();
-		float toAngle = FMath::RadiansToDegrees(FMath::Acos(angleCos));*/
-
 		trackingTarget = Other;
 		if (aiController->LineOfSightTo(trackingTarget))
 		{
