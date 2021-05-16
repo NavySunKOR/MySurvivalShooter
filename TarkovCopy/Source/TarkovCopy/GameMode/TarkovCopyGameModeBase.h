@@ -4,9 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
-#include "TarkovCopy/Interactable/InteractableObject.h"
-#include "TarkovCopy/Weapons/BaseGun.h"
-#include "TarkovCopy/InventoryAndItem/ItemInfos/ItemInfo.h"
 #include "TarkovCopyGameModeBase.generated.h"
 
 /**
@@ -14,6 +11,11 @@
  */
 class AAICharacter;
 class UButton;
+class UItemInfo;
+class ABaseGun;
+class AInteractableObject;
+class AFPPlayerController;
+
 
 UENUM()
 enum class AntiAlliasingOptionType : uint8

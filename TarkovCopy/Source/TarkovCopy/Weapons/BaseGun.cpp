@@ -2,11 +2,11 @@
 
 
 #include "BaseGun.h"
-#include <Runtime/Engine/Classes/Kismet/GameplayStatics.h>
 #include "TarkovCopy/InventoryAndItem/ItemInfos/ItemWeapon.h"
 #include "TarkovCopy/Player/Character/PlayerCharacter.h"
 #include "TarkovCopy/AI/Character/AICharacter.h"
-#include <Runtime/Engine/Classes/Components/ArrowComponent.h>
+#include <Kismet/GameplayStatics.h>
+#include <Components/ArrowComponent.h>
 
 // Sets default values
 ABaseGun::ABaseGun()

@@ -5,6 +5,8 @@
 #include <Kismet/GameplayStatics.h>
 #include <Runtime/Engine/Public/EngineUtils.h>
 #include <TarkovCopy/Player/Controller/FPPlayerController.h>
+#include "TarkovCopy/Interactable/QuestItem.h"
+#include <Engine/TriggerBox.h>
 
 void AEscapeGameMode::SelectQuestItems()
 {

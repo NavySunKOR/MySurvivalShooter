@@ -1,20 +1,25 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "FPPlayerController.h"
+#include "TarkovCopy/Player/Character/PlayerCharacter.h"
+#include "TarkovCopy/GameMode/EscapeGameMode.h"
+#include "TarkovCopy/PublicProperty/UMGPublicProperites.h"
+#include "TarkovCopy/InventoryAndItem/ItemInfos/ItemHelmet.h"
+#include "TarkovCopy/InventoryAndItem/ItemInfos/ItemWeapon.h"
+#include "TarkovCopy/InventoryAndItem/ItemInfos/ItemIcon.h"
+#include "TarkovCopy/InventoryAndItem/GameFunctions/Inventory.h"
+#include "TarkovCopy/Utils/JsonSaveAndLoader.h"
 #include <GameFramework/PlayerInput.h>
 #include <GameFramework/Character.h>
 #include <Kismet/GameplayStatics.h>
 #include <Blueprint/WidgetTree.h>
 #include <Blueprint/UserWidget.h>
+#include <Blueprint/WidgetLayoutLibrary.h>
 #include <Components/CanvasPanelSlot.h>
 #include <Components/VerticalBox.h>
+#include <Components/TextBlock.h>
+#include <Components/CanvasPanel.h>
 #include <TimerManager.h>
-#include "TarkovCopy/GameMode/EscapeGameMode.h"
-#include "TarkovCopy/PublicProperty/UMGPublicProperites.h"
-#include "TarkovCopy/InventoryAndItem/ItemInfos/ItemHelmet.h"
-#include "TarkovCopy/InventoryAndItem/ItemInfos/ItemWeapon.h"
-#include "TarkovCopy/Utils/JsonSaveAndLoader.h"
-#include <Blueprint/WidgetLayoutLibrary.h>
 
 void AFPPlayerController::BeginPlay()
 {

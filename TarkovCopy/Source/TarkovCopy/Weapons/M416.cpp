@@ -2,10 +2,9 @@
 
 
 #include "M416.h"
-#include <Kismet/GameplayStatics.h>
 #include "TarkovCopy/AI/Character/AICharacter.h"
 #include "TarkovCopy/Player/Character/PlayerCharacter.h"
-#include "TarkovCopy/AI/Character/AICharacter.h"
+#include <Kismet/GameplayStatics.h>
 
 AM416::AM416()
 {

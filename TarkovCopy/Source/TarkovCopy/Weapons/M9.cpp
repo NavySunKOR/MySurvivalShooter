@@ -2,11 +2,10 @@
 
 
 #include "M9.h"
-#include <Kismet/GameplayStatics.h>
-#include "TarkovCopy/InventoryAndItem/ItemInfos/ItemWeapon.h"
 #include "TarkovCopy/AI/Character/AICharacter.h"
 #include "TarkovCopy/Player/Character/PlayerCharacter.h"
-#include "TarkovCopy/AI/Character/AICharacter.h"
+#include "TarkovCopy/InventoryAndItem/ItemInfos/ItemWeapon.h"
+#include <Kismet/GameplayStatics.h>
 
 AM9::AM9()
 {

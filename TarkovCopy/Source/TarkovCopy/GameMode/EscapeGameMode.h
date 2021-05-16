@@ -4,14 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "TarkovCopyGameModeBase.h"
-#include "TarkovCopy/Interactable/QuestItem.h"
-#include <Engine/TriggerBox.h>
-#include <TarkovCopy/Player/Controller/FPPlayerController.h>
 #include "EscapeGameMode.generated.h"
 
 /**
  * 
  */
+class AQuestItem;
+class AFPPlayerController;
 class ATriggerBox;
 UCLASS()
 class TARKOVCOPY_API AEscapeGameMode : public ATarkovCopyGameModeBase

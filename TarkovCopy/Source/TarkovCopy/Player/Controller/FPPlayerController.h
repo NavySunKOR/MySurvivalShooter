@@ -3,19 +3,27 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include <Blueprint/UserWidget.h>
-#include <Components/TextBlock.h>
-#include <Components/CanvasPanel.h>
-#include <TarkovCopy/InventoryAndItem/ItemInfos/ItemIcon.h>
-#include <TarkovCopy/InventoryAndItem/GameFunctions/Inventory.h>
+#include "GameFramework/PlayerController.h"
 #include "FPPlayerController.generated.h"
 
 /**
  * 
  */
+class APlayerCharacter;
 class AEscapeGameMode;
-class UVerticalBox;
+class FSlateRect;
+class UCanvasPanel;
+class UCanvasPanelSlot;
+class UTextBlock;
+class UWidget;
 class UItemHelmet;
+class UItemInfo;
+class UItemIcon;
+class UInventory;
+class UTextBlock;
+class UVerticalBox;
+class UUserWidget;
+
 UCLASS()
 class TARKOVCOPY_API AFPPlayerController : public APlayerController
 {
