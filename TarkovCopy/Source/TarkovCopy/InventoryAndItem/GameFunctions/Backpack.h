@@ -3,11 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "TarkovCopy/InventoryAndItem/ItemInfos/ItemInfo.h" // ItemType 때문에 여기다가 넣음
 #include "UObject/NoExportTypes.h"
-#include "TarkovCopy/InventoryAndItem/ItemInfos/ItemInfo.h"
 #include "Backpack.generated.h"
 
 class UInventory;
+class UItemInfo;
 /**
  * 
  */

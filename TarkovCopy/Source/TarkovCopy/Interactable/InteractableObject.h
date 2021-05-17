@@ -3,9 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include <TarkovCopy/Player/Character/PlayerCharacter.h>
 #include "InteractableObject.generated.h"
 
+class APlayerCharacter;
 
 UCLASS( )
 class TARKOVCOPY_API AInteractableObject : public AActor

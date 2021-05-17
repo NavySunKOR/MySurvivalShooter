@@ -1,7 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Backpack.h"
-#include "TarkovCopy/InventoryAndItem/ItemInfos/ItemInfo.h"
 #include <Layout/SlateRect.h>
 
 

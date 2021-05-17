@@ -2,8 +2,6 @@
 
 #pragma once
 
-#include "TarkovCopy/Weapons/BaseGun.h"
-#include "TarkovCopy/InventoryAndItem/GameFunctions/Backpack.h"
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
 #include "Inventory.generated.h"
@@ -12,6 +10,8 @@
  * 
  */
 
+class ABaseGun;
+class UBackpack;
 class UItemWeapon;
 class UItemHelmet;
 

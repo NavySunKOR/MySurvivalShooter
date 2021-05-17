@@ -1,6 +1,8 @@
  // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Inventory.h"
+#include "TarkovCopy/Weapons/BaseGun.h"
+#include "TarkovCopy/InventoryAndItem/GameFunctions/Backpack.h"
 #include "TarkovCopy/Player/Character/PlayerCharacter.h"
 #include "TarkovCopy/Interactable/PickableItem.h"
 #include "TarkovCopy/Utils/JsonSaveAndLoader.h"
