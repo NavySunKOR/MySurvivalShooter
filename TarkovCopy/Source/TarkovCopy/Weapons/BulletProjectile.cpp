@@ -31,7 +31,7 @@ ABulletProjectile::ABulletProjectile()
 void ABulletProjectile::LaunchProjectile()
 {
 	projectileMovementComponent->SetUpdatedComponent(sphereComponent);
-	projectileMovementComponent->InitialSpeed = velocity;
+	projectileMovementComponent->InitialSpeed = velocity/2;
 	projectileMovementComponent->MaxSpeed = velocity;
 	projectileMovementComponent->bRotationFollowsVelocity = true;
 	projectileMovementComponent->Velocity = shootDir * projectileMovementComponent->InitialSpeed;
@@ -77,6 +77,7 @@ void ABulletProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, 
 		return;
 	if(OtherActor->IsA(APlayerCharacter::StaticClass()) || OtherActor->IsA(AAICharacter::StaticClass()))
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Hiited Enemy"));
 		UGameplayStatics::ApplyPointDamage(OtherActor, damage, NormalImpulse, Hit, GetInstigatorController(), bulletOwner, UDamageType::StaticClass());
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), hitEnemyParticle, Hit.ImpactPoint);
 		UGameplayStatics::SpawnSoundAtLocation(GetWorld(), hitEnemySound, Hit.ImpactPoint, Hit.ImpactNormal.Rotation());

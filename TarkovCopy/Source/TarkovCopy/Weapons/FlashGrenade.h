@@ -6,6 +6,15 @@
 #include "HandGrenade.h"
 #include "FlashGrenade.generated.h"
 
+
+class UDamageEvent;
+
+UCLASS()
+class UFlashDamageType : public UDamageType
+{
+	GENERATED_BODY()
+};
+
 /**
  * 
  */

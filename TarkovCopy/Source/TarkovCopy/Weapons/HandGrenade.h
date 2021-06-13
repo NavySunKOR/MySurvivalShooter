@@ -3,31 +3,27 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Pawn.h"
+#include "GameFramework/Actor.h"
 #include "HandGrenade.generated.h"
 
-class USphereComponent;
+class UProjectileMovementComponent;
 
 UCLASS()
-class TARKOVCOPY_API AHandGrenade : public APawn
+class TARKOVCOPY_API AHandGrenade : public AActor
 {
 	GENERATED_BODY()
-	
 public:	
 	// Sets default values for this actor's properties
 	AHandGrenade();
 private:
 	float explosionTimer;
+	UPROPERTY(VisibleAnywhere, Category = "Component")
+	UProjectileMovementComponent* projectileMovement;
 
 	UPROPERTY()
 	UStaticMeshComponent* getMesh;
 protected:
-	TArray<AActor*> grenadeTargets;
-	USphereComponent* sphereCollision;
-
-	UPROPERTY()
 	bool isExploded = true;
-	bool isGrenadeTossed = false;
 
 	UPROPERTY(EditAnywhere)
 	float explosionDuration;
@@ -43,8 +39,6 @@ protected:
 	USoundBase* explosionSound;
 
 	virtual void BeginPlay() override;
-	virtual void NotifyActorBeginOverlap(AActor* Other) override;
-	virtual void NotifyActorEndOverlap(AActor* Other) override;
 
 public:	
 	UPROPERTY()

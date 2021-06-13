@@ -5,13 +5,15 @@
 #include "TarkovCopy/AI/Character/AICharacter.h"
 #include "TarkovCopy/Player/Character/PlayerCharacter.h"
 #include "TarkovCopy/GameMode/TarkovCopyGameModeBase.h"
+#include <GameFramework/ProjectileMovementComponent.h>
 #include <Kismet/GameplayStatics.h>
 
 // Sets default values
 AHandGrenade::AHandGrenade()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	//PrimaryActorTick.bCanEverTick = true;
+	projectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
 
 }
 
@@ -19,86 +21,45 @@ AHandGrenade::AHandGrenade()
 void AHandGrenade::BeginPlay()
 {
 	Super::BeginPlay();
-	sphereCollision = Cast<USphereComponent>(GetDefaultSubobjectByName(TEXT("ExplosionCollision")));
 	DeactivateGrenade();
-}
-void AHandGrenade::NotifyActorBeginOverlap(AActor* Other)
-{
-	if (Other->ActorHasTag(TEXT("Enemy")) || Other->ActorHasTag(TEXT("Player")))
-	{
-		grenadeTargets.Add(Other);
-	}
-}
-
-void AHandGrenade::NotifyActorEndOverlap(AActor* Other)
-{
-	if (Other->ActorHasTag(TEXT("Enemy")) || Other->ActorHasTag(TEXT("Player")))
-	{
-		grenadeTargets.Remove(Other);
-	}
 }
 
 void AHandGrenade::ReactivateGrenade()
 {
-	SetActorHiddenInGame(false);
-
-	sphereCollision->SetActive(true);
+	SetActorHiddenInGame(false); 
 	isExploded = false;
 }
 
 void AHandGrenade::DeactivateGrenade()
 {
 	SetActorHiddenInGame(true);
-	sphereCollision->SetActive(false);
 	isExploded = true;
-	grenadeTargets.Reset();
 }
 
 
-void AHandGrenade::ThrowGrenade(FVector pDir,FVector pStartPos)
+void AHandGrenade::ThrowGrenade(FVector pDir,FVector pStartPos) 
 {
-	if(getMesh == nullptr)
-		getMesh =Cast<UStaticMeshComponent>(GetDefaultSubobjectByName(TEXT("Mesh")));
-	getMesh->SetSimulatePhysics(false);
-	getMesh->SetSimulatePhysics(true);
-	getMesh->SetPhysicsLinearVelocity(pDir * impulseForceVal);
+	ReactivateGrenade();
 	SetActorLocation(pStartPos);
-	isGrenadeTossed = true;
-	
+	projectileMovement->InitialSpeed = impulseForceVal / 2.f;
+	projectileMovement->MaxSpeed = impulseForceVal;
+	projectileMovement->ProjectileGravityScale = 3.f;
+	projectileMovement->Velocity = pDir * impulseForceVal;
+
+	FTimerHandle handle;
+	GetWorld()->GetTimerManager().SetTimer(handle, this, &AHandGrenade::Explode, explosionDuration);
 }
 
 void AHandGrenade::Explode()
 {
-	FVector explodeStart = GetActorLocation();
-	FVector dir;
-	FHitResult hit;
-	FCollisionQueryParams param;
-	param.AddIgnoredActor(this);
-	for (int i = 0; i < grenadeTargets.Num(); i++)
-	{
-		dir = (grenadeTargets[i]->GetActorLocation() - explodeStart);
-		if (GetWorld()->LineTraceSingleByChannel(hit, explodeStart, dir * explosionRadius, ECollisionChannel::ECC_Pawn))
-		{
-			//플레이어 인가 아니면 
-			if (hit.Actor->ActorHasTag(TEXT("Player")))
-			{
-				APlayerCharacter* playerCharacter = Cast<APlayerCharacter>(hit.GetActor());
-				playerCharacter->TookDamage(explosionDamage, hit, GetActorLocation());
-			}
-			//에너미인가
-			else if (hit.Actor->ActorHasTag(TEXT("Enemy")))
-			{
-				AAICharacter* aiCharacter = Cast<AAICharacter>(hit.GetActor());
-				aiCharacter->TookDamage(explosionDamage, hit, grenadeOwner);
-			}
-		}
-	}
-	SetActorHiddenInGame(true);
-	sphereCollision->SetActive(false);
+	UE_LOG(LogTemp, Warning, TEXT("Explode Hand Grenade DRAWING Position : %s"), *GetActorLocation().ToString())
+	UKismetSystemLibrary::DrawDebugSphere(GetWorld(), GetActorLocation() + FVector(0, 0, 100.f), explosionRadius,12,FLinearColor::Red,50.f,50.f);
+
+	//ApplyRadialDamage는 기본적으로 DamageCauser액터가 걸리면 데미지가 미적용이다.
+	UGameplayStatics::ApplyRadialDamage(GetWorld(), explosionDamage, GetActorLocation() + FVector(0,0,100.f), explosionRadius,UDamageType::StaticClass(), TArray<AActor*>(),this,GetInstigator()->GetController(), false, ECollisionChannel::ECC_Visibility);
 	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), explosionParticle, GetActorLocation());
 	UGameplayStatics::SpawnSoundAtLocation(GetWorld(), explosionSound, GetActorLocation());
-	isExploded = true;
-	isGrenadeTossed = false;
+	DeactivateGrenade();
 }
 
 bool AHandGrenade::IsActive()
@@ -110,14 +71,5 @@ bool AHandGrenade::IsActive()
 void AHandGrenade::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	if (!isExploded)
-	{
-		explosionTimer += DeltaTime;
-		if (explosionTimer > explosionDuration)
-		{
-			explosionTimer = 0.f;
-			Explode();
-		}
-	}
 }
 

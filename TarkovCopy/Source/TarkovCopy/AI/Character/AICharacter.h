@@ -24,6 +24,8 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	//Called when take damage
+	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 private:
 	float maxHp = 100.f;
@@ -39,6 +41,7 @@ private:
 	virtual void NotifyActorBeginOverlap(AActor* Other) override;
 	virtual void NotifyActorEndOverlap(AActor* Other) override;
 	void Dead();
+	void CalculateDamageAmount(float& pDamage, FHitResult& pHitParts);
 
 public:	
 	// Called every frame
@@ -59,7 +62,6 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 	void GetFlashed(float pFlashDuration);
-	void TookDamage(float pDamageAmount, FHitResult pHitParts, AActor* pShooter);
 	void SetActiveFalse();
 	float GetCurrentWeaponRange();
 	void FireWeapon();

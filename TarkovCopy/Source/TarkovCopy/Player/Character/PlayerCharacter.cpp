@@ -62,6 +62,61 @@ void APlayerCharacter::BeginPlay()
 	//Pool initialize;
 }
 
+float APlayerCharacter::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+
+	APawn* instigatorPawn = EventInstigator->GetPawn();
+
+	if (instigatorPawn == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("TakeDamage's instigatorPawn is null!"))
+		return -1;
+	}
+
+
+	UE_LOG(LogTemp, Warning, TEXT("TakeDamage"))
+
+	//TODO:이 비교문이 맞는지 체크 해 볼것.
+	if (DamageEvent.DamageTypeClass == UFlashDamageType::StaticClass())
+	{
+		playerController->GetFlashed(Damage, DamageCauser->GetActorLocation());
+	}
+	else
+	{
+		FPointDamageEvent* damageEvent = (FPointDamageEvent*)&DamageEvent;
+
+		//총상인지 아닌지 판단. 포인트 데미지면 총상이다.
+		if (damageEvent->IsOfType(FPointDamageEvent::ClassID))
+		{
+			int generated = rand() % 10;
+			if (generated < 3) // 0,1,2 중 하나 걸리니까 30퍼센트 헤드샷
+			{
+				Damage *= 2.5f;
+				if (inventory->GetEquippedHelmet() != nullptr &&
+					inventory->GetEquippedHelmet()->curDurability >= inventory->GetEquippedHelmet()->damageDecreaseAmount)
+				{
+					Damage -= inventory->GetEquippedHelmet()->damageDecreaseAmount;
+					inventory->GetEquippedHelmet()->curDurability -= inventory->GetEquippedHelmet()->damageDecreaseAmount;
+				}
+			}
+		}
+
+		curHp -= Damage;
+		if (curHp <= 0)
+		{
+			curHp = 0.f;
+			playerController->Dead();
+		}
+
+		playerController->UpdateHealthHud(curHp);
+		playerController->ShowHitIndicator(instigatorPawn->GetActorLocation());
+	}
+
+
+
+	return Damage;
+}
+
 // Called every frame
 void APlayerCharacter::Tick(float DeltaTime)
 {
@@ -187,31 +242,6 @@ float APlayerCharacter::HealPlayer(float pHealAmount)
 		curHp = maxHp;
 	}
 	return curHp;
-}
-
-void APlayerCharacter::TookDamage(float damage, FHitResult pHitParts, FVector pShooterPos)
-{
-	int generated = rand() % 10;
-	if (generated < 3) // 0,1,2 중 하나 걸리니까 30퍼센트 헤드샷
-	{
-		damage *= 2.5f;
-		if (inventory->GetEquippedHelmet() != nullptr && 
-			inventory->GetEquippedHelmet()->curDurability >= inventory->GetEquippedHelmet()->damageDecreaseAmount)
-		{
-			damage -= inventory->GetEquippedHelmet()->damageDecreaseAmount;
-			inventory->GetEquippedHelmet()->curDurability -= inventory->GetEquippedHelmet()->damageDecreaseAmount;
-		}
-	}
-	 
-
-	curHp -= damage;
-	if (curHp <= 0)
-	{
-		curHp = 0.f;
-		playerController->Dead();
-	}
-	playerController->UpdateHealthHud(curHp);
-	playerController->ShowHitIndicator(pShooterPos);
 }
 
 bool APlayerCharacter::PickupItem(UItemInfo* pItemInfo)
@@ -340,7 +370,11 @@ void APlayerCharacter::FireProjectile(float pDamage, float pVelocity, float pMas
 
 	if (!isProjectileFired)
 	{
-		bulletProjectilePools.Add(GetWorld()->SpawnActor<ABulletProjectile>(bulletProjectileOrigin, pFireStartPos, pShootDir.Rotation()));
+		ABulletProjectile* bullet = GetWorld()->SpawnActor<ABulletProjectile>(bulletProjectileOrigin, pFireStartPos, pShootDir.Rotation());
+		bullet->SetInstigator(this);
+		bullet->SetOwner(this);
+		bulletProjectilePools.Add(bullet);
+		//총알의 주인과 선동자 설정 - 주인을 나중에 무기로 바꿀려면 풀을 무기에서 생성하게끔 기능 자체를 옮겨줘야한다. - 특히 멀티 플레이어에서 잘 지켜보도록.
 		bulletProjectilePools[bulletProjectilePools.Num() - 1]->ReactivateProjectile(pDamage, pVelocity, pMass,  Cast<APawn>(this), pShootDir);
 		bulletProjectilePools[bulletProjectilePools.Num() - 1]->LaunchProjectile();
 		bulletProjectilePools[bulletProjectilePools.Num() - 1]->SetActorLocation(pFireStartPos);
@@ -731,9 +765,7 @@ void APlayerCharacter::ThrowGrenade()
 	{
 		if (handGrenadePools[i] &&!handGrenadePools[i]->IsActive())
 		{
-			handGrenadePools[i]->ReactivateGrenade();
 			//Add Physics power
-			handGrenadePools[i]->SetActorLocation(GetActorLocation());
 			handGrenadePools[i]->ThrowGrenade(GetActorForwardVector(),GetActorLocation() + GetActorUpVector() * 100.f + GetActorForwardVector() * 100.f);
 
 			inventory->UseItem(itemReference);
@@ -747,6 +779,8 @@ void APlayerCharacter::ThrowGrenade()
 	if (!isThrowing)
 	{
 		AHandGrenade* hand = GetWorld()->SpawnActor<AHandGrenade>(handGrenadeOrigin);
+		hand->SetInstigator(this);
+		hand->SetOwner(this);
 		handGrenadePools.Add(hand);
 
 		handGrenadePools[handGrenadePools.Num() - 1]->ReactivateGrenade();
@@ -778,9 +812,7 @@ void APlayerCharacter::ThrowFlashGrenade()
 	{
 		if (flashGrenadePools[i] && !flashGrenadePools[i]->IsActive())
 		{
-			flashGrenadePools[i]->ReactivateGrenade();
 			//Add Physics power
-			flashGrenadePools[i]->SetActorLocation(GetActorLocation());
 			flashGrenadePools[i]->ThrowGrenade(GetActorForwardVector(), GetActorLocation() + GetActorUpVector() * 100.f + GetActorForwardVector() * 100.f);
 
 			inventory->UseItem(itemReference);
@@ -794,11 +826,11 @@ void APlayerCharacter::ThrowFlashGrenade()
 	if (!isThrowing)
 	{
 		AFlashGrenade* flash = GetWorld()->SpawnActor<AFlashGrenade>(flashGrenadeOrigin);
+	
 		flashGrenadePools.Add(flash);
-
-		flashGrenadePools[flashGrenadePools.Num() - 1]->ReactivateGrenade();
+		flashGrenadePools[flashGrenadePools.Num() - 1]->SetInstigator(this);
+		flashGrenadePools[flashGrenadePools.Num() - 1]->SetOwner(this);
 		//Add Physics power
-		flashGrenadePools[flashGrenadePools.Num() - 1]->SetActorLocation(GetActorLocation());
 		flashGrenadePools[flashGrenadePools.Num() - 1]->ThrowGrenade(GetActorForwardVector(), GetActorLocation() + GetActorUpVector() * 100.f + GetActorForwardVector() * 100.f);
 
 		inventory->UseItem(itemReference);

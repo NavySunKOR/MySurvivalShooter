@@ -50,6 +50,11 @@ private:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	//Called when take damage
+	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+
+
+
 	UStaticMeshComponent* helmetMesh;
 
 
@@ -143,7 +148,6 @@ public:
 	//virtual void BeginDestroy();
 
 	float HealPlayer(float pHealAmount);
-	void TookDamage(float damage, FHitResult pHitParts,FVector pShooterPos);
 	void Tilting(float pValue);
 
 	//아이템 이동 관련

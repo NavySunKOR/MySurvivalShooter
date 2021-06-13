@@ -4,9 +4,10 @@
 #include "TarkovCopy/AI/Controller/UserCreatedAIController.h"
 #include "TarkovCopy/Player/Character/PlayerCharacter.h"
 #include "TarkovCopy/GameMode/TarkovCopyGameModeBase.h"
+#include "TarkovCopy/Weapons/FlashGrenade.h"
 #include "TarkovCopy/Weapons/BulletProjectile.h"
+#include "TarkovCopy/Weapons/BaseGun.h"
 #include <Components/SphereComponent.h>
-#include <TarkovCopy/Weapons/BaseGun.h>
 #include <Components/SphereComponent.h>
 #include <Components/CapsuleComponent.h>
 #include <GameFramework/CharacterMovementComponent.h>
@@ -39,6 +40,46 @@ void AAICharacter::BeginPlay()
 		currentActiveGun->weaponOwnerAICharacter = this;
 		currentActiveGun->SetOwner(this);
 	}
+}
+
+float AAICharacter::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	//hitParts에 따라서 pDamageAmount를 계산할것.
+	APawn* instigatorPawn = EventInstigator->GetPawn();
+	if (instigatorPawn == nullptr)
+		return -1;
+
+
+	UE_LOG(LogTemp, Warning, TEXT("TakeDamage"));
+
+	//TODO:이 비교문이 맞는지 체크 해 볼것.
+	if (DamageEvent.DamageTypeClass == UFlashDamageType::StaticClass())
+	{
+		GetFlashed(Damage);
+	}
+	else
+	{
+		FPointDamageEvent* damageEvent = (FPointDamageEvent*)&DamageEvent;
+
+		UE_LOG(LogTemp, Warning, TEXT("FPointDamageEvent"));
+		//총에 맞았으면 부위별 데미지를, 수류탄에 맞았으면 그냥 통짜로 데미지가 들어감.
+		if (DamageEvent.IsOfType(FPointDamageEvent::ClassID))
+		{
+			CalculateDamageAmount(Damage, damageEvent->HitInfo);
+		}
+
+		UE_LOG(LogTemp, Warning, TEXT("CalculateDamageAmount"));
+
+		curHp -= Damage;
+		NotifyActorBeginOverlap(instigatorPawn);
+		if (curHp <= 0)
+		{
+			curHp = 0;
+			Dead();
+		}
+	}
+
+	return Damage;
 }
 
 
@@ -89,7 +130,7 @@ void AAICharacter::GetFlashed(float pFlashDuration)
 	isFlashed = true;
 }
 
-void CalculateDamageAmount(float& pDamage,FHitResult& pHitParts)
+void AAICharacter::CalculateDamageAmount(float& pDamage,FHitResult& pHitParts)
 {
 	//Head shot
 	if (pHitParts.BoneName.ToString().Equals(TEXT("head")) || pHitParts.BoneName.ToString().Equals(TEXT("neck")))
@@ -123,22 +164,6 @@ void CalculateDamageAmount(float& pDamage,FHitResult& pHitParts)
 		//TODO:나중에 방어구 시스템 나오면 데미지 경감 시켜줄 것.
 	}
 
-}
-
-void AAICharacter::TookDamage(float pDamageAmount, FHitResult pHitParts,AActor* pShooter)
-{
-	//hitParts에 따라서 pDamageAmount를 계산할것.
-	CalculateDamageAmount(pDamageAmount, pHitParts);
-
-	curHp -= pDamageAmount;
-
-	NotifyActorBeginOverlap(pShooter);
-	if (curHp <= 0)
-	{
-		//TODO:PawnKilled 넣을것.
-		curHp = 0;
-		Dead();
-	}
 }
 
 float AAICharacter::GetCurrentWeaponRange()
@@ -197,6 +222,7 @@ void AAICharacter::Dead()
 	FTimerHandle handle;
 	GetWorld()->GetTimerManager().SetTimer(handle, this, &AAICharacter::SetActiveFalse, 2.f);
 }
+
 void AAICharacter::SetActiveFalse()
 {
 	GetMesh()->SetSimulatePhysics(false);
@@ -237,7 +263,10 @@ void AAICharacter::FireProjectile(float pDamage, float pVelocity, float pMass, F
 
 	if (!isProjectileFired)
 	{
-		bulletProjectilePools.Add(GetWorld()->SpawnActor<ABulletProjectile>(bulletProjectileOrigin));
+		ABulletProjectile* bullet = GetWorld()->SpawnActor<ABulletProjectile>(bulletProjectileOrigin);
+		bullet->SetInstigator(this);
+		bullet->SetOwner(this);
+		bulletProjectilePools.Add(bullet);
 		bulletProjectilePools[bulletProjectilePools.Num() -1]->ReactivateProjectile(pDamage, pVelocity, pMass,Cast<APawn>(this), pShootDir);
 		bulletProjectilePools[bulletProjectilePools.Num() - 1]->LaunchProjectile();
 		bulletProjectilePools[bulletProjectilePools.Num() - 1]->SetActorLocation(pFireStartPos);
