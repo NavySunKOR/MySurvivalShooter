@@ -5,43 +5,57 @@
 #include "TarkovCopy/AI/Character/AICharacter.h"
 #include "TarkovCopy/Player/Character/PlayerCharacter.h"
 #include <Components/SphereComponent.h>
+#include <GameFramework/ProjectileMovementComponent.h>
 #include <Kismet/GameplayStatics.h>
 
 // Sets default values
 ABulletProjectile::ABulletProjectile()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	//PrimaryActorTick.bCanEverTick = true;
+
+	FScriptDelegate bulletHIt;
+	bulletHIt.BindUFunction(this, TEXT("ObjectHit"));
+
+	sphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("BulletCollision"));
+	SetRootComponent(sphereComponent);
+
+	projectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("BulletMovement"));
+	projectileMovementComponent->bSweepCollision = true;
+
+	staticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BulletMesh"));
+	staticMeshComponent->AttachToComponent(sphereComponent, FAttachmentTransformRules::KeepWorldTransform);
 
 }
 
 void ABulletProjectile::LaunchProjectile()
 {
-	getMesh->SetSimulatePhysics(false);
-	getMesh->SetSimulatePhysics(true);
-	getMesh->SetPhysicsLinearVelocity(shootDir * velocity);
+	projectileMovementComponent->SetUpdatedComponent(sphereComponent);
+	projectileMovementComponent->InitialSpeed = velocity;
+	projectileMovementComponent->MaxSpeed = velocity;
+	projectileMovementComponent->bRotationFollowsVelocity = true;
+	projectileMovementComponent->Velocity = shootDir * projectileMovementComponent->InitialSpeed;
 }
 
 void ABulletProjectile::ReactivateProjectile(float pDamage, float pVelocity, float pMass,APawn* pShooter,FVector pShootDir)
 {
-	isHitted = false;
 	isFired = true;
 	damage = pDamage;
 	velocity = pVelocity;
 	mass = pMass;
+
 	lastShooterPos = pShooter->GetActorLocation();
 	bulletOwner = pShooter;
 	shootDir = pShootDir;
 	SetActorHiddenInGame(false);
-	SetActorEnableCollision(true);
+	sphereComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 }
 
 void ABulletProjectile::DeactivateProjectile()
 {
 	isFired = false;
-	getMesh->SetSimulatePhysics(false);
 	SetActorHiddenInGame(true);
-	SetActorEnableCollision(false);
+	sphereComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 bool ABulletProjectile::IsFired()
@@ -53,28 +67,17 @@ bool ABulletProjectile::IsFired()
 void ABulletProjectile::BeginPlay()
 {
 	Super::BeginPlay();
-	getMesh = Cast<UStaticMeshComponent>(GetDefaultSubobjectByName(TEXT("BulletMesh")));
-	rayCheckInterval = 1.f / rayCheckFrame;
+	sphereComponent->OnComponentHit.AddDynamic(this, &ABulletProjectile::OnHit);
 	DeactivateProjectile();
 }
 
-void ABulletProjectile::ObjectHit(AActor* Other, FHitResult Hit)
+void ABulletProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	if (bulletOwner->GetName().Equals(Other->GetName()))
+	if (bulletOwner->GetName().Equals(OtherActor->GetName()))
 		return;
-	AAICharacter* aiCharacter = Cast<AAICharacter>(Hit.GetActor());
-	APlayerCharacter* playerCharacter = Cast<APlayerCharacter>(Hit.GetActor());
-	if (aiCharacter != nullptr)
+	if(OtherActor->IsA(APlayerCharacter::StaticClass()) || OtherActor->IsA(AAICharacter::StaticClass()))
 	{
-		//TODO: 총알의 오너는 플레이어 또는 AI의 캐릭터로 설정 해 줄것.
-		aiCharacter->TookDamage(damage, Hit, GetOwner());
-		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), hitEnemyParticle, Hit.ImpactPoint);
-		UGameplayStatics::SpawnSoundAtLocation(GetWorld(), hitEnemySound, Hit.ImpactPoint, Hit.ImpactNormal.Rotation());
-	}
-	//아니면 지형처리.
-	else if (playerCharacter != nullptr)
-	{
-		playerCharacter->TookDamage(damage, Hit, lastShooterPos);
+		UGameplayStatics::ApplyPointDamage(OtherActor, damage, NormalImpulse, Hit, GetInstigatorController(), bulletOwner, UDamageType::StaticClass());
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), hitEnemyParticle, Hit.ImpactPoint);
 		UGameplayStatics::SpawnSoundAtLocation(GetWorld(), hitEnemySound, Hit.ImpactPoint, Hit.ImpactNormal.Rotation());
 	}
@@ -85,44 +88,5 @@ void ABulletProjectile::ObjectHit(AActor* Other, FHitResult Hit)
 	}
 
 	DeactivateProjectile();
-}
-
-void ABulletProjectile::NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit)
-{
-	if (!isHitted)
-	{
-		isHitted = true;
-		ObjectHit(Other, Hit);
-	}
-}
-
-// Called every frame
-void ABulletProjectile::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-	//CCD로도 프로젝타일이 지형을 뚫고 가는 현상이 발생. Raycast로 추가 체크
-	if (isFired)
-	{
-		rayCheckTimer += DeltaTime;
-		if (rayCheckTimer > rayCheckInterval)
-		{
-			rayCheckParam.ClearIgnoredActors();
-			rayCheckParam.AddIgnoredActor(this);
-			rayCheckParam.AddIgnoredActor(bulletOwner);
-			rayCheckTimer = 0.f;
-			rayCheckStartPos = GetActorLocation();
-			rayCheckEndPos = rayCheckStartPos + shootDir * rayCheckLength;
-			DrawDebugLine(GetWorld(), rayCheckStartPos, rayCheckEndPos, FColor::Orange);
-			if (GetWorld()->LineTraceSingleByChannel(rayCheckHitResult, rayCheckStartPos, rayCheckEndPos, ECollisionChannel::ECC_Pawn, rayCheckParam))
-			{
-				if (!isHitted)
-				{
-					isHitted = true;
-					ObjectHit(rayCheckHitResult.GetActor(), rayCheckHitResult);
-				}
-			}
-		}
-	}
 }
 
