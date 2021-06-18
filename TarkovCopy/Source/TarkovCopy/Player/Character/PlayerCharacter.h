@@ -20,6 +20,8 @@ class AFPPlayerController;
 class ATarkovCopyGameModeBase;
 class FSlateRect;
 
+class UPlayerStatusComponent;
+
 UCLASS()
 class TARKOVCOPY_API APlayerCharacter : public ACharacter
 {
@@ -47,13 +49,19 @@ private:
 	UPROPERTY()
 	AHandGrenade* handGrenadePool;
 
+
+	//Components
+	UPROPERTY(VisibleAnywhere,Category="Components")
+	UPlayerStatusComponent* PlayerStatusComponent;
+
+
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
 	//Called when take damage
 	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
-
-
 
 	UStaticMeshComponent* helmetMesh;
 
@@ -108,19 +116,6 @@ protected:
 	TSubclassOf<ABaseGun> m9Origin;
 
 	UPROPERTY(EditAnywhere)
-	int maxHp = 100;
-	UPROPERTY(EditAnywhere)
-	int curHp;
-
-
-	UPROPERTY(EditAnywhere)
-	float sprintingSpeed;
-	UPROPERTY(EditAnywhere)
-	float walkingSpeed;
-	UPROPERTY(EditAnywhere)
-	float adsWalkingSpeed;
-
-	UPROPERTY(EditAnywhere)
 	TSubclassOf<UInventory> inventoryOrigin;
 
 	UPROPERTY(EditAnywhere)
@@ -146,8 +141,6 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	//virtual void BeginDestroy();
-
-	float HealPlayer(float pHealAmount);
 	void Tilting(float pValue);
 
 	//아이템 이동 관련
@@ -171,6 +164,8 @@ public:
 	//저장 관련
 	void SaveEquipments();
 
+	//스탯 관련
+	void HealPlayer(float pHealAmount);
 
 //BlueprintPureOnly
 protected:

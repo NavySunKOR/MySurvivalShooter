@@ -198,7 +198,6 @@ public:
 	void RemoveHelmet(UItemHelmet* pHelmetInfo);
 
 	//상태 관련
-	void HealPlayer(float pHealAmount);
 	void UpdateHealthHud(float pCurHealth);
 	void UpdateInventoryUI();
 	void Dead();
@@ -217,10 +216,11 @@ public:
 	void ExfilingComplete();
 	void CancelExfiling();
 
+	//스탯 관련
+	void HealPlayer(float pHealAmount);
+
 	//파일저장
 	void SaveEquipments();
-
-
 
 	//BlueprintUsable
 	UFUNCTION(BlueprintCallable)

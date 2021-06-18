@@ -567,18 +567,6 @@ void AFPPlayerController::RemoveHelmet(UItemHelmet* pHelmetInfo)
 
 }
 
-void AFPPlayerController::HealPlayer(float pHealAmount)
-{
-	if (ownerPlayerCharacter == nullptr)
-		ownerPlayerCharacter = Cast<APlayerCharacter>(GetPawn());
-
-	if (ownerPlayerCharacter != nullptr)
-	{
-		float curHp = ownerPlayerCharacter->HealPlayer(pHealAmount);
-		UpdateHealthHud(curHp);
-	}
-}
-
 void AFPPlayerController::UpdateHealthHud(float pCurHealth)
 {
 	float opacityAmount = 1.f - pCurHealth / 100.f;
@@ -746,4 +734,9 @@ void AFPPlayerController::DiscardCurrentActiveItem()
 void AFPPlayerController::CloseAlert()
 {
 	alertHudUI->SetVisibility(ESlateVisibility::Hidden);
+}
+
+void AFPPlayerController::HealPlayer(float pHealAmount)
+{
+
 }

@@ -11,6 +11,7 @@
 #include "TarkovCopy/Interactable/InteractableObject.h"
 #include "TarkovCopy/Interactable/InteractableComponent.h"
 #include "TarkovCopy/GameMode/TarkovCopyGameModeBase.h"
+#include "TarkovCopy/Player/Components/PlayerStatusComponent.h"
 #include "TarkovCopy/Player/Controller/FPPlayerController.h"
 #include "TarkovCopy/Weapons/FlashGrenade.h"
 #include "TarkovCopy/Weapons/BulletProjectile.h"
@@ -22,6 +23,7 @@ APlayerCharacter::APlayerCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	
 
 }
 
@@ -31,12 +33,13 @@ void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	helmetMesh = Cast<UStaticMeshComponent>(GetDefaultSubobjectByName(TEXT("Helmet")));
-	gameMode =Cast<ATarkovCopyGameModeBase>(GetWorld()->GetAuthGameMode());
+	gameMode = Cast<ATarkovCopyGameModeBase>(GetWorld()->GetAuthGameMode());
 	springArm = FindComponentByClass<USpringArmComponent>();
 	springArmOrigin = GetMesh()->GetRelativeLocation();
 	playerController = Cast<AFPPlayerController>(GetController());
-	GetCharacterMovement()->MaxWalkSpeed = walkingSpeed;
-	curHp = maxHp;
+	PlayerStatusComponent = Cast<UPlayerStatusComponent>(GetDefaultSubobjectByName(TEXT("PlayerStatus")));
+	PlayerStatusComponent->SetPlayerInformation(playerController, this);
+	GetCharacterMovement()->MaxWalkSpeed = PlayerStatusComponent->DefaultWalkingSpeed;
 
 	//TODO:나중에 인벤토리 초기화 고칠것
 	inventory = nullptr;
@@ -60,61 +63,6 @@ void APlayerCharacter::BeginPlay()
 	if (playerController != nullptr)
 		playerController->InitInvenotry();
 	//Pool initialize;
-}
-
-float APlayerCharacter::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
-{
-
-	APawn* instigatorPawn = EventInstigator->GetPawn();
-
-	if (instigatorPawn == nullptr)
-	{
-		UE_LOG(LogTemp, Error, TEXT("TakeDamage's instigatorPawn is null!"))
-		return -1;
-	}
-
-
-	UE_LOG(LogTemp, Warning, TEXT("TakeDamage"))
-
-	//TODO:이 비교문이 맞는지 체크 해 볼것.
-	if (DamageEvent.DamageTypeClass == UFlashDamageType::StaticClass())
-	{
-		playerController->GetFlashed(Damage, DamageCauser->GetActorLocation());
-	}
-	else
-	{
-		FPointDamageEvent* damageEvent = (FPointDamageEvent*)&DamageEvent;
-
-		//총상인지 아닌지 판단. 포인트 데미지면 총상이다.
-		if (damageEvent->IsOfType(FPointDamageEvent::ClassID))
-		{
-			int generated = rand() % 10;
-			if (generated < 3) // 0,1,2 중 하나 걸리니까 30퍼센트 헤드샷
-			{
-				Damage *= 2.5f;
-				if (inventory->GetEquippedHelmet() != nullptr &&
-					inventory->GetEquippedHelmet()->curDurability >= inventory->GetEquippedHelmet()->damageDecreaseAmount)
-				{
-					Damage -= inventory->GetEquippedHelmet()->damageDecreaseAmount;
-					inventory->GetEquippedHelmet()->curDurability -= inventory->GetEquippedHelmet()->damageDecreaseAmount;
-				}
-			}
-		}
-
-		curHp -= Damage;
-		if (curHp <= 0)
-		{
-			curHp = 0.f;
-			playerController->Dead();
-		}
-
-		playerController->UpdateHealthHud(curHp);
-		playerController->ShowHitIndicator(instigatorPawn->GetActorLocation());
-	}
-
-
-
-	return Damage;
 }
 
 // Called every frame
@@ -141,19 +89,19 @@ void APlayerCharacter::Tick(float DeltaTime)
 		if (moveVerticalValue > 0)
 		{
 			if (moveHorizontalValue == 0 || (moveVerticalValue > 0 && moveHorizontalValue * moveHorizontalValue > 0))
-				maxWalkValue = (IsSprinting()) ? sprintingSpeed : walkingSpeed;
+				maxWalkValue = (IsSprinting()) ? PlayerStatusComponent->DefaultSprintingSpeed : PlayerStatusComponent->DefaultWalkingSpeed;
 			else
-				maxWalkValue = walkingSpeed;
+				maxWalkValue = PlayerStatusComponent->DefaultWalkingSpeed;
 
-			maxWalkValue = (IsAds()) ? adsWalkingSpeed : maxWalkValue;
+			maxWalkValue = (IsAds()) ? PlayerStatusComponent->DefaultAdsWalkingSpeed: PlayerStatusComponent->DefaultWalkingSpeed;
 		}
 		else
 		{
-			maxWalkValue = walkingSpeed;
-			maxWalkValue = (IsAds()) ? adsWalkingSpeed : maxWalkValue;
+			maxWalkValue = PlayerStatusComponent->DefaultWalkingSpeed;
+			maxWalkValue = (IsAds()) ? PlayerStatusComponent->DefaultAdsWalkingSpeed : PlayerStatusComponent->DefaultWalkingSpeed;
 		}
 
-		GetCharacterMovement()->MaxWalkSpeed = maxWalkValue;
+		GetCharacterMovement()->MaxWalkSpeed = PlayerStatusComponent->DefaultWalkingSpeed;
 		AddMovementInput((GetActorForwardVector() * moveVerticalValue + GetActorRightVector() * moveHorizontalValue)/1.4f);
 	}
 
@@ -212,6 +160,54 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAxis(TEXT("RotateVertical"), this, &APlayerCharacter::RotateVertical);
 }
 
+
+float APlayerCharacter::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	APawn* instigatorPawn = EventInstigator->GetPawn();
+
+	if (instigatorPawn == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("TakeDamage's instigatorPawn is null!"))
+			return -1;
+	}
+
+
+	UE_LOG(LogTemp, Warning, TEXT("TakeDamage"))
+
+		//TODO:이 비교문이 맞는지 체크 해 볼것.
+		if (DamageEvent.DamageTypeClass == UFlashDamageType::StaticClass())
+		{
+			playerController->GetFlashed(Damage, DamageCauser->GetActorLocation());
+		}
+		else
+		{
+			FPointDamageEvent* damageEvent = (FPointDamageEvent*)&DamageEvent;
+
+			//총상인지 아닌지 판단. 포인트 데미지면 총상이다.
+			if (damageEvent->IsOfType(FPointDamageEvent::ClassID))
+			{
+				int generated = rand() % 10;
+				if (generated < 3) // 0,1,2 중 하나 걸리니까 30퍼센트 헤드샷
+				{
+					Damage *= 2.5f;
+					if (inventory->GetEquippedHelmet() != nullptr &&
+						inventory->GetEquippedHelmet()->curDurability >= inventory->GetEquippedHelmet()->damageDecreaseAmount)
+					{
+						Damage -= inventory->GetEquippedHelmet()->damageDecreaseAmount;
+						inventory->GetEquippedHelmet()->curDurability -= inventory->GetEquippedHelmet()->damageDecreaseAmount;
+					}
+				}
+			}
+
+			PlayerStatusComponent->DecreaseHealth(Damage);
+			playerController->ShowHitIndicator(instigatorPawn->GetActorLocation());
+		}
+
+
+
+	return Damage;
+}
+
 void APlayerCharacter::CheckCloseToWall()
 {
 	FVector startPos;
@@ -233,17 +229,6 @@ void APlayerCharacter::CheckCloseToWall()
 		isCloseToWall = false;
 	}
 }
-
-float APlayerCharacter::HealPlayer(float pHealAmount)
-{
-	curHp += pHealAmount;
-	if (curHp > maxHp)
-	{
-		curHp = maxHp;
-	}
-	return curHp;
-}
-
 bool APlayerCharacter::PickupItem(UItemInfo* pItemInfo)
 {
 	bool isItemAdded = inventory->AddNewItemToInventory(pItemInfo);
@@ -767,7 +752,6 @@ void APlayerCharacter::ThrowGrenade()
 		{
 			//Add Physics power
 			handGrenadePools[i]->ThrowGrenade(GetActorForwardVector(),GetActorLocation() + GetActorUpVector() * 100.f + GetActorForwardVector() * 100.f);
-
 			inventory->UseItem(itemReference);
 			inventory->UpdateAndCleanupBackpack();
 			playerController->UpdateInventoryUI();
@@ -838,4 +822,10 @@ void APlayerCharacter::ThrowFlashGrenade()
 		playerController->UpdateInventoryUI();
 		isThrowing = true;
 	}
+}
+
+
+void APlayerCharacter::HealPlayer(float pHealAmount)
+{
+	PlayerStatusComponent->HealPlayer(pHealAmount);
 }
