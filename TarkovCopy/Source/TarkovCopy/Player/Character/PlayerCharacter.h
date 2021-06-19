@@ -19,8 +19,8 @@ class UInventory;
 class AFPPlayerController;
 class ATarkovCopyGameModeBase;
 class FSlateRect;
-
 class UPlayerStatusComponent;
+class UPlayerMovementComponent;
 
 UCLASS()
 class TARKOVCOPY_API APlayerCharacter : public ACharacter
@@ -32,8 +32,6 @@ public:
 	APlayerCharacter();
 
 private: 
-	float moveVerticalValue = 0.f;
-	float moveHorizontalValue = 0.f;
 	float maxWalkValue = 0.f;
 	bool isFired = false; // for semi auto mode only
 	bool isFirePressed = false;
@@ -53,7 +51,16 @@ private:
 	//Components
 	UPROPERTY(VisibleAnywhere,Category="Components")
 	UPlayerStatusComponent* PlayerStatusComponent;
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+	UPlayerMovementComponent* PlayerMovementComponent;
 
+
+	//InputFunctions
+
+	void SetInputSprint();
+	void SetInputWalk();
+	void SetInputCrouch();
+	void SetInputUncrouch();
 
 
 protected:
@@ -66,23 +73,12 @@ protected:
 	UStaticMeshComponent* helmetMesh;
 
 
-	bool isSprinting = false;
-	bool isCrouch = false;
-
-	float checkCloseToWallTimer = 0.f;
-	float checkCloseToWallInterval = 1.f;
-
 	bool isCloseToWall = false;
 
 	void MoveVertical(float pValue);
 	void MoveHorizontal(float pValue);
 	void RotateHorizontal(float pValue);
 	void RotateVertical(float pValue);
-	void SetSprinting();
-	void SetWalking();
-	void SetCrouch();
-	void SetStanding();
-	void CheckCloseToWall();
 
 	//公扁 包访
 	void EquipPrimary();
@@ -156,6 +152,7 @@ public:
 	void RemovePrimary();
 	void RemoveSecondary();
 	void FireProjectile(float pDamage, float pVelocity, float pMass, FVector pFireStartPos, FVector pShootDir);
+	FORCEINLINE ABaseGun* GetCurrentActiveGun() { return currentActiveGun; };
 
 	//规绢备 包访
 	void AddHelmet(UItemHelmet* pHelmetInfo);
@@ -168,7 +165,7 @@ public:
 	void HealPlayer(float pHealAmount);
 
 //BlueprintPureOnly
-protected:
+public:
 	UFUNCTION(BlueprintPure)
     bool IsWeaponEquiped();
 	UFUNCTION(BlueprintPure)

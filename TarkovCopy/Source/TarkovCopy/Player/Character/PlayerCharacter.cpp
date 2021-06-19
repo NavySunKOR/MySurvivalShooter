@@ -12,6 +12,7 @@
 #include "TarkovCopy/Interactable/InteractableComponent.h"
 #include "TarkovCopy/GameMode/TarkovCopyGameModeBase.h"
 #include "TarkovCopy/Player/Components/PlayerStatusComponent.h"
+#include "TarkovCopy/Player/Components/PlayerMovementComponent.h"
 #include "TarkovCopy/Player/Controller/FPPlayerController.h"
 #include "TarkovCopy/Weapons/FlashGrenade.h"
 #include "TarkovCopy/Weapons/BulletProjectile.h"
@@ -28,6 +29,26 @@ APlayerCharacter::APlayerCharacter()
 }
 
 
+void APlayerCharacter::SetInputSprint()
+{
+	PlayerMovementComponent->SetSprinting();
+}
+
+void APlayerCharacter::SetInputWalk()
+{
+	PlayerMovementComponent->SetWalking();
+}
+
+void APlayerCharacter::SetInputCrouch()
+{
+	PlayerMovementComponent->SetCrouch();
+}
+
+void APlayerCharacter::SetInputUncrouch()
+{
+	PlayerMovementComponent->SetUncrouch();
+}
+
 // Called when the game starts or when spawned
 void APlayerCharacter::BeginPlay()
 {
@@ -38,8 +59,13 @@ void APlayerCharacter::BeginPlay()
 	springArmOrigin = GetMesh()->GetRelativeLocation();
 	playerController = Cast<AFPPlayerController>(GetController());
 	PlayerStatusComponent = Cast<UPlayerStatusComponent>(GetDefaultSubobjectByName(TEXT("PlayerStatus")));
+	PlayerMovementComponent = Cast<UPlayerMovementComponent>(GetDefaultSubobjectByName(TEXT("PlayerMovement")));
 	PlayerStatusComponent->SetPlayerInformation(playerController, this);
-	GetCharacterMovement()->MaxWalkSpeed = PlayerStatusComponent->DefaultWalkingSpeed;
+	PlayerMovementComponent->SetPlayerInformation(playerController, this);
+	PlayerStatusComponent->Init();
+	PlayerMovementComponent->Init(PlayerStatusComponent->DefaultSprintingSpeed
+		, PlayerStatusComponent->DefaultWalkingSpeed
+		, PlayerStatusComponent->DefaultAdsWalkingSpeed);
 
 	//TODO:나중에 인벤토리 초기화 고칠것
 	inventory = nullptr;
@@ -70,41 +96,9 @@ void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	checkCloseToWallTimer += DeltaTime;
-	if (checkCloseToWallTimer > checkCloseToWallInterval)
-	{
-		checkCloseToWallTimer = 0.f;
-		CheckCloseToWall();
-	}
-
 	//Movement
-
-	if (moveVerticalValue * moveVerticalValue > 0 || moveHorizontalValue * moveHorizontalValue > 0)
-	{
-		if (moveVerticalValue == 0 && IsSprinting())
-		{
-			SetWalking();
-		}
-
-		if (moveVerticalValue > 0)
-		{
-			if (moveHorizontalValue == 0 || (moveVerticalValue > 0 && moveHorizontalValue * moveHorizontalValue > 0))
-				maxWalkValue = (IsSprinting()) ? PlayerStatusComponent->DefaultSprintingSpeed : PlayerStatusComponent->DefaultWalkingSpeed;
-			else
-				maxWalkValue = PlayerStatusComponent->DefaultWalkingSpeed;
-
-			maxWalkValue = (IsAds()) ? PlayerStatusComponent->DefaultAdsWalkingSpeed: PlayerStatusComponent->DefaultWalkingSpeed;
-		}
-		else
-		{
-			maxWalkValue = PlayerStatusComponent->DefaultWalkingSpeed;
-			maxWalkValue = (IsAds()) ? PlayerStatusComponent->DefaultAdsWalkingSpeed : PlayerStatusComponent->DefaultWalkingSpeed;
-		}
-
-		GetCharacterMovement()->MaxWalkSpeed = PlayerStatusComponent->DefaultWalkingSpeed;
-		AddMovementInput((GetActorForwardVector() * moveVerticalValue + GetActorRightVector() * moveHorizontalValue)/1.4f);
-	}
-
+	PlayerMovementComponent->Loop();
+	
 	if (isFirePressed)
 	{
 		if (currentActiveGun && currentActiveGun->CanFireWeapon() && !IsCloseToWall()) // 세미에서 오토로 바꿔서 쏠때 발생하는 버그를 막기 위하여 처리
@@ -135,8 +129,8 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	PlayerInputComponent->BindAction(TEXT("Sprint"), EInputEvent::IE_Pressed, this, &APlayerCharacter::SetSprinting);
-	PlayerInputComponent->BindAction(TEXT("Sprint"), EInputEvent::IE_Released, this, &APlayerCharacter::SetWalking);
+	PlayerInputComponent->BindAction(TEXT("Sprint"), EInputEvent::IE_Pressed, this, &APlayerCharacter::SetInputSprint);
+	PlayerInputComponent->BindAction(TEXT("Sprint"), EInputEvent::IE_Released, this, &APlayerCharacter::SetInputWalk);
 	PlayerInputComponent->BindAction(TEXT("EquipPrimary"), EInputEvent::IE_Pressed, this, &APlayerCharacter::EquipPrimary);
 	PlayerInputComponent->BindAction(TEXT("EquipSecondary"), EInputEvent::IE_Pressed, this, &APlayerCharacter::EquipSecondary);
 	PlayerInputComponent->BindAction(TEXT("Fire"), EInputEvent::IE_Pressed, this, &APlayerCharacter::FireWeapon);
@@ -145,8 +139,8 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAction(TEXT("ADS"), EInputEvent::IE_Pressed, this, &APlayerCharacter::SetADSWeapon);
 	PlayerInputComponent->BindAction(TEXT("ADS"), EInputEvent::IE_Released, this, &APlayerCharacter::SetHipfireWeapon);
 	PlayerInputComponent->BindAction(TEXT("Reload"), EInputEvent::IE_Pressed, this, &APlayerCharacter::ReloadWeapon);
-	PlayerInputComponent->BindAction(TEXT("Crouch"), EInputEvent::IE_Pressed, this, &APlayerCharacter::SetCrouch);
-	PlayerInputComponent->BindAction(TEXT("Crouch"), EInputEvent::IE_Released, this, &APlayerCharacter::SetStanding);
+	PlayerInputComponent->BindAction(TEXT("Crouch"), EInputEvent::IE_Pressed, this, &APlayerCharacter::SetInputCrouch);
+	PlayerInputComponent->BindAction(TEXT("Crouch"), EInputEvent::IE_Released, this, &APlayerCharacter::SetInputUncrouch);
 	PlayerInputComponent->BindAction(TEXT("Interact"), EInputEvent::IE_Pressed, this, &APlayerCharacter::Interact);
 	PlayerInputComponent->BindAction(TEXT("Inventory"), EInputEvent::IE_Pressed, this, &APlayerCharacter::Inventory);
 	PlayerInputComponent->BindAction(TEXT("InspectWeapon"), EInputEvent::IE_Pressed, this, &APlayerCharacter::InspectWeapon);
@@ -208,27 +202,7 @@ float APlayerCharacter::TakeDamage(float Damage, FDamageEvent const& DamageEvent
 	return Damage;
 }
 
-void APlayerCharacter::CheckCloseToWall()
-{
-	FVector startPos;
-	FVector dir;
-	FHitResult hit;
-	startPos = GetActorLocation();
-	dir = GetActorForwardVector();
-	FCollisionQueryParams paramCol;
-	paramCol.AddIgnoredActor(this);
-	if (currentActiveGun)
-		paramCol.AddIgnoredActor(currentActiveGun);
 
-	if (GetWorld()->LineTraceSingleByChannel(hit, startPos, startPos + dir * 150.f, ECollisionChannel::ECC_Pawn, paramCol))
-	{
-		isCloseToWall = true;
-	}
-	else
-	{
-		isCloseToWall = false;
-	}
-}
 bool APlayerCharacter::PickupItem(UItemInfo* pItemInfo)
 {
 	bool isItemAdded = inventory->AddNewItemToInventory(pItemInfo);
@@ -397,7 +371,7 @@ bool APlayerCharacter::IsAds()
 
 bool APlayerCharacter::IsWalking()
 {
-	return (!isSprinting && GetVelocity().Size()>0) ;
+	return (PlayerMovementComponent && !PlayerMovementComponent->IsSprinting && GetVelocity().Size()>0) ;
 }
 
 int APlayerCharacter::GetWeaponCode()
@@ -427,7 +401,7 @@ int APlayerCharacter::GetReloadState()
 
 bool APlayerCharacter::IsSprinting()
 {
-	return (isSprinting && GetVelocity().Size() > 0);
+	return (PlayerMovementComponent && PlayerMovementComponent->IsSprinting && GetVelocity().Size() > 0);
 }
 
 bool APlayerCharacter::IsFiring()
@@ -442,68 +416,23 @@ bool APlayerCharacter::IsReloading()
 
 void APlayerCharacter::MoveVertical(float pValue)
 {
-	if (gameMode && (gameMode->isPlayerDied || gameMode->isPlayerEscaped))
-	{
-		moveVerticalValue = 0;
-		return;
-	}
-
-	moveVerticalValue = pValue;
+	PlayerMovementComponent->MoveVerticalValue = pValue;
 }
 
 void APlayerCharacter::MoveHorizontal(float pValue)
 {
-	if (gameMode && (gameMode->isPlayerDied || gameMode->isPlayerEscaped))
-	{
-		moveHorizontalValue = 0;
-		return;
-	}
-	moveHorizontalValue = pValue;
+	PlayerMovementComponent->MoveHorizontalValue = pValue;
 }
 
 void APlayerCharacter::RotateHorizontal(float pValue)
 {
-	if (gameMode && (gameMode->isPlayerDied || gameMode->isPlayerEscaped))
-		return;
 	AddControllerYawInput(pValue);
 }
 
 void APlayerCharacter::RotateVertical(float pValue)
 {
-	if (gameMode && (gameMode->isPlayerDied || gameMode->isPlayerEscaped))
-		return;
 	AddControllerPitchInput(-pValue);
 }
-
-void APlayerCharacter::SetSprinting()
-{
-	if (!isCrouch && ((moveVerticalValue > 0 && moveHorizontalValue == 0) || (moveVerticalValue > 0 && moveHorizontalValue * moveHorizontalValue> 0)))
-	{
-		isSprinting = true;
-	}
-}
-
-void APlayerCharacter::SetWalking()
-{
-	isSprinting = false;
-}
-
-void APlayerCharacter::SetCrouch()
-{
-	if (IsSprinting())
-	{
-		SetWalking();
-	}
-	Crouch();
-	isCrouch = true;
-}
-
-void APlayerCharacter::SetStanding()
-{
-	UnCrouch();
-	isCrouch = false;
-}
-
 
 void APlayerCharacter::EquipPrimary()
 {

@@ -15,11 +15,19 @@ UPlayerStatusComponent::UPlayerStatusComponent()
 }
 
 
-// Called when the game starts
-void UPlayerStatusComponent::BeginPlay()
+void UPlayerStatusComponent::Loop()
 {
-	Super::BeginPlay();
+
+}
+
+void UPlayerStatusComponent::Init()
+{
 	CurHp = MaxHp;
+}
+
+void UPlayerStatusComponent::End()
+{
+
 }
 
 void UPlayerStatusComponent::HealPlayer(float pHealAmount)

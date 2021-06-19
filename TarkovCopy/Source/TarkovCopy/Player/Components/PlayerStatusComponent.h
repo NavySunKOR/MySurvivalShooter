@@ -15,7 +15,6 @@ class TARKOVCOPY_API UPlayerStatusComponent : public UActorComponent
 public:	
 	// Sets default values for this component's properties
 	UPlayerStatusComponent();
-
 private:
 
 	UPROPERTY(EditAnywhere)
@@ -25,11 +24,9 @@ private:
 	AFPPlayerController* PlayerController;
 	APlayerCharacter* PlayerCharacter;
 
-protected:
-	virtual void BeginPlay() override;
+	void Loop();
 
 public:	
-	FORCEINLINE bool IsDead() { return CurHp <= 0; };
 
 	UPROPERTY(EditAnywhere)
 	float DefaultSprintingSpeed;
@@ -38,14 +35,23 @@ public:
 	UPROPERTY(EditAnywhere)
 	float DefaultAdsWalkingSpeed;
 
+
+	void Init();
+	void End();
+
 	void HealPlayer(float pHealAmount);
 	void DecreaseHealth(float pDamageAmount);
+
+
+
+
+//Inlines
+public :
 	FORCEINLINE void SetPlayerInformation(AFPPlayerController* pPlayerController, APlayerCharacter* pPlayerCharacter)
 	{
 		PlayerController = pPlayerController;
 		PlayerCharacter = pPlayerCharacter;
 	}
-
-
+	FORCEINLINE bool IsDead() { return CurHp <= 0; };
 		
 };
