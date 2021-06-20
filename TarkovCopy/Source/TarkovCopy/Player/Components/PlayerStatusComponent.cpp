@@ -14,20 +14,9 @@ UPlayerStatusComponent::UPlayerStatusComponent()
 	PrimaryComponentTick.bCanEverTick = false;
 }
 
-
-void UPlayerStatusComponent::Loop()
-{
-
-}
-
-void UPlayerStatusComponent::Init()
+void UPlayerStatusComponent::Init(AFPPlayerController* pPlayerController, APlayerCharacter* pPlayerCharacter)
 {
 	CurHp = MaxHp;
-}
-
-void UPlayerStatusComponent::End()
-{
-
 }
 
 void UPlayerStatusComponent::HealPlayer(float pHealAmount)

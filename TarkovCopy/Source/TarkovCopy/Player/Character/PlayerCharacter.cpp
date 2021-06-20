@@ -60,10 +60,8 @@ void APlayerCharacter::BeginPlay()
 	playerController = Cast<AFPPlayerController>(GetController());
 	PlayerStatusComponent = Cast<UPlayerStatusComponent>(GetDefaultSubobjectByName(TEXT("PlayerStatus")));
 	PlayerMovementComponent = Cast<UPlayerMovementComponent>(GetDefaultSubobjectByName(TEXT("PlayerMovement")));
-	PlayerStatusComponent->SetPlayerInformation(playerController, this);
-	PlayerMovementComponent->SetPlayerInformation(playerController, this);
-	PlayerStatusComponent->Init();
-	PlayerMovementComponent->Init(PlayerStatusComponent->DefaultSprintingSpeed
+	PlayerStatusComponent->Init(playerController, this);
+	PlayerMovementComponent->Init(playerController, this,PlayerStatusComponent->DefaultSprintingSpeed
 		, PlayerStatusComponent->DefaultWalkingSpeed
 		, PlayerStatusComponent->DefaultAdsWalkingSpeed);
 

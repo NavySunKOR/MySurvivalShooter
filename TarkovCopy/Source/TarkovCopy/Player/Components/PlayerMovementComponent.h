@@ -2,38 +2,26 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "Components/ActorComponent.h"
+#include "BasePlayerComponent.h"
 #include "PlayerMovementComponent.generated.h"
 
-class AFPPlayerController;
-class APlayerCharacter;
-
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class TARKOVCOPY_API UPlayerMovementComponent : public UActorComponent
+class TARKOVCOPY_API UPlayerMovementComponent : public UBasePlayerComponent
 {
 	GENERATED_BODY()
 public:
 	// Sets default values for this component's properties
 	UPlayerMovementComponent();
-	FORCEINLINE void SetPlayerInformation(AFPPlayerController* pPlayerController, APlayerCharacter* pPlayerCharacter)
-	{
-		PlayerController = pPlayerController;
-		PlayerCharacter = pPlayerCharacter;
-	}
 
 private :
-	AFPPlayerController* PlayerController;
-	APlayerCharacter* PlayerCharacter;
-	FTimerHandle LoopTimer;
-	UPROPERTY(EditAnywhere, Category = "MovementComponent")
-	float LoopFrame = 60.f;
-	float MaxWalkValue = 0.f;
-	
 
+	float MaxWalkValue = 0.f;
 	float WalkingSpeed = 0.f;
 	float AdsWalkingSpeed = 0.f;
 	float SprintSpeed = 0.f;
+
+	void CheckCloseToWall();
+	void MovementCheck();
 
 public:
 	bool IsCloseToWall = false;
@@ -42,9 +30,9 @@ public:
 	float MoveVerticalValue = 0.f;
 	float MoveHorizontalValue = 0.f;
 
-	void Init(float pSprintSpeed, float pWalkingSpeed, float pAdsWalkingSpeed);
-	void Loop();
-	void End();
+	void Init(AFPPlayerController* pPlayerController, APlayerCharacter* pPlayerCharacter,float pSprintSpeed, float pWalkingSpeed, float pAdsWalkingSpeed);
+	virtual void Loop() override;
+	virtual void End() override;
 
 	//SetValueFromMovement
 	void SetSprinting();
@@ -52,9 +40,4 @@ public:
 	void SetCrouch();
 	void SetUncrouch();
 
-
-protected:
-
-	void CheckCloseToWall();
-	void MovementCheck();
 };

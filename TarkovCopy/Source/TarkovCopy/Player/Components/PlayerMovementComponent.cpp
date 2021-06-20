@@ -11,19 +11,19 @@ UPlayerMovementComponent::UPlayerMovementComponent()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = false;
 
 	// ...
 }
 
-void UPlayerMovementComponent::Init(float pSprintSpeed, float pWalkingSpeed, float pAdsWalkingSpeed)
+void UPlayerMovementComponent::Init(AFPPlayerController* pPlayerController, APlayerCharacter* pPlayerCharacter,float pSprintSpeed, float pWalkingSpeed, float pAdsWalkingSpeed)
 {
+	Super::Init(pPlayerController, pPlayerCharacter);
 	SprintSpeed = pSprintSpeed;
 	WalkingSpeed = pWalkingSpeed;
 	AdsWalkingSpeed = pAdsWalkingSpeed;
 
 	PlayerCharacter->GetCharacterMovement()->MaxWalkSpeed = WalkingSpeed;
-	GetWorld()->GetTimerManager().SetTimer(LoopTimer, this, &UPlayerMovementComponent::Loop, 1/ LoopFrame, true);
 }
 
 void UPlayerMovementComponent::Loop()

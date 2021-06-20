@@ -2,13 +2,12 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "Components/ActorComponent.h"
+#include "BasePlayerComponent.h"
 #include "PlayerStatusComponent.generated.h"
 
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
-class TARKOVCOPY_API UPlayerStatusComponent : public UActorComponent
+class TARKOVCOPY_API UPlayerStatusComponent : public UBasePlayerComponent
 {
 	GENERATED_BODY()
 
@@ -20,11 +19,6 @@ private:
 	UPROPERTY(EditAnywhere)
 	float MaxHp = 100;
 	float CurHp;
-	
-	AFPPlayerController* PlayerController;
-	APlayerCharacter* PlayerCharacter;
-
-	void Loop();
 
 public:	
 
@@ -35,23 +29,13 @@ public:
 	UPROPERTY(EditAnywhere)
 	float DefaultAdsWalkingSpeed;
 
-
-	void Init();
-	void End();
-
+	virtual void Init(AFPPlayerController* pPlayerController, APlayerCharacter* pPlayerCharacter) override;
 	void HealPlayer(float pHealAmount);
 	void DecreaseHealth(float pDamageAmount);
 
-
-
-
 //Inlines
 public :
-	FORCEINLINE void SetPlayerInformation(AFPPlayerController* pPlayerController, APlayerCharacter* pPlayerCharacter)
-	{
-		PlayerController = pPlayerController;
-		PlayerCharacter = pPlayerCharacter;
-	}
+
 	FORCEINLINE bool IsDead() { return CurHp <= 0; };
 		
 };
