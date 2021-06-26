@@ -5,17 +5,15 @@
 #include <GameFramework/CharacterMovementComponent.h>
 #include <Blueprint/UserWidget.h>
 #include <DrawDebugHelpers.h>
-#include "TarkovCopy/InventoryAndItem/ItemInfos/ItemInfo.h"
-#include "TarkovCopy/InventoryAndItem/ItemInfos/ItemHelmet.h"
 #include "TarkovCopy/InventoryAndItem/GameFunctions/Inventory.h"
+#include "TarkovCopy/InventoryAndItem/ItemInfos/ItemFlashGrenade.h"
 #include "TarkovCopy/Interactable/InteractableObject.h"
 #include "TarkovCopy/Interactable/InteractableComponent.h"
 #include "TarkovCopy/GameMode/TarkovCopyGameModeBase.h"
 #include "TarkovCopy/Player/Components/PlayerStatusComponent.h"
 #include "TarkovCopy/Player/Components/PlayerMovementComponent.h"
+#include "TarkovCopy/Player/Components/PlayerEquipmentComponent.h"
 #include "TarkovCopy/Player/Controller/FPPlayerController.h"
-#include "TarkovCopy/Weapons/FlashGrenade.h"
-#include "TarkovCopy/Weapons/BulletProjectile.h"
 #include "TarkovCopy/Weapons/BaseGun.h"
 #include "TarkovCopy/Utils/JsonSaveAndLoader.h"
 
@@ -60,10 +58,12 @@ void APlayerCharacter::BeginPlay()
 	playerController = Cast<AFPPlayerController>(GetController());
 	PlayerStatusComponent = Cast<UPlayerStatusComponent>(GetDefaultSubobjectByName(TEXT("PlayerStatus")));
 	PlayerMovementComponent = Cast<UPlayerMovementComponent>(GetDefaultSubobjectByName(TEXT("PlayerMovement")));
+	PlayerEquipmentComponent = Cast<UPlayerEquipmentComponent>(GetDefaultSubobjectByName(TEXT("PlayerEquipment")));
 	PlayerStatusComponent->Init(playerController, this);
 	PlayerMovementComponent->Init(playerController, this,PlayerStatusComponent->DefaultSprintingSpeed
 		, PlayerStatusComponent->DefaultWalkingSpeed
 		, PlayerStatusComponent->DefaultAdsWalkingSpeed);
+	PlayerEquipmentComponent->Init(playerController, this);
 
 	//TODO:나중에 인벤토리 초기화 고칠것
 	inventory = nullptr;
@@ -99,26 +99,8 @@ void APlayerCharacter::Tick(float DeltaTime)
 	
 	if (isFirePressed)
 	{
-		if (currentActiveGun && currentActiveGun->CanFireWeapon() && !IsCloseToWall()) // 세미에서 오토로 바꿔서 쏠때 발생하는 버그를 막기 위하여 처리
-		{
-			if (currentActiveGun->isAutoFire && !isFired)
-			{
-				ActualFireWeapon();
-			}
-			else if (!isFired)
-			{
-				isFired = true;
-				ActualFireWeapon();
-			}
-		}
-		else if (currentActiveGun && (!IsFiring()) && (!IsReloading()) && IsEmptyMagazine() && !IsCloseToWall())
-		{
-			if (!isFired)
-			{
-				isFired = true;
-				currentActiveGun->EmptyFireWeapon();
-			}
-		}
+		if(!IsCloseToWall())
+			PlayerEquipmentComponent->FireWeapon();
 	}
 }
 
@@ -247,96 +229,37 @@ void APlayerCharacter::Tilting(float pValue)
 
 void APlayerCharacter::AddPrimary(TSubclassOf<ABaseGun> pWeaponOrigin, UItemWeapon* pItemWeapon)
 {
-	if (primaryWeapon != nullptr)
-		return;
-	primaryWeapon = GetWorld()->SpawnActor<ABaseGun>(pWeaponOrigin);
-	if (primaryWeapon != nullptr)
-	{
-		primaryWeapon->SetInfo(pItemWeapon);
-		primaryWeapon->SetParentMeshFPP(GetMesh());
-		primaryWeapon->AttachToActor(this, FAttachmentTransformRules::SnapToTargetIncludingScale);
-		primaryWeapon->SetOwner(this);
-		primaryWeapon->weaponOwnerCharacter = this;
-	}
-	inventory->SetPrimaryWeaponItem(pItemWeapon);
-	EquipPrimary();
+	if(PlayerEquipmentComponent->AddPrimary(pWeaponOrigin,pItemWeapon))
+		inventory->RemoveItem((UItemInfo*)pItemWeapon);
 }
 
 void APlayerCharacter::AddSecondary(TSubclassOf<ABaseGun> pWeaponOrigin, UItemWeapon* pItemWeapon)
 {
-	if (secondaryWeapon != nullptr)
-		return;
-	secondaryWeapon = GetWorld()->SpawnActor<ABaseGun>(m9Origin);
-	if (secondaryWeapon != nullptr)
-	{
-		secondaryWeapon->SetInfo(pItemWeapon);
-		secondaryWeapon->SetParentMeshFPP(GetMesh());
-		secondaryWeapon->AttachToActor(this, FAttachmentTransformRules::SnapToTargetIncludingScale);
-		secondaryWeapon->SetOwner(this);
-		secondaryWeapon->weaponOwnerCharacter = this;
-	}
-
-	inventory->SetSecondaryWeaponItem(pItemWeapon);
-	EquipSecondary();
+	if (PlayerEquipmentComponent->AddSecondary(pWeaponOrigin, pItemWeapon))
+		inventory->RemoveItem((UItemInfo*)pItemWeapon);
 }
 
 void APlayerCharacter::RemovePrimary()
 {
-	if (primaryWeapon == currentActiveGun)
-		currentActiveGun = nullptr;
-	if(primaryWeapon)
-		primaryWeapon->Destroy();
-	primaryWeapon = nullptr;
-
-	if (secondaryWeapon)
-	{
-		EquipSecondary();
-	}
+	PlayerEquipmentComponent->RemovePrimary();
 }
 
 void APlayerCharacter::RemoveSecondary()
 {
-	if (secondaryWeapon == currentActiveGun)
-		currentActiveGun = nullptr;
-	if (secondaryWeapon)
-		secondaryWeapon->Destroy();
-	secondaryWeapon = nullptr;
-
-	if (primaryWeapon)
-	{
-		EquipPrimary();
-	}
+	PlayerEquipmentComponent->RemoveSecondary();
 }
-
 
 void APlayerCharacter::FireProjectile(float pDamage, float pVelocity, float pMass, FVector pFireStartPos, FVector pShootDir)
 {
-	bool isProjectileFired = false;
-	for (int i = 0; i < bulletProjectilePools.Num(); i++)
-	{
-		if (bulletProjectilePools[i] && !bulletProjectilePools[i]->IsFired())
-		{
-			bulletProjectilePools[i]->ReactivateProjectile(pDamage, pVelocity, pMass, Cast<APawn>(this), pShootDir);
-			bulletProjectilePools[i]->LaunchProjectile();
-			bulletProjectilePools[i]->SetActorLocation(pFireStartPos);
-			isProjectileFired = true;
-			break;
-		}
-	}
+	PlayerEquipmentComponent->FireProjectile(pDamage, pVelocity, pMass, pFireStartPos, pShootDir);
+}
 
-
-	if (!isProjectileFired)
-	{
-		ABulletProjectile* bullet = GetWorld()->SpawnActor<ABulletProjectile>(bulletProjectileOrigin, pFireStartPos, pShootDir.Rotation());
-		bullet->SetInstigator(this);
-		bullet->SetOwner(this);
-		bulletProjectilePools.Add(bullet);
-		//총알의 주인과 선동자 설정 - 주인을 나중에 무기로 바꿀려면 풀을 무기에서 생성하게끔 기능 자체를 옮겨줘야한다. - 특히 멀티 플레이어에서 잘 지켜보도록.
-		bulletProjectilePools[bulletProjectilePools.Num() - 1]->ReactivateProjectile(pDamage, pVelocity, pMass,  Cast<APawn>(this), pShootDir);
-		bulletProjectilePools[bulletProjectilePools.Num() - 1]->LaunchProjectile();
-		bulletProjectilePools[bulletProjectilePools.Num() - 1]->SetActorLocation(pFireStartPos);
-		isProjectileFired = true;
-	}
+ABaseGun* APlayerCharacter::GetCurrentActiveGun()
+{
+	if (PlayerEquipmentComponent)
+		return PlayerEquipmentComponent->GetCurrentEquipedWepaon();
+	else
+		return nullptr;
 }
 
 void APlayerCharacter::AddHelmet(UItemHelmet* pHelmetInfo)
@@ -359,12 +282,12 @@ void APlayerCharacter::SaveEquipments()
 
 bool APlayerCharacter::IsWeaponEquiped()
 {
-	return (currentActiveGun != nullptr);
+	return PlayerEquipmentComponent&&PlayerEquipmentComponent->IsWeaponEquiped();
 }
 
 bool APlayerCharacter::IsAds()
 {
-	return (currentActiveGun && currentActiveGun->isAds);
+	return PlayerEquipmentComponent && PlayerEquipmentComponent->IsAds();
 }
 
 bool APlayerCharacter::IsWalking()
@@ -374,12 +297,12 @@ bool APlayerCharacter::IsWalking()
 
 int APlayerCharacter::GetWeaponCode()
 {
-	return (currentActiveGun)?currentActiveGun->itemCode:-1;
+	return PlayerEquipmentComponent && PlayerEquipmentComponent->GetWeaponCode();
 }
 
 bool APlayerCharacter::IsEmptyMagazine()
 {
-	return (currentActiveGun && currentActiveGun->curMagRounds <= 0);
+	return PlayerEquipmentComponent && PlayerEquipmentComponent->IsEmptyMagazine();
 }
 
 bool APlayerCharacter::IsCloseToWall()
@@ -389,12 +312,12 @@ bool APlayerCharacter::IsCloseToWall()
 
 bool APlayerCharacter::IsShotgun()
 {
-	return (currentActiveGun && currentActiveGun->itemCode == 3);
+	return PlayerEquipmentComponent && PlayerEquipmentComponent->IsShotgun();
 }
 
 int APlayerCharacter::GetReloadState()
 {
-	return (currentActiveGun && currentActiveGun->itemCode == 3)?currentActiveGun->reloadState : -1;
+	return PlayerEquipmentComponent && PlayerEquipmentComponent->GetReloadState();
 }
 
 bool APlayerCharacter::IsSprinting()
@@ -404,12 +327,12 @@ bool APlayerCharacter::IsSprinting()
 
 bool APlayerCharacter::IsFiring()
 {
-	return (currentActiveGun && currentActiveGun->isFiring);
+	return PlayerEquipmentComponent && PlayerEquipmentComponent->IsFiring();
 }
 
 bool APlayerCharacter::IsReloading()
 {
-	return (currentActiveGun && currentActiveGun->isReloading);
+	return PlayerEquipmentComponent && PlayerEquipmentComponent->IsReloading();
 }
 
 void APlayerCharacter::MoveVertical(float pValue)
@@ -434,34 +357,12 @@ void APlayerCharacter::RotateVertical(float pValue)
 
 void APlayerCharacter::EquipPrimary()
 {
-	if (primaryWeapon)
-	{
-		primaryWeapon->SetActorHiddenInGame(false);
-		primaryWeapon->SetActorTickEnabled(true);
-		currentActiveGun = primaryWeapon;
-		currentActiveGun->EquipWeapon();
-		if (secondaryWeapon)
-		{
-			secondaryWeapon->SetActorHiddenInGame(true);
-			secondaryWeapon->SetActorTickEnabled(false);
-		}
-	}
+	PlayerEquipmentComponent->EquipPrimary();
 }
 
 void APlayerCharacter::EquipSecondary()
 {
-	if (secondaryWeapon)
-	{
-		secondaryWeapon->SetActorHiddenInGame(false);
-		secondaryWeapon->SetActorTickEnabled(true);
-		currentActiveGun = secondaryWeapon;
-		currentActiveGun->EquipWeapon();
-		if (primaryWeapon)
-		{
-			primaryWeapon->SetActorHiddenInGame(true);
-			primaryWeapon->SetActorTickEnabled(false);
-		}
-	}
+	PlayerEquipmentComponent->EquipSecondary();
 }
 
 void APlayerCharacter::FireWeapon()
@@ -478,42 +379,18 @@ void APlayerCharacter::FireWeapon()
 
 void APlayerCharacter::ActualFireWeapon()
 {
-	FVector start;
-	FRotator dir;
-
-	currentActiveGun->UpdateMuzzleInfo();
-	start = currentActiveGun->muzzleStart;
-	if (IsAds())
-	{
-		dir = currentActiveGun->muzzleDir;
-	}
-	else
-	{
-		FVector viewpointPos;
-		FRotator viewpointRotation;
-		GetController()->GetPlayerViewPoint(viewpointPos, viewpointRotation);
-		dir = ((viewpointPos +(viewpointRotation.Vector()*500.f)) - start).Rotation();
-	}
-
-	currentActiveGun->FireWeapon(start, dir);
-
-	if (IsAds())
-	{
-		AddControllerPitchInput(-currentActiveGun->adsBulletVerticalSpreadIncrement);
-		AddControllerYawInput(currentActiveGun->adsBulletHorizontalSpreadIncrement);
-	}
-
+	PlayerEquipmentComponent->ActualFireWeapon();
 }
 
 void APlayerCharacter::FireUpWeapon()
 {
 	isFirePressed = false;
-	isFired = false;
+	PlayerEquipmentComponent->UnlockFireWeapon();
 }
 
 void APlayerCharacter::SetADSWeapon()
 {
-	if (playerController->isInventoryOpened )
+	if (playerController->isInventoryOpened)
 	{
 		return;
 	}
@@ -521,50 +398,41 @@ void APlayerCharacter::SetADSWeapon()
 	if (gameMode && (gameMode->isPlayerDied || gameMode->isPlayerEscaped || gameMode->isPauseMenuOpened))
 		return;
 
-	if (currentActiveGun && !IsCloseToWall())
-	{
-		currentActiveGun->SetADS();
-		playerController->SetADS();
-	}
+	if (IsCloseToWall())
+		return;
+
+	PlayerEquipmentComponent->SetADSWeapon();
+	playerController->SetADS();
 }
 
 void APlayerCharacter::SetHipfireWeapon()
 {
 	if (gameMode && (gameMode->isPlayerDied || gameMode->isPlayerEscaped || gameMode->isPauseMenuOpened))
 		return;
-	if (currentActiveGun)
-	{
-		currentActiveGun->SetHipfire();
-		playerController->SetHipfire();
-	}
+
+	PlayerEquipmentComponent->SetHipfireWeapon();
+	playerController->SetHipfire();
 }
 
 void APlayerCharacter::ReloadWeapon()
 {
+
 	if (gameMode && (gameMode->isPlayerDied || gameMode->isPlayerEscaped || gameMode->isPauseMenuOpened))
 		return;
+	if (inventory->isUsingInventory)
+		return;
 
-
-	if (currentActiveGun && !currentActiveGun->isReloading && !inventory->isUsingInventory)
+	if (PlayerEquipmentComponent->CanReloadWeapon())
 	{
-		int needAmmo = currentActiveGun->maximumMagRounds - currentActiveGun->curMagRounds;
-		
-
-		//TODO: 체크 로직은 인벤토리가 추가되면 바로 바뀔 것
-		//needAmmo가 현재 보유 수보다 같거나 적고 현재 발사가 가능한 상태이면서 재장전 중이 아니면 재장전 아니면 빠꾸
+		int needAmmo = PlayerEquipmentComponent->GetNeedAmmoForReload();
 		if (needAmmo > 0)
 		{
 			int ownedAmmo = 0;
 			inventory->isUsingInventory = true;
-			if (currentActiveGun == primaryWeapon)
-			{
-				//TODO: 실기능 구현
-				ownedAmmo = inventory->GetAllPrimaryWeaponAmmo(currentActiveGun->GetClass()->GetName());
-			}
-			else if (currentActiveGun == secondaryWeapon)
-			{
-				ownedAmmo = inventory->GetAllSecondaryWeaponAmmo(currentActiveGun->GetClass()->GetName());
-			}
+
+			ownedAmmo = (PlayerEquipmentComponent->IsPrimaryWeaponEquiped()) ? 
+				inventory->GetAllPrimaryWeaponAmmo(PlayerEquipmentComponent->GetCurrentEquipedWepaon()->GetClass()->GetName()) :
+				inventory->GetAllSecondaryWeaponAmmo(PlayerEquipmentComponent->GetCurrentEquipedWepaon()->GetClass()->GetName());
 
 			if (ownedAmmo == 0)
 			{
@@ -577,30 +445,27 @@ void APlayerCharacter::ReloadWeapon()
 				needAmmo = ownedAmmo;
 			}
 
-			currentActiveGun->Reload(needAmmo);
-			if (currentActiveGun == primaryWeapon)
+			PlayerEquipmentComponent->ActualReloadWeapon(needAmmo);
+			if (PlayerEquipmentComponent->IsPrimaryWeaponEquiped())
 			{
-				inventory->UsePrimaryWeaponAmmo(needAmmo,currentActiveGun->GetClass()->GetName());
+				inventory->UsePrimaryWeaponAmmo(needAmmo, PlayerEquipmentComponent->GetCurrentEquipedWepaon()->GetClass()->GetName());
 			}
 			else
 			{
-				inventory->UseSecondaryWeaponAmmo(needAmmo, currentActiveGun->GetClass()->GetName());
+				inventory->UseSecondaryWeaponAmmo(needAmmo, PlayerEquipmentComponent->GetCurrentEquipedWepaon()->GetClass()->GetName());
 			}
-
 			inventory->UpdateAndCleanupBackpack();
-			playerController->UpdateInventoryUI();
-
 			inventory->isUsingInventory = false;
 		}
 	}
+
+	playerController->UpdateInventoryUI();
+
 }
 
 void APlayerCharacter::SetWeaponSelector()
 {
-	if (currentActiveGun && currentActiveGun->isCanAutoFire)
-	{
-		currentActiveGun->isAutoFire = !currentActiveGun->isAutoFire;
-	}
+	PlayerEquipmentComponent->SetWeaponSelector();
 }
 
 void APlayerCharacter::Interact()
@@ -644,10 +509,10 @@ void APlayerCharacter::InspectWeapon()
 	if (gameMode && (gameMode->isPlayerDied || gameMode->isPlayerEscaped || gameMode->isPauseMenuOpened))
 		return;
 
-	if (currentActiveGun && !IsReloading() && !IsSprinting() && !IsAds() && !IsFiring())
-	{
-		currentActiveGun->InspectWeapon();
-	}
+	if (IsSprinting())
+		return;
+
+	PlayerEquipmentComponent->InspectWeapon();
 }
 
 void APlayerCharacter::Inventory()
@@ -672,39 +537,10 @@ void APlayerCharacter::ThrowGrenade()
 		return;
 	}
 
-	bool isThrowing = false;
-	for (int i = 0; i < handGrenadePools.Num(); i++)
-	{
-		if (handGrenadePools[i] &&!handGrenadePools[i]->IsActive())
-		{
-			//Add Physics power
-			handGrenadePools[i]->ThrowGrenade(GetActorForwardVector(),GetActorLocation() + GetActorUpVector() * 100.f + GetActorForwardVector() * 100.f);
-			inventory->UseItem(itemReference);
-			inventory->UpdateAndCleanupBackpack();
-			playerController->UpdateInventoryUI();
-			isThrowing = true;
-			break;
-		}
-	}
-
-	if (!isThrowing)
-	{
-		AHandGrenade* hand = GetWorld()->SpawnActor<AHandGrenade>(handGrenadeOrigin);
-		hand->SetInstigator(this);
-		hand->SetOwner(this);
-		handGrenadePools.Add(hand);
-
-		handGrenadePools[handGrenadePools.Num() - 1]->ReactivateGrenade();
-		//Add Physics power
-		handGrenadePools[handGrenadePools.Num() - 1]->SetActorLocation(GetActorLocation());
-		handGrenadePools[handGrenadePools.Num() - 1]->ThrowGrenade(GetActorForwardVector(), GetActorLocation() + GetActorUpVector() * 100.f + GetActorForwardVector() * 100.f);
-
-		inventory->UseItem(itemReference);
-		inventory->UpdateAndCleanupBackpack();
-		playerController->UpdateInventoryUI();
-
-		isThrowing = true;
-	}
+	PlayerEquipmentComponent->ThrowGrenade();
+	inventory->UseItem(itemReference);
+	inventory->UpdateAndCleanupBackpack();
+	playerController->UpdateInventoryUI();
 }
 
 void APlayerCharacter::ThrowFlashGrenade()
@@ -717,38 +553,10 @@ void APlayerCharacter::ThrowFlashGrenade()
 		return;
 	}
 
-	bool isThrowing = false;
-
-	for (int i = 0; i < flashGrenadePools.Num(); i++)
-	{
-		if (flashGrenadePools[i] && !flashGrenadePools[i]->IsActive())
-		{
-			//Add Physics power
-			flashGrenadePools[i]->ThrowGrenade(GetActorForwardVector(), GetActorLocation() + GetActorUpVector() * 100.f + GetActorForwardVector() * 100.f);
-
-			inventory->UseItem(itemReference);
-			inventory->UpdateAndCleanupBackpack();
-			playerController->UpdateInventoryUI();
-			isThrowing = true;
-			break;
-		}
-	}
-
-	if (!isThrowing)
-	{
-		AFlashGrenade* flash = GetWorld()->SpawnActor<AFlashGrenade>(flashGrenadeOrigin);
-	
-		flashGrenadePools.Add(flash);
-		flashGrenadePools[flashGrenadePools.Num() - 1]->SetInstigator(this);
-		flashGrenadePools[flashGrenadePools.Num() - 1]->SetOwner(this);
-		//Add Physics power
-		flashGrenadePools[flashGrenadePools.Num() - 1]->ThrowGrenade(GetActorForwardVector(), GetActorLocation() + GetActorUpVector() * 100.f + GetActorForwardVector() * 100.f);
-
-		inventory->UseItem(itemReference);
-		inventory->UpdateAndCleanupBackpack();
-		playerController->UpdateInventoryUI();
-		isThrowing = true;
-	}
+	PlayerEquipmentComponent->ThrowFlashGrenade();
+	inventory->UseItem(itemReference);
+	inventory->UpdateAndCleanupBackpack();
+	playerController->UpdateInventoryUI();
 }
 
 

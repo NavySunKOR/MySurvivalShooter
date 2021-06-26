@@ -40,4 +40,5 @@ public:
 	void SetCrouch();
 	void SetUncrouch();
 
+
 };

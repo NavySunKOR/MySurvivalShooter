@@ -21,6 +21,7 @@ class ATarkovCopyGameModeBase;
 class FSlateRect;
 class UPlayerStatusComponent;
 class UPlayerMovementComponent;
+class UPlayerEquipmentComponent;
 
 UCLASS()
 class TARKOVCOPY_API APlayerCharacter : public ACharacter
@@ -33,26 +34,17 @@ public:
 
 private: 
 	float maxWalkValue = 0.f;
-	bool isFired = false; // for semi auto mode only
 	bool isFirePressed = false;
 	USpringArmComponent* springArm;
 	FVector springArmOrigin;
-	UPROPERTY()
-	TArray<AHandGrenade*> handGrenadePools;
-	UPROPERTY()
-	TArray<AHandGrenade*> flashGrenadePools;
-	UPROPERTY()
-	TArray<ABulletProjectile*> bulletProjectilePools;
-
-	UPROPERTY()
-	AHandGrenade* handGrenadePool;
-
 
 	//Components
 	UPROPERTY(VisibleAnywhere,Category="Components")
 	UPlayerStatusComponent* PlayerStatusComponent;
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	UPlayerMovementComponent* PlayerMovementComponent;
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+	UPlayerEquipmentComponent* PlayerEquipmentComponent;
 
 
 	//InputFunctions
@@ -102,10 +94,6 @@ protected:
 	void ThrowFlashGrenade();
 
 
-	ABaseGun* currentActiveGun;
-	ABaseGun* primaryWeapon;
-	ABaseGun* secondaryWeapon;
-
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<ABaseGun> m416Origin;
 	UPROPERTY(EditDefaultsOnly)
@@ -113,13 +101,6 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UInventory> inventoryOrigin;
-
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<AHandGrenade> handGrenadeOrigin;
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<AHandGrenade> flashGrenadeOrigin;
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<ABulletProjectile> bulletProjectileOrigin;
 
 	ATarkovCopyGameModeBase* gameMode;
 
@@ -152,7 +133,7 @@ public:
 	void RemovePrimary();
 	void RemoveSecondary();
 	void FireProjectile(float pDamage, float pVelocity, float pMass, FVector pFireStartPos, FVector pShootDir);
-	FORCEINLINE ABaseGun* GetCurrentActiveGun() { return currentActiveGun; };
+	ABaseGun* GetCurrentActiveGun();
 
 	//방어구 관련
 	void AddHelmet(UItemHelmet* pHelmetInfo);
