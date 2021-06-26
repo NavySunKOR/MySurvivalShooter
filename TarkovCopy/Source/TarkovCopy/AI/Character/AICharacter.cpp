@@ -234,7 +234,6 @@ void AAICharacter::SetActiveFalse()
 
 void AAICharacter::FireWeapon()
 {
-
 	if (currentActiveGun->CanFireWeapon())
 	{
 		FVector start = GetActorLocation() + GetActorForwardVector() * 150.f;

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
+#include "TarkovCopy/InventoryAndItem/ItemInfos/ItemInfo.h"
 #include "Inventory.generated.h"
 
 /**
