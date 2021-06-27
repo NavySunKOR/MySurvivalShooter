@@ -8,6 +8,7 @@
 #include "TarkovCopy/InventoryAndItem/ItemInfos/ItemWeapon.h"
 #include "TarkovCopy/InventoryAndItem/ItemInfos/ItemIcon.h"
 #include "TarkovCopy/InventoryAndItem/GameFunctions/Inventory.h"
+#include "TarkovCopy/InventoryAndItem/GameFunctions/Backpack.h"
 #include "TarkovCopy/Utils/JsonSaveAndLoader.h"
 #include <GameFramework/PlayerInput.h>
 #include <GameFramework/Character.h>
@@ -142,7 +143,7 @@ void AFPPlayerController::PlayerTick(float DeltaTime)
 
 TArray<UItemInfo*> AFPPlayerController::GetItemContainers()
 {
-	return ownerPlayerCharacter->inventory->GetBackpack()->GetItemContainers();
+	return ownerPlayerCharacter->GetInventory()->GetBackpack()->GetItemContainers();
 }
 
 void AFPPlayerController::InitInvenotry()
@@ -168,7 +169,7 @@ void AFPPlayerController::InitInvenotry()
 	secondaryWeaponContainerUISlot = Cast<UCanvasPanelSlot>(secondaryWeaponContainerUI->Slot);
 	helmetContainerUISlot = Cast<UCanvasPanelSlot>(helmetContainerUI->Slot);
 	
-	itemContainerUISlot->SetSize(FVector2D(UMGPublicProperites::BASIC_INVENTORY_GRID_WIDTH, UMGPublicProperites::BASIC_INVENTORY_GRID_HEIGHT) * ownerPlayerCharacter->inventory->GetBackpack()->GetBackpackSize());
+	itemContainerUISlot->SetSize(FVector2D(UMGPublicProperites::BASIC_INVENTORY_GRID_WIDTH, UMGPublicProperites::BASIC_INVENTORY_GRID_HEIGHT) * ownerPlayerCharacter->GetInventory()->GetBackpack()->GetBackpackSize());
 
 	itemContainerRect.Left = itemContainerUISlot->GetPosition().X;
 	itemContainerRect.Top = itemContainerUISlot->GetPosition().Y;
@@ -191,14 +192,14 @@ void AFPPlayerController::InitInvenotry()
 	helmetContainerRect.Bottom = helmetContainerRect.Top + helmetContainerUISlot->GetSize().Y;
 
 
-	TArray<UItemInfo*> itemContainers = ownerPlayerCharacter->inventory->GetBackpack()->GetItemContainers();
+	TArray<UItemInfo*> itemContainers = ownerPlayerCharacter->GetInventory()->GetBackpack()->GetItemContainers();
 	if (itemContainers.Num() > 0)
 	{
 		for (int i = 0; i < itemContainers.Num(); i++)
 		{
 			if (itemContainers[i])
 			{
-				AddItem(itemContainers[i], ownerPlayerCharacter->inventory);
+				AddItem(itemContainers[i], ownerPlayerCharacter->GetInventory());
 			}
 		}
 	}
@@ -210,17 +211,17 @@ void AFPPlayerController::InitInvenotry()
 
 	if (loadedSecondaryWeapon)
 	{
-		AddItem(loadedSecondaryWeapon, ownerPlayerCharacter->inventory);
+		AddItem(loadedSecondaryWeapon, ownerPlayerCharacter->GetInventory());
 		AddSecondary(loadedSecondaryWeapon->weaponSubclass, loadedSecondaryWeapon);
 	}
 	if (loadedPrimaryWeapon)
 	{
-		AddItem(loadedPrimaryWeapon, ownerPlayerCharacter->inventory);
+		AddItem(loadedPrimaryWeapon, ownerPlayerCharacter->GetInventory());
 		AddPrimary(loadedPrimaryWeapon->weaponSubclass, loadedPrimaryWeapon);
 	}
 	if (loadedHelmet)
 	{
-		AddItem(loadedHelmet, ownerPlayerCharacter->inventory);
+		AddItem(loadedHelmet, ownerPlayerCharacter->GetInventory());
 		AddHelmet(loadedHelmet);
 	}
 
@@ -314,7 +315,7 @@ void AFPPlayerController::DropItem(UItemIcon* pItemIcon)
 {
 	itemContainerUI->RemoveChild(pItemIcon);
 	//
-	if (!ownerPlayerCharacter->inventory->HasItem(pItemIcon->itemInfo))
+	if (!ownerPlayerCharacter->GetInventory()->HasItem(pItemIcon->itemInfo))
 	{
 		primaryWeaponContainerUI->RemoveChild(pItemIcon);
 		secondaryWeaponContainerUI->RemoveChild(pItemIcon);

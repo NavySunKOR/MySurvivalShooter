@@ -13,6 +13,7 @@
 #include "TarkovCopy/Player/Components/PlayerStatusComponent.h"
 #include "TarkovCopy/Player/Components/PlayerMovementComponent.h"
 #include "TarkovCopy/Player/Components/PlayerEquipmentComponent.h"
+#include "TarkovCopy/Player/Components/PlayerInventoryComponent.h"
 #include "TarkovCopy/Player/Controller/FPPlayerController.h"
 #include "TarkovCopy/Weapons/BaseGun.h"
 #include "TarkovCopy/Utils/JsonSaveAndLoader.h"
@@ -59,34 +60,22 @@ void APlayerCharacter::BeginPlay()
 	PlayerStatusComponent = Cast<UPlayerStatusComponent>(GetDefaultSubobjectByName(TEXT("PlayerStatus")));
 	PlayerMovementComponent = Cast<UPlayerMovementComponent>(GetDefaultSubobjectByName(TEXT("PlayerMovement")));
 	PlayerEquipmentComponent = Cast<UPlayerEquipmentComponent>(GetDefaultSubobjectByName(TEXT("PlayerEquipment")));
+	PlayerInventoryComponent = Cast<UPlayerInventoryComponent>(GetDefaultSubobjectByName(TEXT("PlayerInventory")));
 	PlayerStatusComponent->Init(playerController, this);
 	PlayerMovementComponent->Init(playerController, this,PlayerStatusComponent->DefaultSprintingSpeed
 		, PlayerStatusComponent->DefaultWalkingSpeed
 		, PlayerStatusComponent->DefaultAdsWalkingSpeed);
 	PlayerEquipmentComponent->Init(playerController, this);
+	PlayerInventoryComponent->Init(playerController, this);
+	
 
-	//TODO:나중에 인벤토리 초기화 고칠것
-	inventory = nullptr;
-	inventory = NewObject<UInventory>(GetWorld(),inventoryOrigin);
-	inventory->Init(this);
-
-
-	TArray<UItemInfo*> tempContainers = JsonSaveAndLoader::LoadBackpackItemContainers(GetWorld());
-	if (tempContainers.Num() > 0)
-	{
-		for (int i = 0; i < tempContainers.Num(); i++)
-		{
-			if (tempContainers[i])
-			{
-				inventory->AddNewItemToInventory(tempContainers[i]);
-				playerController->AddItem(inventory->GetBackpack()->GetItemContainers()[inventory->GetBackpack()->GetItemContainers().Num()-1], inventory);
-			}
-		}
-	}
-
-	if (playerController != nullptr)
-		playerController->InitInvenotry();
+	
 	//Pool initialize;
+}
+
+UInventory* APlayerCharacter::GetInventory()
+{
+	return PlayerInventoryComponent->GetInventory();
 }
 
 // Called every frame
@@ -164,12 +153,7 @@ float APlayerCharacter::TakeDamage(float Damage, FDamageEvent const& DamageEvent
 				if (generated < 3) // 0,1,2 중 하나 걸리니까 30퍼센트 헤드샷
 				{
 					Damage *= 2.5f;
-					if (inventory->GetEquippedHelmet() != nullptr &&
-						inventory->GetEquippedHelmet()->curDurability >= inventory->GetEquippedHelmet()->damageDecreaseAmount)
-					{
-						Damage -= inventory->GetEquippedHelmet()->damageDecreaseAmount;
-						inventory->GetEquippedHelmet()->curDurability -= inventory->GetEquippedHelmet()->damageDecreaseAmount;
-					}
+					PlayerInventoryComponent->ReduceHelmetDurability(Damage);
 				}
 			}
 
@@ -185,33 +169,27 @@ float APlayerCharacter::TakeDamage(float Damage, FDamageEvent const& DamageEvent
 
 bool APlayerCharacter::PickupItem(UItemInfo* pItemInfo)
 {
-	bool isItemAdded = inventory->AddNewItemToInventory(pItemInfo);
-	if (isItemAdded && playerController != nullptr)
-	{
-		playerController->AddItem(pItemInfo,inventory);
-	}
-
-	return isItemAdded;
+	return PlayerInventoryComponent->PickupItem(pItemInfo);
 }
 
 void APlayerCharacter::StartMoveItemPos(UItemInfo* pItemInfo)
 {
-	inventory->StartMoveItemPos(pItemInfo);
+	PlayerInventoryComponent->StartMoveItemPos(pItemInfo);
 }
 
 bool APlayerCharacter::CanItemMoveTo(FSlateRect pIntSlateRect)
 {
-	return inventory->CanItemMoveTo(pIntSlateRect);
+	return PlayerInventoryComponent->CanItemMoveTo(pIntSlateRect);
 }
 
 void APlayerCharacter::MoveItemTo(UItemInfo* pItemInfo, FSlateRect pIntSlateRect)
 {
-	inventory->MoveItemTo(pItemInfo, pIntSlateRect);
+	PlayerInventoryComponent->MoveItemTo(pItemInfo, pIntSlateRect);
 }
 
 void APlayerCharacter::FailedToMoveItemPos(UItemInfo* pItemInfo)
 {
-	inventory->FailedToMoveItemPos(pItemInfo);
+	PlayerInventoryComponent->FailedToMoveItemPos(pItemInfo);
 }
 
 void APlayerCharacter::Tilting(float pValue)
@@ -229,14 +207,14 @@ void APlayerCharacter::Tilting(float pValue)
 
 void APlayerCharacter::AddPrimary(TSubclassOf<ABaseGun> pWeaponOrigin, UItemWeapon* pItemWeapon)
 {
-	if(PlayerEquipmentComponent->AddPrimary(pWeaponOrigin,pItemWeapon))
-		inventory->RemoveItem((UItemInfo*)pItemWeapon);
+	if (PlayerEquipmentComponent->AddPrimary(pWeaponOrigin, pItemWeapon))
+		PlayerInventoryComponent->RemoveItem((UItemInfo*)pItemWeapon);
 }
 
 void APlayerCharacter::AddSecondary(TSubclassOf<ABaseGun> pWeaponOrigin, UItemWeapon* pItemWeapon)
 {
 	if (PlayerEquipmentComponent->AddSecondary(pWeaponOrigin, pItemWeapon))
-		inventory->RemoveItem((UItemInfo*)pItemWeapon);
+		PlayerInventoryComponent->RemoveItem((UItemInfo*)pItemWeapon);
 }
 
 void APlayerCharacter::RemovePrimary()
@@ -266,18 +244,18 @@ void APlayerCharacter::AddHelmet(UItemHelmet* pHelmetInfo)
 {
 	//TODO: 메쉬 찾아서 켜줘
 	helmetMesh->SetVisibility(true);
-	inventory->EquipHelmet(pHelmetInfo);
+	PlayerInventoryComponent->AddHelmet(pHelmetInfo);
 }
 
 void APlayerCharacter::RemoveHelmet(UItemHelmet* pHelmetInfo)
 {
 	helmetMesh->SetVisibility(false);
-	inventory->UnequipHelmet();
+	PlayerInventoryComponent->RemoveHelmet();
 }
 
 void APlayerCharacter::SaveEquipments()
 {
-	inventory->SaveEquipments();
+	PlayerInventoryComponent->SaveEquipments();
 }
 
 bool APlayerCharacter::IsWeaponEquiped()
@@ -419,7 +397,7 @@ void APlayerCharacter::ReloadWeapon()
 
 	if (gameMode && (gameMode->isPlayerDied || gameMode->isPlayerEscaped || gameMode->isPauseMenuOpened))
 		return;
-	if (inventory->isUsingInventory)
+	if (PlayerInventoryComponent->IsUsingInventory())
 		return;
 
 	if (PlayerEquipmentComponent->CanReloadWeapon())
@@ -427,35 +405,20 @@ void APlayerCharacter::ReloadWeapon()
 		int needAmmo = PlayerEquipmentComponent->GetNeedAmmoForReload();
 		if (needAmmo > 0)
 		{
-			int ownedAmmo = 0;
-			inventory->isUsingInventory = true;
-
-			ownedAmmo = (PlayerEquipmentComponent->IsPrimaryWeaponEquiped()) ? 
-				inventory->GetAllPrimaryWeaponAmmo(PlayerEquipmentComponent->GetCurrentEquipedWepaon()->GetClass()->GetName()) :
-				inventory->GetAllSecondaryWeaponAmmo(PlayerEquipmentComponent->GetCurrentEquipedWepaon()->GetClass()->GetName());
-
-			if (ownedAmmo == 0)
-			{
-				inventory->isUsingInventory = false;
+			FString weaponName = PlayerEquipmentComponent->GetCurrentEquipedWepaon()->GetClass()->GetName();
+			if (PlayerInventoryComponent->HaveEnoughAmmoForReload(weaponName, PlayerEquipmentComponent->IsPrimaryWeaponEquiped(), needAmmo))
 				return;
-			}
 
-			if (needAmmo > ownedAmmo)
-			{
-				needAmmo = ownedAmmo;
-			}
-
-			PlayerEquipmentComponent->ActualReloadWeapon(needAmmo);
 			if (PlayerEquipmentComponent->IsPrimaryWeaponEquiped())
 			{
-				inventory->UsePrimaryWeaponAmmo(needAmmo, PlayerEquipmentComponent->GetCurrentEquipedWepaon()->GetClass()->GetName());
+				PlayerInventoryComponent->UsePrimaryAmmo(needAmmo, weaponName);
 			}
 			else
 			{
-				inventory->UseSecondaryWeaponAmmo(needAmmo, PlayerEquipmentComponent->GetCurrentEquipedWepaon()->GetClass()->GetName());
+				PlayerInventoryComponent->UseSecondaryAmmo(needAmmo, weaponName);
 			}
-			inventory->UpdateAndCleanupBackpack();
-			inventory->isUsingInventory = false;
+
+			PlayerEquipmentComponent->ActualReloadWeapon(needAmmo);
 		}
 	}
 
@@ -531,32 +494,30 @@ void APlayerCharacter::ThrowGrenade()
 {
 	if (gameMode && (gameMode->isPlayerDied || gameMode->isPlayerEscaped || gameMode->isPauseMenuOpened))
 		return;
-	UItemInfo* itemReference = inventory->HasItemType(ItemType::GRENADE);
-	if (itemReference == nullptr)
+
+	UItemInfo* itemReference = nullptr;
+	if (!PlayerInventoryComponent->HasItemType(itemReference,ItemType::GRENADE))
 	{
 		return;
 	}
 
 	PlayerEquipmentComponent->ThrowGrenade();
-	inventory->UseItem(itemReference);
-	inventory->UpdateAndCleanupBackpack();
-	playerController->UpdateInventoryUI();
+	PlayerInventoryComponent->UseItem(itemReference);
 }
 
 void APlayerCharacter::ThrowFlashGrenade()
 {
 	if (gameMode && (gameMode->isPlayerDied || gameMode->isPlayerEscaped || gameMode->isPauseMenuOpened))
 		return;
-	UItemInfo* itemReference = inventory->HasItemType(ItemType::FLASHGRENADE);
-	if (itemReference == nullptr)
+	UItemInfo* itemReference = nullptr;
+
+	if (!PlayerInventoryComponent->HasItemType(itemReference, ItemType::FLASHGRENADE))
 	{
 		return;
 	}
 
 	PlayerEquipmentComponent->ThrowFlashGrenade();
-	inventory->UseItem(itemReference);
-	inventory->UpdateAndCleanupBackpack();
-	playerController->UpdateInventoryUI();
+	PlayerInventoryComponent->UseItem(itemReference);
 }
 
 

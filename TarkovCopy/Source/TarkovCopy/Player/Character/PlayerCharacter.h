@@ -22,6 +22,7 @@ class FSlateRect;
 class UPlayerStatusComponent;
 class UPlayerMovementComponent;
 class UPlayerEquipmentComponent;
+class UPlayerInventoryComponent;
 
 UCLASS()
 class TARKOVCOPY_API APlayerCharacter : public ACharacter
@@ -45,6 +46,8 @@ private:
 	UPlayerMovementComponent* PlayerMovementComponent;
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	UPlayerEquipmentComponent* PlayerEquipmentComponent;
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+	UPlayerInventoryComponent* PlayerInventoryComponent;
 
 
 	//InputFunctions
@@ -99,17 +102,14 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<ABaseGun> m9Origin;
 
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<UInventory> inventoryOrigin;
 
 	ATarkovCopyGameModeBase* gameMode;
 
 
 public:	
-	UPROPERTY()
-	UInventory* inventory;
 	AFPPlayerController* playerController;
 
+	UInventory* GetInventory();
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
