@@ -16,6 +16,7 @@ UPlayerStatusComponent::UPlayerStatusComponent()
 
 void UPlayerStatusComponent::Init(AFPPlayerController* pPlayerController, APlayerCharacter* pPlayerCharacter)
 {
+	Super::Init(pPlayerController, pPlayerCharacter);
 	CurHp = MaxHp;
 }
 

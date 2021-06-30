@@ -47,6 +47,8 @@ void ABulletProjectile::ReactivateProjectile(float pDamage, float pVelocity, flo
 	lastShooterPos = pShooter->GetActorLocation();
 	bulletOwner = pShooter;
 	shootDir = pShootDir;
+	SetOwner(pShooter);
+	SetInstigator(pShooter);
 	SetActorHiddenInGame(false);
 	sphereComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 }

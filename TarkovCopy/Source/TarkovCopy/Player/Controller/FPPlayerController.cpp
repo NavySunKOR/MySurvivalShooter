@@ -110,8 +110,8 @@ void AFPPlayerController::PlayerTick(float DeltaTime)
 		//각도 적용
 
 		FVector characterForward = ownerPlayerCharacter->GetActorForwardVector();
-		FVector hitDir = (hitFromPos - ownerPlayerCharacter->GetActorLocation());
-		float angle = FMath::RadiansToDegrees(FMath::Acos(FVector::DotProduct(characterForward, hitDir) / (characterForward.Size() * hitDir.Size())));
+		FVector hitDir = (hitFromPos - ownerPlayerCharacter->GetActorLocation()).GetSafeNormal();
+		float angle = FMath::RadiansToDegrees(FMath::Acos(FVector::DotProduct(characterForward, hitDir)));
 		float crossAngle = FVector::DotProduct(FVector::CrossProduct(characterForward, hitDir),FVector::UpVector);
 
 		if (crossAngle < 0)
@@ -616,10 +616,10 @@ void AFPPlayerController::Dead()
 
 void AFPPlayerController::GetFlashed(float pFlashTime, FVector pFlashbangPos)
 {
-	FVector dirToFlashbang = pFlashbangPos - ownerPlayerCharacter->GetActorLocation();
+	FVector dirToFlashbang = (pFlashbangPos - ownerPlayerCharacter->GetActorLocation()).GetSafeNormal();
 	FVector playerForward = ownerPlayerCharacter->GetActorForwardVector();
 
-	float vectorResult = FVector::DotProduct(dirToFlashbang, playerForward) / dirToFlashbang.Size() * playerForward.Size();
+	float vectorResult = FVector::DotProduct(dirToFlashbang, playerForward);
 	float angle = FMath::RadiansToDegrees(FMath::Acos(vectorResult)) ;
 	UE_LOG(LogTemp,Warning,TEXT("Value :%f"), angle)
 	

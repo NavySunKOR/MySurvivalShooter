@@ -19,11 +19,6 @@ bool UBTDecorator_IsInRange::CalculateRawConditionValue(UBehaviorTreeComponent& 
 		return false;
 	else
 	{
-	/*	FVector targetDir = (owner->trackingTarget->GetActorLocation() - owner->GetActorLocation());
-		targetDir.Normalize();
-		float angleCos = FVector::DotProduct(owner->GetActorForwardVector(), targetDir) / owner->GetActorForwardVector().Size() * targetDir.Size();
-		float toAngle = FMath::RadiansToDegrees(FMath::Acos(angleCos));*/
-
 		if (OwnerComp.GetAIOwner()->LineOfSightTo(owner->trackingTarget) && 
 			(owner->trackingTarget->GetActorLocation() - owner->GetActorLocation()).Size() < owner->GetCurrentWeaponRange())
 		{
