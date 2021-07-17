@@ -29,7 +29,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	float DefaultAdsWalkingSpeed;
 
-	virtual void Init(AFPPlayerController* pPlayerController, APlayerCharacter* pPlayerCharacter) override;
+	void InitStatusComponent(AFPPlayerController* pPlayerController, APlayerCharacter* pPlayerCharacter);
 	void HealPlayer(float pHealAmount);
 	void DecreaseHealth(float pDamageAmount);
 

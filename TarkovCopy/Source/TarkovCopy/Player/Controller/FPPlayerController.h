@@ -10,6 +10,8 @@
  * 
  */
 class APlayerCharacter;
+class AInGameHUD;
+class ABaseGun;
 class AEscapeGameMode;
 class FSlateRect;
 class UCanvasPanel;
@@ -36,15 +38,8 @@ public:
 
 //Created
 private:
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<UUserWidget> healthHudWidget;
+	AInGameHUD* IngameHud;
 	//Status Render
-	UPROPERTY()
-	UUserWidget* healthHudUI;
-	UPROPERTY()
-	UWidget* healthHudBgUI;
-	UPROPERTY()
-	UWidget* flashHudBgUI;
 
 	//Crosshair Render
 	UPROPERTY(EditAnywhere)
@@ -73,13 +68,6 @@ private:
 	TSubclassOf<UUserWidget> youveEscapedWidget;
 	UPROPERTY()
 	UUserWidget* youveEscapedUI;
-
-	//Hit Indicator
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<UUserWidget> hitIndicatorWidget;
-	UUserWidget* hitIndicatorUI;
-	UWidget* hitIndicatorActualUI;
-
 
 	//TODO: UI관련, 추 후에 컨트롤러로 옮길것
 	UPROPERTY(EditAnywhere)
@@ -134,26 +122,14 @@ private:
 	float timeToExfil = 5.f;
 	float exfilCounter = 0.f;
 
-	//flash 관련
-	bool isFlashed = false;
-	float flashTimer = 0.f;
-	float flashInterval = 0.f;
-	float flashFadeAmount = 0.f;
-
-	//hitIndicator 관련
-	bool isHit = false;
-	float hitIndicatorTimer = 0.f;
-	float hitIndicatorInterval = 4.f;
-	float hitIndicatorFadeAmount = 0.f;
-	FVector hitFromPos;
-
-
 	void CloseAlert();
 
 	void OpenInventory();
 	void CloseInventory();
 	
 public:
+
+
 	bool isInventoryOpened= false;
 	FSlateRect itemContainerRect;
 	FSlateRect primaryWeaponContainerRect;
@@ -198,15 +174,8 @@ public:
 	void RemoveHelmet(UItemHelmet* pHelmetInfo);
 
 	//상태 관련
-	void UpdateHealthHud(float pCurHealth);
 	void UpdateInventoryUI();
 	void Dead();
-
-	//섬광탄
-	void GetFlashed(float pFlashTime,FVector pFlashbangPos);
-
-	//피격
-	void ShowHitIndicator(FVector pHitDir);
 
 	//퀘스트 관련
 	void ShowQuestInfo(FString itemName, float distance);
@@ -221,6 +190,9 @@ public:
 
 	//파일저장
 	void SaveEquipments();
+
+	//UI관련
+	FORCEINLINE AInGameHUD* GetInGameHUD() { return IngameHud; };
 
 	//BlueprintUsable
 	UFUNCTION(BlueprintCallable)

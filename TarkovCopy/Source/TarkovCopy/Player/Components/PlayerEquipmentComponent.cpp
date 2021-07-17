@@ -119,6 +119,11 @@ void UPlayerEquipmentComponent::FireProjectile(float pDamage, float pVelocity, f
 	}
 }
 
+void UPlayerEquipmentComponent::InitEquipmentComponent(AFPPlayerController* pPlayerController, APlayerCharacter* pPlayerCharacter)
+{
+	Super::Init(pPlayerController, pPlayerCharacter);
+}
+
 bool UPlayerEquipmentComponent::AddPrimary(TSubclassOf<ABaseGun> pWeaponOrigin, UItemWeapon* pItemWeapon)
 {
 	if (primaryWeapon != nullptr)
@@ -235,19 +240,24 @@ void UPlayerEquipmentComponent::SetHipfireWeapon()
 
 void UPlayerEquipmentComponent::FireWeapon()
 {
-	if (currentActiveGun && currentActiveGun->CanFireWeapon()) // 세미에서 오토로 바꿔서 쏠때 발생하는 버그를 막기 위하여 처리
+	if (currentActiveGun == nullptr)
+		return;
+	if (currentActiveGun->CanFireWeapon()) 
 	{
-		if (currentActiveGun->isAutoFire && !isFired)
+		if(!isFired)
 		{
-			ActualFireWeapon();
-		}
-		else if (!isFired)
-		{
-			isFired = true;
-			ActualFireWeapon();
+			if (currentActiveGun->isAutoFire)
+			{
+				ActualFireWeapon();
+			}
+			else
+			{
+				isFired = true;
+				ActualFireWeapon();
+			}
 		}
 	}
-	else if (currentActiveGun && (!IsFiring()) && (!IsReloading()) && IsEmptyMagazine())
+	else if ((!IsFiring()) && (!IsReloading()) && IsEmptyMagazine()) //자동 반자동 상관없이 탄창이 비었으면 Dry fire을 함.
 	{
 		if (!isFired)
 		{

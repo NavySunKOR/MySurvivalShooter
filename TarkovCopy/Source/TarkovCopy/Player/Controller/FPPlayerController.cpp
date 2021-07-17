@@ -9,6 +9,7 @@
 #include "TarkovCopy/InventoryAndItem/ItemInfos/ItemIcon.h"
 #include "TarkovCopy/InventoryAndItem/GameFunctions/Inventory.h"
 #include "TarkovCopy/InventoryAndItem/GameFunctions/Backpack.h"
+#include "TarkovCopy/UI/InGameHUD.h"
 #include "TarkovCopy/Utils/JsonSaveAndLoader.h"
 #include <GameFramework/PlayerInput.h>
 #include <GameFramework/Character.h>
@@ -26,10 +27,7 @@ void AFPPlayerController::BeginPlay()
 {
 	bShowMouseCursor = false;
 
-	healthHudUI = CreateWidget<UUserWidget>(this, healthHudWidget);
-	healthHudUI->AddToViewport();
-	healthHudBgUI = healthHudUI->GetWidgetFromName(TEXT("Splash"));
-	flashHudBgUI = healthHudUI->GetWidgetFromName(TEXT("FlashSplash"));
+	IngameHud = Cast<AInGameHUD>(GetHUD());
 
 	crosshairUI = CreateWidget<UUserWidget>(this, crosshairWidget);
 	crosshairUI->AddToViewport();
@@ -45,11 +43,6 @@ void AFPPlayerController::BeginPlay()
 
 	youveEscapedUI = CreateWidget<UUserWidget>(this, youveEscapedWidget);
 	youveEscapedUI->AddToViewport(2);
-
-	hitIndicatorUI = CreateWidget<UUserWidget>(this, hitIndicatorWidget);
-	hitIndicatorUI->AddToViewport();
-	hitIndicatorActualUI = hitIndicatorUI->GetWidgetFromName(TEXT("HitIndicator"));
-
 
 	alertHudUI->SetVisibility(ESlateVisibility::Hidden);
 	exfilAlertUI->SetVisibility(ESlateVisibility::Hidden);
@@ -85,60 +78,6 @@ void AFPPlayerController::PlayerTick(float DeltaTime)
 		}
 	}
 
-	if (isFlashed)
-	{
-		flashTimer += DeltaTime;
-		if (flashTimer > flashInterval / 2.f)
-		{
-			flashFadeAmount = ((flashInterval - flashTimer) / (flashInterval * 2.f));
-			flashHudBgUI->SetRenderOpacity(flashFadeAmount);
-		}
-
-		if (flashTimer > flashInterval)
-		{
-			isFlashed = false;
-			flashTimer = 0.f;
-			flashInterval = 0.f;
-			flashHudBgUI->SetRenderOpacity(0.f);
-		}
-	}
-
-	if (isHit)
-	{
-		hitIndicatorTimer += DeltaTime;
-
-		//각도 적용
-
-		FVector characterForward = ownerPlayerCharacter->GetActorForwardVector();
-		FVector hitDir = (hitFromPos - ownerPlayerCharacter->GetActorLocation()).GetSafeNormal();
-		float angle = FMath::RadiansToDegrees(FMath::Acos(FVector::DotProduct(characterForward, hitDir)));
-		float crossAngle = FVector::DotProduct(FVector::CrossProduct(characterForward, hitDir),FVector::UpVector);
-
-		if (crossAngle < 0)
-		{
-			angle = -angle;
-		}
-
-
-		if (angle > 180.f)
-		{
-			angle -= 180.f;
-		}
-		hitIndicatorActualUI->SetRenderTransformAngle(angle);
-
-		if (hitIndicatorTimer > hitIndicatorInterval / 2.f)
-		{
-			hitIndicatorFadeAmount = ((hitIndicatorInterval - hitIndicatorTimer) / (hitIndicatorInterval * 2.f));
-			hitIndicatorActualUI->SetRenderOpacity(hitIndicatorFadeAmount);
-		}
-
-		if (hitIndicatorTimer > hitIndicatorInterval)
-		{
-			isHit = false;
-			hitIndicatorTimer = 0.f;
-			hitIndicatorActualUI->SetRenderOpacity(0.f);
-		}
-	}
 }
 
 TArray<UItemInfo*> AFPPlayerController::GetItemContainers()
@@ -568,14 +507,6 @@ void AFPPlayerController::RemoveHelmet(UItemHelmet* pHelmetInfo)
 
 }
 
-void AFPPlayerController::UpdateHealthHud(float pCurHealth)
-{
-	float opacityAmount = 1.f - pCurHealth / 100.f;
-	if (opacityAmount < 0.2f)
-		opacityAmount = 0.2f;
-	healthHudBgUI->SetRenderOpacity(opacityAmount);
-}
-
 void CleanupArray(TArray<UItemIcon*>& pItem)
 {
 	for (int i = pItem.Num() - 1; i >= 0; i--)
@@ -608,43 +539,9 @@ void AFPPlayerController::Dead()
 {
 	youreDeadUI->SetVisibility(ESlateVisibility::Visible);
 	crosshairUI->RemoveFromViewport();
-	hitIndicatorUI->RemoveFromViewport();
 	CloseInventory();
 	if(gameMode)
 	gameMode->PlayerDied();//메인화면으로 가는거 넣을것.
-}
-
-void AFPPlayerController::GetFlashed(float pFlashTime, FVector pFlashbangPos)
-{
-	FVector dirToFlashbang = (pFlashbangPos - ownerPlayerCharacter->GetActorLocation()).GetSafeNormal();
-	FVector playerForward = ownerPlayerCharacter->GetActorForwardVector();
-
-	float vectorResult = FVector::DotProduct(dirToFlashbang, playerForward);
-	float angle = FMath::RadiansToDegrees(FMath::Acos(vectorResult)) ;
-	UE_LOG(LogTemp,Warning,TEXT("Value :%f"), angle)
-	
-	//TODO: 섬광탄에 영향받는 시야각을 나중에 CONSTANT로 몰아서 정의할 것.
-	//TODO: 0.6이면 COS하면 50도 가까이 됨 - 각도로 계산하면 각도로 바꿔주는 비용이 발생하기 때문에, 그냥 COS() 값으로 계산.
-	if (vectorResult > 0.6f)
-	{
-		flashInterval = pFlashTime;
-		flashTimer = 0.f;
-		isFlashed = true;
-		//TODO: 섬광탄 스크린 효과
-		flashHudBgUI->SetRenderOpacity(1.f);
-	}
-
-
-
-}
-
-void AFPPlayerController::ShowHitIndicator(FVector pHitFrom)
-{
-	hitFromPos = pHitFrom;
-	isHit = true;
-	hitIndicatorTimer = 0.f;
-	hitIndicatorActualUI->SetRenderOpacity(1.f);
-
 }
 
 void AFPPlayerController::ShowQuestInfo(FString itemName, float distance)

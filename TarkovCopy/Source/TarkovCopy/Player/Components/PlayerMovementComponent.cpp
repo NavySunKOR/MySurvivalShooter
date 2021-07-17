@@ -16,7 +16,7 @@ UPlayerMovementComponent::UPlayerMovementComponent()
 	// ...
 }
 
-void UPlayerMovementComponent::Init(AFPPlayerController* pPlayerController, APlayerCharacter* pPlayerCharacter,float pSprintSpeed, float pWalkingSpeed, float pAdsWalkingSpeed)
+void UPlayerMovementComponent::InitMovementComponent(AFPPlayerController* pPlayerController, APlayerCharacter* pPlayerCharacter,float pSprintSpeed, float pWalkingSpeed, float pAdsWalkingSpeed)
 {
 	Super::Init(pPlayerController, pPlayerCharacter);
 	SprintSpeed = pSprintSpeed;

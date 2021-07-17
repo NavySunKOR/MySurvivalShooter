@@ -18,7 +18,7 @@ void UPlayerInventoryComponent::ReduceHelmetDurability(float& pDamageRef)
 	}
 }
 
-void UPlayerInventoryComponent::Init(AFPPlayerController* pPlayerController, APlayerCharacter* pPlayerCharacter)
+void UPlayerInventoryComponent::InitInventoryComponent(AFPPlayerController* pPlayerController, APlayerCharacter* pPlayerCharacter)
 {
 	Super::Init(pPlayerController, pPlayerCharacter);
 

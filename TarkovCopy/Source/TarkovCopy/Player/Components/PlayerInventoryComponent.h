@@ -22,7 +22,7 @@ protected:
 	UInventory* Inventory;
 public:
 	void ReduceHelmetDurability(float& pDamageRef);
-	virtual void Init(AFPPlayerController* pPlayerController, APlayerCharacter* pPlayerCharacter) override;
+	void InitInventoryComponent(AFPPlayerController* pPlayerController, APlayerCharacter* pPlayerCharacter) ;
 	void StartMoveItemPos(UItemInfo* pItemInfo);
 	bool CanItemMoveTo(FSlateRect pIntSlateRect) const;
 	void MoveItemTo(UItemInfo* pItemInfo, FSlateRect pIntSlateRect);

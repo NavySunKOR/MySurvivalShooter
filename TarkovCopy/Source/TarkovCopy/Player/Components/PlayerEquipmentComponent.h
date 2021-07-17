@@ -43,7 +43,8 @@ private:
 
 	bool isFired = false; // for semi auto mode only
 
-public:	
+public:
+	void InitEquipmentComponent(AFPPlayerController* pPlayerController, APlayerCharacter* pPlayerCharacter);
 	bool AddPrimary(TSubclassOf<ABaseGun> pWeaponOrigin, UItemWeapon* pItemWeapon);
 	bool AddSecondary(TSubclassOf<ABaseGun> pWeaponOrigin, UItemWeapon* pItemWeapon);
 	void RemovePrimary();

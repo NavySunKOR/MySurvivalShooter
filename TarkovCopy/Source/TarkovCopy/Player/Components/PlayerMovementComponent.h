@@ -30,7 +30,8 @@ public:
 	float MoveVerticalValue = 0.f;
 	float MoveHorizontalValue = 0.f;
 
-	void Init(AFPPlayerController* pPlayerController, APlayerCharacter* pPlayerCharacter,float pSprintSpeed, float pWalkingSpeed, float pAdsWalkingSpeed);
+	//PlayerMovementComponent는 이 함수를 호출할 것.
+	void InitMovementComponent(AFPPlayerController* pPlayerController, APlayerCharacter* pPlayerCharacter,float pSprintSpeed, float pWalkingSpeed, float pAdsWalkingSpeed);
 	virtual void Loop() override;
 	virtual void End() override;
 

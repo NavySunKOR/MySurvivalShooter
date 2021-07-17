@@ -16,6 +16,8 @@
 #include "TarkovCopy/Player/Components/PlayerInventoryComponent.h"
 #include "TarkovCopy/Player/Controller/FPPlayerController.h"
 #include "TarkovCopy/Weapons/BaseGun.h"
+#include "TarkovCopy/Weapons/FlashGrenade.h"
+#include "TarkovCopy/UI/InGameHUD.h"
 #include "TarkovCopy/Utils/JsonSaveAndLoader.h"
 
 // Sets default values
@@ -61,16 +63,13 @@ void APlayerCharacter::BeginPlay()
 	PlayerMovementComponent = Cast<UPlayerMovementComponent>(GetDefaultSubobjectByName(TEXT("PlayerMovement")));
 	PlayerEquipmentComponent = Cast<UPlayerEquipmentComponent>(GetDefaultSubobjectByName(TEXT("PlayerEquipment")));
 	PlayerInventoryComponent = Cast<UPlayerInventoryComponent>(GetDefaultSubobjectByName(TEXT("PlayerInventory")));
-	PlayerStatusComponent->Init(playerController, this);
-	PlayerMovementComponent->Init(playerController, this,PlayerStatusComponent->DefaultSprintingSpeed
+	PlayerStatusComponent->InitStatusComponent(playerController, this);
+	PlayerEquipmentComponent->InitEquipmentComponent(playerController, this);
+	PlayerInventoryComponent->InitInventoryComponent(playerController, this);
+	PlayerMovementComponent->InitMovementComponent(playerController, this, PlayerStatusComponent->DefaultSprintingSpeed
 		, PlayerStatusComponent->DefaultWalkingSpeed
 		, PlayerStatusComponent->DefaultAdsWalkingSpeed);
-	PlayerEquipmentComponent->Init(playerController, this);
-	PlayerInventoryComponent->Init(playerController, this);
-	
 
-	
-	//Pool initialize;
 }
 
 UInventory* APlayerCharacter::GetInventory()
@@ -86,10 +85,9 @@ void APlayerCharacter::Tick(float DeltaTime)
 	//Movement
 	PlayerMovementComponent->Loop();
 	
-	if (isFirePressed)
+	if (isFirePressed && !IsCloseToWall())
 	{
-		if(!IsCloseToWall())
-			PlayerEquipmentComponent->FireWeapon();
+		PlayerEquipmentComponent->FireWeapon();
 	}
 }
 
@@ -137,31 +135,29 @@ float APlayerCharacter::TakeDamage(float Damage, FDamageEvent const& DamageEvent
 
 	UE_LOG(LogTemp, Warning, TEXT("TakeDamage"))
 
-		//TODO:이 비교문이 맞는지 체크 해 볼것.
-		if (DamageEvent.DamageTypeClass == UFlashDamageType::StaticClass())
-		{
-			playerController->GetFlashed(Damage, DamageCauser->GetActorLocation());
-		}
-		else
-		{
-			FPointDamageEvent* damageEvent = (FPointDamageEvent*)&DamageEvent;
+	//TODO:이 비교문이 맞는지 체크 해 볼것.
+	if (DamageEvent.DamageTypeClass == UFlashDamageType::StaticClass())
+	{
+		playerController->GetInGameHUD()->GetFlashed(Damage, DamageCauser->GetActorLocation());
+	}
+	else
+	{
+		FPointDamageEvent* damageEvent = (FPointDamageEvent*)&DamageEvent;
 
-			//총상인지 아닌지 판단. 포인트 데미지면 총상이다.
-			if (damageEvent->IsOfType(FPointDamageEvent::ClassID))
+		//총상인지 아닌지 판단. 포인트 데미지면 총상이다.
+		if (damageEvent->IsOfType(FPointDamageEvent::ClassID))
+		{
+			int generated = rand() % 10;
+			if (generated < 3) // 0,1,2 중 하나 걸리니까 30퍼센트 헤드샷
 			{
-				int generated = rand() % 10;
-				if (generated < 3) // 0,1,2 중 하나 걸리니까 30퍼센트 헤드샷
-				{
-					Damage *= 2.5f;
-					PlayerInventoryComponent->ReduceHelmetDurability(Damage);
-				}
+				Damage *= 2.5f;
+				PlayerInventoryComponent->ReduceHelmetDurability(Damage);
 			}
-
-			PlayerStatusComponent->DecreaseHealth(Damage);
-			playerController->ShowHitIndicator(instigatorPawn->GetActorLocation());
 		}
 
-
+		PlayerStatusComponent->DecreaseHealth(Damage);
+		playerController->GetInGameHUD()->ShowHitIndicator(instigatorPawn->GetActorLocation());
+	}
 
 	return Damage;
 }

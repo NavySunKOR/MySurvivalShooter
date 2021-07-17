@@ -23,8 +23,8 @@ protected:
 	AFPPlayerController* PlayerController;
 	APlayerCharacter* PlayerCharacter;
 
+	void Init(AFPPlayerController* pPlayerController, APlayerCharacter* pPlayerCharacter);
 public:	
-	virtual void Init(AFPPlayerController* pPlayerController, APlayerCharacter* pPlayerCharacter);
 	virtual void Loop();
 	virtual void End();
 		

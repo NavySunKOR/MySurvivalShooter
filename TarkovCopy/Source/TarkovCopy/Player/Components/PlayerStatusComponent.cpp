@@ -8,13 +8,14 @@
 
 #include "PlayerStatusComponent.h"
 #include "TarkovCopy/Player/Controller/FPPlayerController.h"
+#include "TarkovCopy/UI/InGameHUD.h"
 
 UPlayerStatusComponent::UPlayerStatusComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
 }
 
-void UPlayerStatusComponent::Init(AFPPlayerController* pPlayerController, APlayerCharacter* pPlayerCharacter)
+void UPlayerStatusComponent::InitStatusComponent(AFPPlayerController* pPlayerController, APlayerCharacter* pPlayerCharacter)
 {
 	Super::Init(pPlayerController, pPlayerCharacter);
 	CurHp = MaxHp;
@@ -28,7 +29,7 @@ void UPlayerStatusComponent::HealPlayer(float pHealAmount)
 		CurHp = MaxHp;
 	}
 
-	PlayerController->UpdateHealthHud(CurHp);
+	PlayerController->GetInGameHUD()->UpdateHealthHud(CurHp);
 }
 
 void UPlayerStatusComponent::DecreaseHealth(float pDamageAmount)
@@ -40,5 +41,5 @@ void UPlayerStatusComponent::DecreaseHealth(float pDamageAmount)
 		PlayerController->Dead();
 	}
 
-	PlayerController->UpdateHealthHud(CurHp);
+	PlayerController->GetInGameHUD()->UpdateHealthHud(CurHp);
 }
