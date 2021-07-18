@@ -24,5 +24,7 @@ public:
 	void UpdateHealthHud(float pCurHealth);
 	void ShowHitIndicator(FVector pHitDir);
 	void GetFlashed(float pFlashTime, FVector pFlashbangPos);
+	void SetCrosshairVisible();
+	void SetCrosshairInvisible();
 
 };

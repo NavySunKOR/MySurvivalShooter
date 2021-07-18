@@ -104,6 +104,15 @@ void UInGameHUDWidget::GetFlashed(float pFlashTime, FVector pFlashbangPos)
 	}
 }
 
+void UInGameHUDWidget::SetCrosshairVisible()
+{
+	Crosshair->SetVisibility(ESlateVisibility::Visible);
+}
+
+void UInGameHUDWidget::SetCrosshairInvisible()
+{
+	Crosshair->SetVisibility(ESlateVisibility::Hidden);
+}
 
 
 /*

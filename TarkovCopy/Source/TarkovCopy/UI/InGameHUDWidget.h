@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include <Components/Overlay.h>
 #include <Components/BackgroundBlur.h>
+#include <Components/Image.h>
 #include "InGameHUDWidget.generated.h"
 #define PROCESS_FRAMERATE 0.016f
 
@@ -42,6 +43,8 @@ private:
 #pragma endregion
 
 protected:
+	UPROPERTY(Meta = (BindWidget))
+	UImage* Crosshair;
 
 	UPROPERTY(Meta = (BindWidget))
 	UOverlay* HitIndicate;
@@ -57,6 +60,8 @@ public:
 	void UpdateHealthHud(float pCurHealth);
 	void ShowHitIndicator(FVector pHitDir);
 	void GetFlashed(float pFlashTime, FVector pFlashbangPos);
+	void SetCrosshairVisible();
+	void SetCrosshairInvisible();
 
 
 };

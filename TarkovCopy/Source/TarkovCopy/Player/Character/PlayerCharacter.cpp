@@ -376,7 +376,7 @@ void APlayerCharacter::SetADSWeapon()
 		return;
 
 	PlayerEquipmentComponent->SetADSWeapon();
-	playerController->SetADS();
+	playerController->GetInGameHUD()->SetCrosshairInvisible();
 }
 
 void APlayerCharacter::SetHipfireWeapon()
@@ -385,7 +385,7 @@ void APlayerCharacter::SetHipfireWeapon()
 		return;
 
 	PlayerEquipmentComponent->SetHipfireWeapon();
-	playerController->SetHipfire();
+	playerController->GetInGameHUD()->SetCrosshairVisible();
 }
 
 void APlayerCharacter::ReloadWeapon()

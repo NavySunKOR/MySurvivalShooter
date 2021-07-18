@@ -29,8 +29,6 @@ void AFPPlayerController::BeginPlay()
 
 	IngameHud = Cast<AInGameHUD>(GetHUD());
 
-	crosshairUI = CreateWidget<UUserWidget>(this, crosshairWidget);
-	crosshairUI->AddToViewport();
 	
 	alertHudUI = CreateWidget<UUserWidget>(this, alertHudWidget);
 	alertHudUI->AddToViewport();
@@ -173,7 +171,7 @@ void AFPPlayerController::OpenInventory()
 	{
 		LockOpenUI();
 		isInventoryOpened = true;
-		crosshairUI->SetVisibility(ESlateVisibility::Hidden);
+		IngameHud->SetCrosshairInvisible();
 		inventoryUI->AddToViewport();
 		itemDetailPanel->SetVisibility(ESlateVisibility::Hidden);
 	}
@@ -186,7 +184,7 @@ void AFPPlayerController::CloseInventory()
 	{
 		UnlockCloseUI();
 		isInventoryOpened = false;
-		crosshairUI->SetVisibility(ESlateVisibility::Visible);
+		IngameHud->SetCrosshairVisible();
 		inventoryUI->RemoveFromViewport();
 		itemDetailPanel->SetVisibility(ESlateVisibility::Hidden);
 	}
@@ -437,17 +435,6 @@ void AFPPlayerController::AddSecondary(TSubclassOf<ABaseGun> pWeaponClass, UItem
 	}
 }
 
-void AFPPlayerController::SetADS()
-{
-	crosshairUI->SetVisibility(ESlateVisibility::Hidden);
-}
-
-void AFPPlayerController::SetHipfire()
-{
-	crosshairUI->SetVisibility(ESlateVisibility::Visible);
-}
-
-
 void AFPPlayerController::RemovePrimary()
 {
 	if (ownerPlayerCharacter == nullptr) 
@@ -538,7 +525,7 @@ void AFPPlayerController::UpdateInventoryUI()
 void AFPPlayerController::Dead()
 {
 	youreDeadUI->SetVisibility(ESlateVisibility::Visible);
-	crosshairUI->RemoveFromViewport();
+	IngameHud->SetCrosshairInvisible();
 	CloseInventory();
 	if(gameMode)
 	gameMode->PlayerDied();//메인화면으로 가는거 넣을것.

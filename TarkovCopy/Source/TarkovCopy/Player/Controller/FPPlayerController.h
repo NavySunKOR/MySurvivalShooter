@@ -40,14 +40,7 @@ public:
 private:
 	AInGameHUD* IngameHud;
 	//Status Render
-
-	//Crosshair Render
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<UUserWidget> crosshairWidget;
-	UPROPERTY()
-	UUserWidget* crosshairUI;
-
-
+	
 	//Mission and notify
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUserWidget> alertHudWidget;
@@ -162,9 +155,6 @@ public:
 	//무기 관련
 	void AddPrimary(TSubclassOf<ABaseGun> pWeaponClass,UItemWeapon* pItemWeapon);
 	void AddSecondary(TSubclassOf<ABaseGun> pWeaponClass, UItemWeapon* pItemWeapon);
-
-	void SetADS();
-	void SetHipfire();
 
 	void RemovePrimary();
 	void RemoveSecondary();

@@ -27,3 +27,13 @@ void AInGameHUD::GetFlashed(float pFlashTime, FVector pFlashbangPos)
 {
 	IngameHud->GetFlashed(pFlashTime, pFlashbangPos);
 }
+
+void AInGameHUD::SetCrosshairVisible()
+{
+	IngameHud->SetCrosshairVisible();
+}
+
+void AInGameHUD::SetCrosshairInvisible()
+{
+	IngameHud->SetCrosshairInvisible();
+}
