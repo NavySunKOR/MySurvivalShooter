@@ -2,11 +2,13 @@
 
 
 #include "ItemMedikit.h"
+#include "TarkovCopy/Player/Character/PlayerCharacter.h"
 #include "TarkovCopy/Player/Controller/FPPlayerController.h"
 
 void UItemMedikit::Use(AFPPlayerController* pPlayerCon)
 {
-	pPlayerCon->HealPlayer(healAmount);
+	APlayerCharacter* player = Cast<APlayerCharacter>(pPlayerCon->GetPawn());
+	player->HealPlayer(healAmount);
 	Super::Use(pPlayerCon);
 }
 

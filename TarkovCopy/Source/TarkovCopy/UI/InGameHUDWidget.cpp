@@ -71,8 +71,10 @@ void UInGameHUDWidget::UpdateHealthHud(float pCurHealth)
 void UInGameHUDWidget::ShowHitIndicator(FVector pHitDir)
 {
 	HitFromPos = pHitDir;
+	CurHitIndicatorTime = 0.f;
 	HitIndicatorFadeStartTime = HitIndicatorInterval * 0.75f;
 	HitIndicatorFadeAmount = 1 / ((HitIndicatorInterval - FlashFadeStartTime) / PROCESS_FRAMERATE);
+	HitIndicate->SetRenderOpacity(1.f);
 	GetWorldTimer().ClearTimer(HitIndicatorTimerHandle);
 	GetWorldTimer().SetTimer(HitIndicatorTimerHandle,this,&UInGameHUDWidget::IndicatorProcessing,PROCESS_FRAMERATE,true);
 }

@@ -620,8 +620,3 @@ void AFPPlayerController::CloseAlert()
 {
 	alertHudUI->SetVisibility(ESlateVisibility::Hidden);
 }
-
-void AFPPlayerController::HealPlayer(float pHealAmount)
-{
-
-}

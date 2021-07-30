@@ -122,7 +122,6 @@ private:
 	
 public:
 
-
 	bool isInventoryOpened= false;
 	FSlateRect itemContainerRect;
 	FSlateRect primaryWeaponContainerRect;
@@ -134,6 +133,9 @@ public:
 
 	//플레이어의 인터페이스 뚫기
 	TArray<UItemInfo*> GetItemContainers();
+
+	bool IsInteractable();
+	bool IsActionable();
 
 	void InitInvenotry();
 	void OpenCloseInventory();
@@ -174,9 +176,6 @@ public:
 	void Exfiling();
 	void ExfilingComplete();
 	void CancelExfiling();
-
-	//스탯 관련
-	void HealPlayer(float pHealAmount);
 
 	//파일저장
 	void SaveEquipments();

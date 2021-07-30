@@ -105,6 +105,8 @@ protected:
 
 	ATarkovCopyGameModeBase* gameMode;
 
+	bool IsActionable() const;
+
 
 public:	
 	AFPPlayerController* playerController;

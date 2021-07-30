@@ -84,8 +84,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 
 	//Movement
 	PlayerMovementComponent->Loop();
-	
-	if (isFirePressed && !IsCloseToWall())
+	if (isFirePressed && !isCloseToWall)
 	{
 		PlayerEquipmentComponent->FireWeapon();
 	}
@@ -125,30 +124,29 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 float APlayerCharacter::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	APawn* instigatorPawn = EventInstigator->GetPawn();
-
 	if (instigatorPawn == nullptr)
 	{
 		UE_LOG(LogTemp, Error, TEXT("TakeDamage's instigatorPawn is null!"))
-			return -1;
+		return -1;
 	}
 
-
-	UE_LOG(LogTemp, Warning, TEXT("TakeDamage"))
-
 	//TODO:이 비교문이 맞는지 체크 해 볼것.
-	if (DamageEvent.DamageTypeClass == UFlashDamageType::StaticClass())
+	bool isDamageTypeFlashbang = DamageEvent.DamageTypeClass == UFlashDamageType::StaticClass();
+
+	if (isDamageTypeFlashbang)
 	{
 		playerController->GetInGameHUD()->GetFlashed(Damage, DamageCauser->GetActorLocation());
 	}
 	else
 	{
 		FPointDamageEvent* damageEvent = (FPointDamageEvent*)&DamageEvent;
+		bool isGunshotWounded = damageEvent->IsOfType(FPointDamageEvent::ClassID); //총상인지 아닌지 판단. 포인트 데미지면 총상이다.
 
-		//총상인지 아닌지 판단. 포인트 데미지면 총상이다.
-		if (damageEvent->IsOfType(FPointDamageEvent::ClassID))
+		if (isGunshotWounded)
 		{
 			int generated = rand() % 10;
-			if (generated < 3) // 0,1,2 중 하나 걸리니까 30퍼센트 헤드샷
+			bool isUnder30percent = generated < 3; // 0,1,2 중 하나 걸리니까 30퍼센트 헤드샷
+			if (isUnder30percent) 
 			{
 				Damage *= 2.5f;
 				PlayerInventoryComponent->ReduceHelmetDurability(Damage);
@@ -203,13 +201,15 @@ void APlayerCharacter::Tilting(float pValue)
 
 void APlayerCharacter::AddPrimary(TSubclassOf<ABaseGun> pWeaponOrigin, UItemWeapon* pItemWeapon)
 {
-	if (PlayerEquipmentComponent->AddPrimary(pWeaponOrigin, pItemWeapon))
+	bool isAddPrimarySuccessful = PlayerEquipmentComponent->AddPrimary(pWeaponOrigin, pItemWeapon);
+	if (isAddPrimarySuccessful)
 		PlayerInventoryComponent->RemoveItem((UItemInfo*)pItemWeapon);
 }
 
 void APlayerCharacter::AddSecondary(TSubclassOf<ABaseGun> pWeaponOrigin, UItemWeapon* pItemWeapon)
 {
-	if (PlayerEquipmentComponent->AddSecondary(pWeaponOrigin, pItemWeapon))
+	bool isAddSecondarySuccessful = PlayerEquipmentComponent->AddSecondary(pWeaponOrigin, pItemWeapon);
+	if (isAddSecondarySuccessful)
 		PlayerInventoryComponent->RemoveItem((UItemInfo*)pItemWeapon);
 }
 
@@ -256,27 +256,44 @@ void APlayerCharacter::SaveEquipments()
 
 bool APlayerCharacter::IsWeaponEquiped()
 {
-	return PlayerEquipmentComponent&&PlayerEquipmentComponent->IsWeaponEquiped();
+	if (PlayerMovementComponent == nullptr)
+		return false;
+	
+	return PlayerEquipmentComponent->IsWeaponEquiped();
 }
 
 bool APlayerCharacter::IsAds()
 {
-	return PlayerEquipmentComponent && PlayerEquipmentComponent->IsAds();
+	if (PlayerMovementComponent == nullptr)
+		return false;
+
+	return PlayerEquipmentComponent->IsAds();
 }
 
 bool APlayerCharacter::IsWalking()
 {
-	return (PlayerMovementComponent && !PlayerMovementComponent->IsSprinting && GetVelocity().Size()>0) ;
+	if (PlayerMovementComponent == nullptr)
+		return false;
+
+	bool isSprinting = PlayerMovementComponent->IsSprinting;
+	bool hasSpeed = GetVelocity().Size() > 0;
+
+	return (!isSprinting && hasSpeed);
 }
 
 int APlayerCharacter::GetWeaponCode()
 {
-	return PlayerEquipmentComponent && PlayerEquipmentComponent->GetWeaponCode();
+	if (PlayerMovementComponent == nullptr)
+		return -1;
+	return PlayerEquipmentComponent->GetWeaponCode();
 }
 
 bool APlayerCharacter::IsEmptyMagazine()
 {
-	return PlayerEquipmentComponent && PlayerEquipmentComponent->IsEmptyMagazine();
+	if (PlayerMovementComponent == nullptr)
+		return false;
+
+	return PlayerEquipmentComponent->IsEmptyMagazine();
 }
 
 bool APlayerCharacter::IsCloseToWall()
@@ -286,27 +303,40 @@ bool APlayerCharacter::IsCloseToWall()
 
 bool APlayerCharacter::IsShotgun()
 {
-	return PlayerEquipmentComponent && PlayerEquipmentComponent->IsShotgun();
+	if (PlayerMovementComponent == nullptr)
+		return false;
+	return PlayerEquipmentComponent->IsShotgun();
 }
 
 int APlayerCharacter::GetReloadState()
 {
-	return PlayerEquipmentComponent && PlayerEquipmentComponent->GetReloadState();
+	if (PlayerMovementComponent == nullptr)
+		return -1;
+	return PlayerEquipmentComponent->GetReloadState();
 }
 
 bool APlayerCharacter::IsSprinting()
 {
-	return (PlayerMovementComponent && PlayerMovementComponent->IsSprinting && GetVelocity().Size() > 0);
+	if (PlayerMovementComponent == nullptr)
+		return false;
+
+	return PlayerMovementComponent->IsSprinting && GetVelocity().Size() > 0;
 }
 
 bool APlayerCharacter::IsFiring()
 {
-	return PlayerEquipmentComponent && PlayerEquipmentComponent->IsFiring();
+	if (PlayerEquipmentComponent == nullptr)
+		return false;
+
+	return PlayerEquipmentComponent->IsFiring();
 }
 
 bool APlayerCharacter::IsReloading()
 {
-	return PlayerEquipmentComponent && PlayerEquipmentComponent->IsReloading();
+	if (PlayerEquipmentComponent == nullptr)
+		return false;
+
+	return PlayerEquipmentComponent->IsReloading();
 }
 
 void APlayerCharacter::MoveVertical(float pValue)
@@ -341,7 +371,13 @@ void APlayerCharacter::EquipSecondary()
 
 void APlayerCharacter::FireWeapon()
 {
-	if (playerController->isInventoryOpened || gameMode->isPlayerDied || gameMode->isPlayerEscaped || gameMode->isPauseMenuOpened)
+	//인벤토리가 열렸는지?
+	if (playerController->isInventoryOpened)
+		return;
+
+	//액션이 가능한지?
+	bool isActionable = IsActionable();
+	if (isActionable)
 	{
 		return;
 	}
@@ -364,15 +400,19 @@ void APlayerCharacter::FireUpWeapon()
 
 void APlayerCharacter::SetADSWeapon()
 {
+	//인벤토리가 열렸는지?
 	if (playerController->isInventoryOpened)
 	{
 		return;
 	}
 
-	if (gameMode && (gameMode->isPlayerDied || gameMode->isPlayerEscaped || gameMode->isPauseMenuOpened))
+	//행동이 가능한지?
+	bool isActionable = IsActionable();
+	if (!isActionable)
 		return;
 
-	if (IsCloseToWall())
+	//벽과 가까운지?
+	if (isCloseToWall)
 		return;
 
 	PlayerEquipmentComponent->SetADSWeapon();
@@ -381,7 +421,9 @@ void APlayerCharacter::SetADSWeapon()
 
 void APlayerCharacter::SetHipfireWeapon()
 {
-	if (gameMode && (gameMode->isPlayerDied || gameMode->isPlayerEscaped || gameMode->isPauseMenuOpened))
+	//행동이 가능한지?
+	bool isActionable = IsActionable();
+	if (!isActionable)
 		return;
 
 	PlayerEquipmentComponent->SetHipfireWeapon();
@@ -390,34 +432,47 @@ void APlayerCharacter::SetHipfireWeapon()
 
 void APlayerCharacter::ReloadWeapon()
 {
-
-	if (gameMode && (gameMode->isPlayerDied || gameMode->isPlayerEscaped || gameMode->isPauseMenuOpened))
+	// 행동이 가능한지?
+	bool isActionable = IsActionable(); 
+	if (!isActionable)
 		return;
-	if (PlayerInventoryComponent->IsUsingInventory())
+
+	// 인벤토리 사용 중인지?
+	bool isUsingInventory = PlayerInventoryComponent->IsUsingInventory(); 
+	if (isUsingInventory)
 		return;
 
-	if (PlayerEquipmentComponent->CanReloadWeapon())
+	// 무기를 장전 할 수 있는지?
+	bool canReloadWeapon = PlayerEquipmentComponent->CanReloadWeapon(); 
+	if (!canReloadWeapon)
+		return;
+
+	// 무기를 장전해야하는지?
+	int needAmmo = PlayerEquipmentComponent->GetNeedAmmoForReload();
+	bool isNeedAmmoForWeapon = needAmmo > 0; 
+	if (!isNeedAmmoForWeapon)
+		return;
+
+	//무기를 장전하기 위하여 충분한 탄약이 있는지?
+	FString weaponName = PlayerEquipmentComponent->GetCurrentEquipedWepaon()->GetClass()->GetName();
+	bool haveEnoughAmmoForReload = PlayerInventoryComponent->HaveEnoughAmmoForReload(weaponName,
+		PlayerEquipmentComponent->IsPrimaryWeaponEquiped(), needAmmo); 
+	if (!haveEnoughAmmoForReload)
+		return;
+
+
+	//주무기를 장착 중인지?
+	bool isPrimaryWeaponEquiped = PlayerEquipmentComponent->IsPrimaryWeaponEquiped();
+	if (isPrimaryWeaponEquiped)
 	{
-		int needAmmo = PlayerEquipmentComponent->GetNeedAmmoForReload();
-		if (needAmmo > 0)
-		{
-			FString weaponName = PlayerEquipmentComponent->GetCurrentEquipedWepaon()->GetClass()->GetName();
-			if (PlayerInventoryComponent->HaveEnoughAmmoForReload(weaponName, PlayerEquipmentComponent->IsPrimaryWeaponEquiped(), needAmmo))
-				return;
-
-			if (PlayerEquipmentComponent->IsPrimaryWeaponEquiped())
-			{
-				PlayerInventoryComponent->UsePrimaryAmmo(needAmmo, weaponName);
-			}
-			else
-			{
-				PlayerInventoryComponent->UseSecondaryAmmo(needAmmo, weaponName);
-			}
-
-			PlayerEquipmentComponent->ActualReloadWeapon(needAmmo);
-		}
+		PlayerInventoryComponent->UsePrimaryAmmo(needAmmo, weaponName);
+	}
+	else
+	{
+		PlayerInventoryComponent->UseSecondaryAmmo(needAmmo, weaponName);
 	}
 
+	PlayerEquipmentComponent->ActualReloadWeapon(needAmmo);
 	playerController->UpdateInventoryUI();
 
 }
@@ -429,19 +484,30 @@ void APlayerCharacter::SetWeaponSelector()
 
 void APlayerCharacter::Interact()
 {
-	if (playerController->isInventoryOpened || gameMode->isPlayerDied || gameMode->isPlayerEscaped || gameMode->isPauseMenuOpened)
+	//인벤토리가 열렸는지
+	if (playerController->isInventoryOpened)
 	{
 		return;
 	}
+
+	//행동이 가능한지?
+	bool isActionable = IsActionable();
+	if (!isActionable)
+	{
+		return;
+	}
+
+	//컨트롤러 null일 시 패스
+	APlayerController* con = Cast<APlayerController>(GetController());
+	if (con == nullptr)
+		return;
+
 	FHitResult hit;
 	FVector start;
 	FRotator dir;
 	FCollisionQueryParams param;
 	param.AddIgnoredActor(this);
 
-	APlayerController* con = Cast<APlayerController>(GetController());
-	if (con == nullptr)
-		return;
 	con->GetPlayerViewPoint(start, dir);
 
 	if (GetWorld()->LineTraceSingleByChannel(hit, start, start + dir.Vector() * 800.f, ECollisionChannel::ECC_Pawn, param))
@@ -465,10 +531,14 @@ void APlayerCharacter::Interact()
 
 void APlayerCharacter::InspectWeapon()
 {
-	if (gameMode && (gameMode->isPlayerDied || gameMode->isPlayerEscaped || gameMode->isPauseMenuOpened))
+	//행동이 가능한지?
+	bool isActionable = IsActionable();
+	if (!isActionable)
 		return;
 
-	if (IsSprinting())
+	//달리고 있는지?
+	bool isSprinting = IsSprinting();
+	if (isSprinting)
 		return;
 
 	PlayerEquipmentComponent->InspectWeapon();
@@ -476,9 +546,14 @@ void APlayerCharacter::InspectWeapon()
 
 void APlayerCharacter::Inventory()
 {
-	if (gameMode && (gameMode->isPlayerDied || gameMode->isPlayerEscaped || gameMode->isPauseMenuOpened))
+	//행동이 가능한지?
+	bool isActionable = IsActionable();
+	if (!isActionable)
 		return;
-	if (IsAds())
+
+	//조준 중인가?
+	bool isAds = IsAds();
+	if (isAds)
 	{
 		SetHipfireWeapon();
 	}
@@ -488,11 +563,15 @@ void APlayerCharacter::Inventory()
 
 void APlayerCharacter::ThrowGrenade()
 {
-	if (gameMode && (gameMode->isPlayerDied || gameMode->isPlayerEscaped || gameMode->isPauseMenuOpened))
+	//행동이 가능한지?
+	bool isActionable = IsActionable();
+	if (!isActionable)
 		return;
 
+	//아이템을 가지고 있는지?
 	UItemInfo* itemReference = nullptr;
-	if (!PlayerInventoryComponent->HasItemType(itemReference,ItemType::GRENADE))
+	bool hasItemType = PlayerInventoryComponent->HasItemType(itemReference, ItemType::GRENADE);
+	if (!hasItemType)
 	{
 		return;
 	}
@@ -503,11 +582,17 @@ void APlayerCharacter::ThrowGrenade()
 
 void APlayerCharacter::ThrowFlashGrenade()
 {
-	if (gameMode && (gameMode->isPlayerDied || gameMode->isPlayerEscaped || gameMode->isPauseMenuOpened))
+	//행동이 가능한가?
+	bool isActionable = IsActionable();
+	if (!isActionable)
+	{
 		return;
+	};
+	
+	//아이템이 사용이 가능한가?
 	UItemInfo* itemReference = nullptr;
-
-	if (!PlayerInventoryComponent->HasItemType(itemReference, ItemType::FLASHGRENADE))
+	bool hasItem = PlayerInventoryComponent->HasItemType(itemReference, ItemType::FLASHGRENADE);
+	if (!hasItem)
 	{
 		return;
 	}
@@ -520,4 +605,28 @@ void APlayerCharacter::ThrowFlashGrenade()
 void APlayerCharacter::HealPlayer(float pHealAmount)
 {
 	PlayerStatusComponent->HealPlayer(pHealAmount);
+}
+
+bool APlayerCharacter::IsActionable() const
+{
+	//gamemode가 null인지?
+	if (gameMode == nullptr)
+		return false;
+	
+	//플레이어가 사망 했는지?
+	bool isPlayerDied = gameMode->isPlayerDied;
+	if (isPlayerDied)
+		return false;
+
+	//플레이어가 탈출 했는지?
+	bool isPlayerEscaped = gameMode->isPlayerEscaped;
+	if (isPlayerEscaped)
+		return false;
+
+	//메뉴가 열렸는지?
+	bool isPauseMenuOpened = gameMode->isPauseMenuOpened;
+	if (isPauseMenuOpened)
+		return false;
+	else
+		return true;
 }
