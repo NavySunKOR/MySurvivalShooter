@@ -17,7 +17,7 @@ class UItemHelmet;
 class UItemWeapon;
 class UInventory;
 class AFPPlayerController;
-class ATarkovCopyGameModeBase;
+class AEscapeGameMode;
 class FSlateRect;
 class UPlayerStatusComponent;
 class UPlayerMovementComponent;
@@ -103,7 +103,7 @@ protected:
 	TSubclassOf<ABaseGun> m9Origin;
 
 
-	ATarkovCopyGameModeBase* gameMode;
+	AEscapeGameMode* gameMode;
 
 	bool IsActionable() const;
 

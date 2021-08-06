@@ -55,7 +55,7 @@ void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	helmetMesh = Cast<UStaticMeshComponent>(GetDefaultSubobjectByName(TEXT("Helmet")));
-	gameMode = Cast<ATarkovCopyGameModeBase>(GetWorld()->GetAuthGameMode());
+	gameMode = Cast<AEscapeGameMode>(GetWorld()->GetAuthGameMode());
 	springArm = FindComponentByClass<USpringArmComponent>();
 	springArmOrigin = GetMesh()->GetRelativeLocation();
 	playerController = Cast<AFPPlayerController>(GetController());
@@ -69,6 +69,7 @@ void APlayerCharacter::BeginPlay()
 	PlayerMovementComponent->InitMovementComponent(playerController, this, PlayerStatusComponent->DefaultSprintingSpeed
 		, PlayerStatusComponent->DefaultWalkingSpeed
 		, PlayerStatusComponent->DefaultAdsWalkingSpeed);
+
 
 }
 

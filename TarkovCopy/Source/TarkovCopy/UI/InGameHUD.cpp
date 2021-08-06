@@ -3,14 +3,20 @@
 
 #include "InGameHUD.h"
 #include "InGameHUDWidget.h"
+#include "InGameHUDTopRightWidget.h"
 #include <Blueprint/UserWidget.h>
 
 void AInGameHUD::BeginPlay()
 {
 	Super::BeginPlay();
-	if(IngameHud ==nullptr)
+	if (IngameHud == nullptr)
 		IngameHud = CreateWidget<UInGameHUDWidget>(GetOwningPlayerController(), IngameHudWidgetClass);
 	IngameHud->AddToViewport(0);
+
+
+	if (IngameHudTopRight == nullptr)
+		IngameHudTopRight = CreateWidget<UInGameHUDTopRightWidget>(GetOwningPlayerController(), IngameHudTopRightWidgetClass);
+	IngameHudTopRight->AddToViewport(0);
 }
 
 void AInGameHUD::UpdateHealthHud(float pCurHealth)
@@ -36,4 +42,14 @@ void AInGameHUD::SetCrosshairVisible()
 void AInGameHUD::SetCrosshairInvisible()
 {
 	IngameHud->SetCrosshairInvisible();
+}
+
+void AInGameHUD::ShowQuestInfo(FString itemName, float distance)
+{
+	IngameHudTopRight->ShowQuestInfo(itemName, distance);
+}
+
+void AInGameHUD::ShowExfilPoints(FString exfilPointsName, float distance)
+{
+	IngameHudTopRight->ShowExfilPoints(exfilPointsName, distance);
 }

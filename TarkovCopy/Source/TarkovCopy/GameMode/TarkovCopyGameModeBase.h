@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/GameModeBase.h"
+#include "GameFramework/GameMode.h"
 #include "TarkovCopyGameModeBase.generated.h"
 
 /**
@@ -33,7 +33,7 @@ enum class OnOffType : uint8
 };
 
 UCLASS()
-class TARKOVCOPY_API ATarkovCopyGameModeBase : public AGameModeBase
+class TARKOVCOPY_API ATarkovCopyGameModeBase : public AGameMode
 {
 	GENERATED_BODY()
 public:

@@ -3,10 +3,37 @@
 
 #include "EscapeGameMode.h"
 #include <Kismet/GameplayStatics.h>
+#include <GameFramework/GameSession.h>
 #include <Runtime/Engine/Public/EngineUtils.h>
-#include <TarkovCopy/Player/Controller/FPPlayerController.h>
+#include "TarkovCopy/Player/Controller/FPPlayerController.h"
+#include "TarkovCopy/UI/InGameHUD.h"
 #include "TarkovCopy/Interactable/QuestItem.h"
 #include <Engine/TriggerBox.h>
+
+
+void AEscapeGameMode::StartPlay()
+{
+	Super::StartPlay();
+}
+
+void AEscapeGameMode::PostLogin(APlayerController* pPlayerCon)
+{
+	Super::PostLogin(pPlayerCon);
+}
+
+void AEscapeGameMode::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+	if (GetMatchState() == MatchState::InProgress)
+	{
+		if (!isInitializedComplete)
+		{
+			playerCon = Cast<AFPPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+			SelectQuestItems();
+			isInitializedComplete = true;
+		}
+	}
+}
 
 void AEscapeGameMode::SelectQuestItems()
 {
@@ -22,13 +49,11 @@ void AEscapeGameMode::SelectQuestItems()
 	activeQuestItem = allQuestItems[num];
 	activeQuestItem->SetActorHiddenInGame(false);
 
-
-	playerCon = Cast<AFPPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-	if (playerCon != nullptr)
+	AInGameHUD* ingameHud = Cast<AInGameHUD>(playerCon->GetHUD());
+	if (ingameHud)
 	{
-		playerCon->ShowQuestInfo(activeQuestItem->GetName(), (activeQuestItem->GetActorLocation() - playerCon->GetPawn()->GetActorLocation()).Size() / 100.f);
+		ingameHud->ShowQuestInfo(activeQuestItem->GetName(), (activeQuestItem->GetActorLocation() - playerCon->GetPawn()->GetActorLocation()).Size() / 100.f);
 	}
-
 }
 void AEscapeGameMode::SelectExfilPoint()
 {
@@ -46,13 +71,14 @@ void AEscapeGameMode::SelectExfilPoint()
 
 	if (playerCon != nullptr)
 	{
-		playerCon->ShowExfilPoints(activeExfilPoint->GetName(), (activeExfilPoint->GetActorLocation() - playerCon->GetPawn()->GetActorLocation()).Size() / 100.f);
+		AInGameHUD* ingameHud = Cast<AInGameHUD>(playerCon->GetHUD());
+		if (ingameHud)
+		{
+			ingameHud->ShowExfilPoints(activeExfilPoint->GetName(), (activeExfilPoint->GetActorLocation() - playerCon->GetPawn()->GetActorLocation()).Size() / 100.f);
+		}
 	}
 }
-void AEscapeGameMode::StartPlay()
-{
-	Super::StartPlay();
-}
+
 void AEscapeGameMode::QuestCompleted(AInteractableObject* questItem)
 {
 	if (activeQuestItem == questItem)

@@ -42,10 +42,6 @@ private:
 	//Status Render
 	
 	//Mission and notify
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<UUserWidget> alertHudWidget;
-	UPROPERTY()
-	UUserWidget* alertHudUI;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUserWidget> exfilAlertWidget;
@@ -98,12 +94,6 @@ private:
 	AEscapeGameMode* gameMode;
 
 	UPROPERTY()
-	UTextBlock* alertTypeText;
-	UPROPERTY()
-	UTextBlock* missionObjectText;
-	UPROPERTY()
-	UTextBlock* rangeText;
-	UPROPERTY()
 	UTextBlock* exfilTimerText;
 
 	UPROPERTY()
@@ -114,8 +104,6 @@ private:
 	bool isExfiling = false;
 	float timeToExfil = 5.f;
 	float exfilCounter = 0.f;
-
-	void CloseAlert();
 
 	void OpenInventory();
 	void CloseInventory();
@@ -170,8 +158,6 @@ public:
 	void Dead();
 
 	//Äù½ºÆ® °ü·Ã
-	void ShowQuestInfo(FString itemName, float distance);
-	void ShowExfilPoints(FString exfilPointsName, float distance);
 	void ShowCannotExfil();
 	void Exfiling();
 	void ExfilingComplete();

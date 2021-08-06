@@ -29,10 +29,6 @@ void AFPPlayerController::BeginPlay()
 
 	IngameHud = Cast<AInGameHUD>(GetHUD());
 
-	
-	alertHudUI = CreateWidget<UUserWidget>(this, alertHudWidget);
-	alertHudUI->AddToViewport();
-
 	exfilAlertUI = CreateWidget<UUserWidget>(this, exfilAlertWidget);
 	exfilAlertUI->AddToViewport();
 
@@ -42,21 +38,11 @@ void AFPPlayerController::BeginPlay()
 	youveEscapedUI = CreateWidget<UUserWidget>(this, youveEscapedWidget);
 	youveEscapedUI->AddToViewport(2);
 
-	alertHudUI->SetVisibility(ESlateVisibility::Hidden);
 	exfilAlertUI->SetVisibility(ESlateVisibility::Hidden);
 	youveEscapedUI->SetVisibility(ESlateVisibility::Hidden);
 	youreDeadUI->SetVisibility(ESlateVisibility::Hidden);
 
-	alertTypeText = Cast<UTextBlock>(alertHudUI->GetWidgetFromName(TEXT("AlertType")));
-	missionObjectText = Cast<UTextBlock>(alertHudUI->GetWidgetFromName(TEXT("Object")));
-	rangeText = Cast<UTextBlock>(alertHudUI->GetWidgetFromName(TEXT("Range")));
 	exfilTimerText = Cast<UTextBlock>(exfilAlertUI->GetWidgetFromName(TEXT("ExfilTimer")));
-	
-	gameMode = GetWorld()->GetAuthGameMode<AEscapeGameMode>();
-	if(gameMode)
-		gameMode->SelectQuestItems();
-
-
 }
 
 void AFPPlayerController::PlayerTick(float DeltaTime)
@@ -531,41 +517,6 @@ void AFPPlayerController::Dead()
 	gameMode->PlayerDied();//메인화면으로 가는거 넣을것.
 }
 
-void AFPPlayerController::ShowQuestInfo(FString itemName, float distance)
-{
-	alertHudUI->SetVisibility(ESlateVisibility::Visible);
-	alertTypeText->SetText(FText::FromString("Quest"));
-
-	FString objectMessage = "Get the ";
-	objectMessage.Append(itemName);
-	missionObjectText->SetText(FText::FromString(objectMessage));
-
-	FString rangeString = FString::FormatAsNumber((int)distance);
-	rangeString.Append("m");
-	rangeText->SetText(FText::FromString(rangeString));
-
-	FTimerHandle timers;
-	GetWorldTimerManager().SetTimer(timers,this,&AFPPlayerController::CloseAlert, 3.f, false);
-}
-
-void AFPPlayerController::ShowExfilPoints(FString exfilPointsName, float distance)
-{
-	alertHudUI->SetVisibility(ESlateVisibility::Visible);
-
-	alertTypeText->SetText(FText::FromString("Exfil"));
-
-	FString objectMessage = "Get to the ";
-	objectMessage.Append(exfilPointsName);
-	missionObjectText->SetText(FText::FromString(objectMessage));
-
-	FString rangeString = FString::FormatAsNumber((int)distance);
-	rangeString.Append("m");
-	rangeText->SetText(FText::FromString(rangeString));
-
-	FTimerHandle timers;
-	GetWorldTimerManager().SetTimer(timers, this, &AFPPlayerController::CloseAlert, 3.f, false);
-}
-
 
 void AFPPlayerController::ShowCannotExfil()
 {
@@ -614,9 +565,4 @@ void AFPPlayerController::UseCurrentActiveItem()
 void AFPPlayerController::DiscardCurrentActiveItem()
 {
 	currentActiveItemIcon->DropItem();
-}
-
-void AFPPlayerController::CloseAlert()
-{
-	alertHudUI->SetVisibility(ESlateVisibility::Hidden);
 }

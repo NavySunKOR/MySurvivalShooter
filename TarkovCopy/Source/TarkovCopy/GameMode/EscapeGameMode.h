@@ -26,14 +26,17 @@ private:
 	//Exfil
 	TArray<AActor*> allExfilPoints;
 	AActor* activeExfilPoint;
-
-
 	AFPPlayerController* playerCon;
 
+	bool isInitializedComplete = false;
+
+protected:
+	virtual void Tick(float DeltaSeconds) override;
 public:
 	void SelectQuestItems();
 	void SelectExfilPoint();
 	virtual void StartPlay() override;
+	virtual void PostLogin(APlayerController* pPlayerCon) override;
 	virtual void QuestCompleted(AInteractableObject* questItem) override;
 	virtual void TryExfil() override;
 	virtual void CancelExfil() override;

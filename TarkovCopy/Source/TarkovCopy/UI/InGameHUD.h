@@ -10,6 +10,7 @@
  * 
  */
 class UInGameHUDWidget;
+class UInGameHUDTopRightWidget;
 UCLASS()
 class TARKOVCOPY_API AInGameHUD : public AHUD
 {
@@ -20,11 +21,20 @@ protected:
 	TSubclassOf<UInGameHUDWidget> IngameHudWidgetClass;
 	UPROPERTY()
 	UInGameHUDWidget* IngameHud;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UInGameHUDTopRightWidget> IngameHudTopRightWidgetClass;
+	UPROPERTY()
+	UInGameHUDTopRightWidget* IngameHudTopRight;
+
 public:
 	void UpdateHealthHud(float pCurHealth);
 	void ShowHitIndicator(FVector pHitDir);
 	void GetFlashed(float pFlashTime, FVector pFlashbangPos);
 	void SetCrosshairVisible();
 	void SetCrosshairInvisible();
+
+	void ShowQuestInfo(FString itemName, float distance);
+	void ShowExfilPoints(FString exfilPointsName, float distance);
 
 };
