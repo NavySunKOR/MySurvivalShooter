@@ -122,13 +122,8 @@ public:
 	//플레이어의 인터페이스 뚫기
 	TArray<UItemInfo*> GetItemContainers();
 
-	bool IsInteractable();
-	bool IsActionable();
-
 	void InitInvenotry();
 	void OpenCloseInventory();
-	void LockOpenUI();
-	void UnlockCloseUI();
 	void OpenItemDetailPanel(UItemIcon* pItemIcon);
 
 	//Item 이동 관련

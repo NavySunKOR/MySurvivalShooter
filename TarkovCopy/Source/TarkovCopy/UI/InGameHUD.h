@@ -11,6 +11,7 @@
  */
 class UInGameHUDWidget;
 class UInGameHUDTopRightWidget;
+class UInGameHUDPauseMenuWidget;
 UCLASS()
 class TARKOVCOPY_API AInGameHUD : public AHUD
 {
@@ -27,7 +28,18 @@ protected:
 	UPROPERTY()
 	UInGameHUDTopRightWidget* IngameHudTopRight;
 
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UInGameHUDPauseMenuWidget> IngameHudPauseMenuClass;
+	UPROPERTY()
+	UInGameHUDPauseMenuWidget* IngameHudPauseMenu;
+
 public:
+	bool IsPauseMenuOpened();
+	void OpenClosePauseMenu();
+	void LockInput();
+	void UnlockInput();
+
 	void UpdateHealthHud(float pCurHealth);
 	void ShowHitIndicator(FVector pHitDir);
 	void GetFlashed(float pFlashTime, FVector pFlashbangPos);

@@ -70,7 +70,7 @@ void APlayerCharacter::BeginPlay()
 		, PlayerStatusComponent->DefaultWalkingSpeed
 		, PlayerStatusComponent->DefaultAdsWalkingSpeed);
 
-
+	IngameHUD = Cast<AInGameHUD>(playerController->GetHUD());
 }
 
 UInventory* APlayerCharacter::GetInventory()
@@ -113,7 +113,8 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAction(TEXT("InspectWeapon"), EInputEvent::IE_Pressed, this, &APlayerCharacter::InspectWeapon);
 	PlayerInputComponent->BindAction(TEXT("ThrowGrenade"), EInputEvent::IE_Pressed, this, &APlayerCharacter::ThrowGrenade);
 	PlayerInputComponent->BindAction(TEXT("ThrowFlashGrenade"), EInputEvent::IE_Pressed, this, &APlayerCharacter::ThrowFlashGrenade);
-
+	PlayerInputComponent->BindAction(TEXT("PauseMenu"), EInputEvent::IE_Pressed, this, &APlayerCharacter::PauseMenu);
+	
 	PlayerInputComponent->BindAxis(TEXT("Tilting"), this, &APlayerCharacter::Tilting);
 	PlayerInputComponent->BindAxis(TEXT("MoveVertical"), this, &APlayerCharacter::MoveVertical);
 	PlayerInputComponent->BindAxis(TEXT("MoveHorizontal"), this, &APlayerCharacter::MoveHorizontal);
@@ -562,6 +563,11 @@ void APlayerCharacter::Inventory()
 	playerController->OpenCloseInventory();
 }
 
+void APlayerCharacter::PauseMenu()
+{
+	IngameHUD->OpenClosePauseMenu();
+}
+
 void APlayerCharacter::ThrowGrenade()
 {
 	//행동이 가능한지?
@@ -625,7 +631,7 @@ bool APlayerCharacter::IsActionable() const
 		return false;
 
 	//메뉴가 열렸는지?
-	bool isPauseMenuOpened = gameMode->isPauseMenuOpened;
+	bool isPauseMenuOpened = IngameHUD && IngameHUD->IsPauseMenuOpened();
 	if (isPauseMenuOpened)
 		return false;
 	else

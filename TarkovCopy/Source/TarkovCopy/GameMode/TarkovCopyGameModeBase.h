@@ -42,44 +42,14 @@ private:
 	TArray<AAICharacter*> aiPlayers;
 	TSubclassOf<AAICharacter> aiCharacter;
 
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<UUserWidget> pauseMenuWidgetOrigin;
-	UPROPERTY()
-	UUserWidget* pauseMenuWidget;
-
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<UUserWidget> optionMenuWidgetOrigin;
-	UPROPERTY()
-	UUserWidget* optionMenuWidget;
-
-
 	//pause menu buttons
 
 	void InitializeAI();
-	void InitializeSystemUI();
 	void ReturnToMainMenu();
 
 
 protected:
 	virtual void BeginPlay() override;
-	virtual void Tick(float DeltaSeconds) override;
-
-	void OpenPauseMenu();
-
-	UFUNCTION(BlueprintCallable)
-	void ClosePauseMenu();
-
-	UFUNCTION(BlueprintCallable)
-	void ResumeGame();
-
-	UFUNCTION(BlueprintCallable)
-	void QuitGame();
-
-	UFUNCTION(BlueprintCallable)
-	void OpenOptionMenu();
-
-	UFUNCTION(BlueprintCallable)
-	void CloseOptionMenu();
 
 public:
 	UPROPERTY(EditAnywhere)
@@ -99,7 +69,6 @@ public:
 	
 	bool isPlayerDied = false;
 	bool isPlayerEscaped = false;
-	bool isPauseMenuOpened = false;
 
 	virtual void PlayerDied();
 	virtual void QuestCompleted(AInteractableObject* questItem);

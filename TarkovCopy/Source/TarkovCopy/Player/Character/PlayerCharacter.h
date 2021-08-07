@@ -12,6 +12,7 @@ class AHandGrenade;
 class ACharacter;
 class ABulletProjectile;
 class ABaseGun;
+class AInGameHUD;
 class UItemInfo;
 class UItemHelmet;
 class UItemWeapon;
@@ -89,6 +90,7 @@ protected:
 	void Interact();
 	void InspectWeapon();
 	void Inventory();
+	void PauseMenu();
 
 	//¼ö·ùÅº
 	void ThrowGrenade();
@@ -104,6 +106,7 @@ protected:
 
 
 	AEscapeGameMode* gameMode;
+	AInGameHUD* IngameHUD;
 
 	bool IsActionable() const;
 

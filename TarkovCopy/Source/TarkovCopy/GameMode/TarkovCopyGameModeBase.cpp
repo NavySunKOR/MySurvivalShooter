@@ -26,57 +26,12 @@ void ATarkovCopyGameModeBase::ReturnToMainMenu()
 {
 	UGameplayStatics::OpenLevel(GetWorld(), TEXT("MainMenu"));
 }
-void ATarkovCopyGameModeBase::OpenPauseMenu()
-{
-	isPauseMenuOpened = true;
-	playerController->UnlockCloseUI();
-	playerController->LockOpenUI();
-	pauseMenuWidget->AddToViewport();
-}
-void ATarkovCopyGameModeBase::ClosePauseMenu()
-{
-	isPauseMenuOpened = false;
-	playerController->UnlockCloseUI();
-	pauseMenuWidget->RemoveFromViewport();
-}
+
 void ATarkovCopyGameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
 	playerController = Cast<AFPPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 	InitializeAI();
-	InitializeSystemUI();
-}
-
-void ATarkovCopyGameModeBase::Tick(float DeltaSeconds)
-{
-	Super::Tick(DeltaSeconds);
-	if (playerController == nullptr)
-	{
-		playerController = Cast<AFPPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-	}
-
-	if (playerController->WasInputKeyJustPressed(EKeys::Tab))
-	{
-		if (optionMenuWidget->IsInViewport())
-		{
-			CloseOptionMenu();
-			ClosePauseMenu();
-		}
-		else
-		{
-			if (!pauseMenuWidget->IsInViewport())
-			{
-				//메뉴 열기
-				OpenPauseMenu();
-			}
-			else
-			{
-				//메뉴 닫기
-				ClosePauseMenu();
-			}
-		}
-
-	}
 }
 
 void ATarkovCopyGameModeBase::InitializeAI()
@@ -91,12 +46,6 @@ void ATarkovCopyGameModeBase::InitializeAI()
 		character->SetActorLocation(spawnPoint->GetActorLocation());
 		aiPlayers.Add(character);
 	}
-}
-
-void ATarkovCopyGameModeBase::InitializeSystemUI()
-{
-	pauseMenuWidget = CreateWidget<UUserWidget>(playerController, pauseMenuWidgetOrigin);
-	optionMenuWidget = CreateWidget<UUserWidget>(playerController, optionMenuWidgetOrigin);
 }
 
 void ATarkovCopyGameModeBase::PlayerDied()
@@ -131,32 +80,4 @@ void ATarkovCopyGameModeBase::TryExfil()
 void ATarkovCopyGameModeBase::CancelExfil()
 {
 
-}
-
-//BlueprintCallables
-
-void ATarkovCopyGameModeBase::ResumeGame()
-{
-	ClosePauseMenu();
-}
-
-void ATarkovCopyGameModeBase::QuitGame()
-{
-	UGameplayStatics::OpenLevel(GetWorld(), TEXT("MainMenu"));
-}
-
-void ATarkovCopyGameModeBase::OpenOptionMenu()
-{
-	ClosePauseMenu(); 
-
-	isPauseMenuOpened = true;
-	playerController->LockOpenUI();
-	optionMenuWidget->AddToViewport();
-}
-
-void ATarkovCopyGameModeBase::CloseOptionMenu()
-{
-	isPauseMenuOpened = false;
-	optionMenuWidget->RemoveFromViewport();
-	OpenPauseMenu();
 }
