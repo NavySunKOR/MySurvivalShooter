@@ -6,6 +6,7 @@
 #include "InGameHUDTopRightWidget.h"
 #include "InGameHUDPauseMenuWidget.h"
 #include <Blueprint/UserWidget.h>
+#include <Blueprint/WidgetBlueprintLibrary.h>
 
 void AInGameHUD::BeginPlay()
 {
@@ -21,6 +22,9 @@ void AInGameHUD::BeginPlay()
 
 	if(IngameHudPauseMenu == nullptr)
 		IngameHudPauseMenu = CreateWidget<UInGameHUDPauseMenuWidget>(GetOwningPlayerController(), IngameHudPauseMenuClass);
+
+	IngameHudPauseMenu->AddToViewport(0);
+	IngameHudPauseMenu->SetVisibility(ESlateVisibility::Hidden);
 }
 
 bool AInGameHUD::IsPauseMenuOpened()
@@ -30,15 +34,15 @@ bool AInGameHUD::IsPauseMenuOpened()
 
 void AInGameHUD::OpenClosePauseMenu()
 {
-	if (IngameHudPauseMenu->IsInViewport())
+	if (IngameHudPauseMenu->IsVisible())
 	{
+		IngameHudPauseMenu->SetVisibility(ESlateVisibility::Hidden);
 		IngameHudPauseMenu->OpenClosePauseMenu();
-		IngameHudPauseMenu->RemoveFromViewport();
 		UnlockInput();
 	}
 	else
 	{
-		IngameHudPauseMenu->AddToViewport(0);
+		IngameHudPauseMenu->SetVisibility(ESlateVisibility::Visible);
 		IngameHudPauseMenu->OpenClosePauseMenu();
 		LockInput();
 	}
@@ -47,20 +51,12 @@ void AInGameHUD::OpenClosePauseMenu()
 
 void AInGameHUD::LockInput()
 {
-	PlayerOwner->bShowMouseCursor = true;
-	PlayerOwner->bEnableClickEvents = true;
-	PlayerOwner->bEnableMouseOverEvents = true;
-	PlayerOwner->SetIgnoreLookInput(true);
-	PlayerOwner->SetIgnoreMoveInput(true);
+	GetOwningPlayerController()->SetInputMode(FInputModeGameAndUI());
 }
 
 void AInGameHUD::UnlockInput()
 {
-	PlayerOwner->bShowMouseCursor = false;
-	PlayerOwner->bEnableClickEvents = false;
-	PlayerOwner->bEnableMouseOverEvents = false;
-	PlayerOwner->SetIgnoreLookInput(false);
-	PlayerOwner->SetIgnoreMoveInput(false);
+	GetOwningPlayerController()->SetInputMode(FInputModeGameOnly());
 }
 
 void AInGameHUD::UpdateHealthHud(float pCurHealth)
