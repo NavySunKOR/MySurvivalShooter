@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/HUD.h"
+#include "TarkovCopy/Core/Enums.h"
 #include "InGameHUD.generated.h"
 
 /**
@@ -12,6 +13,7 @@
 class UInGameHUDWidget;
 class UInGameHUDTopRightWidget;
 class UInGameHUDPauseMenuWidget;
+class UInGameHUDGameEndWidget;
 UCLASS()
 class TARKOVCOPY_API AInGameHUD : public AHUD
 {
@@ -34,6 +36,11 @@ protected:
 	UPROPERTY()
 	UInGameHUDPauseMenuWidget* IngameHudPauseMenu;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UInGameHUDGameEndWidget> IngameHUDGameEndClass;
+	UPROPERTY()
+	UInGameHUDGameEndWidget* IngameHUDGameEnd;
+
 public:
 	bool IsPauseMenuOpened();
 	void OpenClosePauseMenu();
@@ -49,4 +56,8 @@ public:
 	void ShowQuestInfo(FString itemName, float distance);
 	void ShowExfilPoints(FString exfilPointsName, float distance);
 
+	void ShowGameResult(EGameEndType pEnum);
+
+	void ShowExfilStatus();
+	void HideExfilStatus();
 };

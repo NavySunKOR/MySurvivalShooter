@@ -93,3 +93,17 @@ void AInGameHUD::ShowExfilPoints(FString exfilPointsName, float distance)
 {
 	IngameHudTopRight->ShowExfilPoints(exfilPointsName, distance);
 }
+
+void AInGameHUD::ShowGameResult(EGameEndType pEnum)
+{
+
+}
+
+void AInGameHUD::ShowExfilStatus()
+{
+}
+
+void AInGameHUD::HideExfilStatus()
+{
+
+}

@@ -29,20 +29,7 @@ void AFPPlayerController::BeginPlay()
 
 	IngameHud = Cast<AInGameHUD>(GetHUD());
 
-	exfilAlertUI = CreateWidget<UUserWidget>(this, exfilAlertWidget);
-	exfilAlertUI->AddToViewport();
 
-	youreDeadUI = CreateWidget<UUserWidget>(this, youreDeadWidget);
-	youreDeadUI->AddToViewport(2);
-
-	youveEscapedUI = CreateWidget<UUserWidget>(this, youveEscapedWidget);
-	youveEscapedUI->AddToViewport(2);
-
-	exfilAlertUI->SetVisibility(ESlateVisibility::Hidden);
-	youveEscapedUI->SetVisibility(ESlateVisibility::Hidden);
-	youreDeadUI->SetVisibility(ESlateVisibility::Hidden);
-
-	exfilTimerText = Cast<UTextBlock>(exfilAlertUI->GetWidgetFromName(TEXT("ExfilTimer")));
 }
 
 void AFPPlayerController::PlayerTick(float DeltaTime)
@@ -492,7 +479,7 @@ void AFPPlayerController::UpdateInventoryUI()
 
 void AFPPlayerController::Dead()
 {
-	youreDeadUI->SetVisibility(ESlateVisibility::Visible);
+	IngameHud->ShowGameResult(EGameEndType::Dead);
 	IngameHud->SetCrosshairInvisible();
 	CloseInventory();
 	if(gameMode)
@@ -511,15 +498,15 @@ void AFPPlayerController::Exfiling()
 	{
 		isExfiling = true;
 		exfilCounter = 0.f;
-		exfilAlertUI->SetVisibility(ESlateVisibility::Visible);
+		IngameHud->ShowExfilStatus();
 	}
 }
 
 void AFPPlayerController::ExfilingComplete()
 {
 	isExfiling = false;
-	exfilAlertUI->SetVisibility(ESlateVisibility::Hidden);
-	youveEscapedUI->SetVisibility(ESlateVisibility::Visible);
+	IngameHud->HideExfilStatus();
+	IngameHud->ShowGameResult(EGameEndType::Escaped);
 	if(gameMode)
 		gameMode->ExfilCompleted();
 }
@@ -529,7 +516,7 @@ void AFPPlayerController::CancelExfiling()
 	if (isExfiling)
 	{
 		isExfiling = false;
-		exfilAlertUI->SetVisibility(ESlateVisibility::Hidden);
+		IngameHud->HideExfilStatus();
 	}
 }
 

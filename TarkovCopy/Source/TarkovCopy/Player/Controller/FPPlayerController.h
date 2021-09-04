@@ -23,6 +23,7 @@ class UItemInfo;
 class UItemIcon;
 class UInventory;
 class UTextBlock;
+class UItemWeapon;
 class UVerticalBox;
 class UUserWidget;
 
@@ -39,24 +40,6 @@ public:
 //Created
 private:
 	AInGameHUD* IngameHud;
-	//Status Render
-	
-	//Mission and notify
-
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<UUserWidget> exfilAlertWidget;
-	UPROPERTY()
-	UUserWidget* exfilAlertUI;
-
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<UUserWidget> youreDeadWidget;
-	UPROPERTY()
-	UUserWidget* youreDeadUI;
-
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<UUserWidget> youveEscapedWidget;
-	UPROPERTY()
-	UUserWidget* youveEscapedUI;
 
 	//TODO: UI관련, 추 후에 컨트롤러로 옮길것
 	UPROPERTY(EditAnywhere)
