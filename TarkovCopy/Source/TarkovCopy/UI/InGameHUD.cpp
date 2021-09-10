@@ -29,7 +29,7 @@ void AInGameHUD::BeginPlay()
 
 bool AInGameHUD::IsPauseMenuOpened()
 {
-	return IngameHudPauseMenu->IsInViewport();
+	return IngameHudPauseMenu->GetVisibility() == ESlateVisibility::Visible;
 }
 
 void AInGameHUD::OpenClosePauseMenu()

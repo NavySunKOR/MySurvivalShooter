@@ -9,7 +9,7 @@
 #include "TarkovCopy/InventoryAndItem/ItemInfos/ItemFlashGrenade.h"
 #include "TarkovCopy/Interactable/InteractableObject.h"
 #include "TarkovCopy/Interactable/InteractableComponent.h"
-#include "TarkovCopy/GameMode/TarkovCopyGameModeBase.h"
+#include "TarkovCopy/GameMode/EscapeGameMode.h"
 #include "TarkovCopy/Player/Components/PlayerStatusComponent.h"
 #include "TarkovCopy/Player/Components/PlayerMovementComponent.h"
 #include "TarkovCopy/Player/Components/PlayerEquipmentComponent.h"
@@ -512,8 +512,9 @@ void APlayerCharacter::Interact()
 
 	con->GetPlayerViewPoint(start, dir);
 
-	if (GetWorld()->LineTraceSingleByChannel(hit, start, start + dir.Vector() * 800.f, ECollisionChannel::ECC_Pawn, param))
+	if (GetWorld()->LineTraceSingleByChannel(hit, start, start + dir.Vector() * 800.f, ECollisionChannel::ECC_WorldDynamic, param))
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Hit name %s"), *hit.Actor->GetName())
 		AActor* hitActor = hit.GetActor();
 		AInteractableObject* inter = Cast<AInteractableObject>(hitActor);
 		if (inter != nullptr)
