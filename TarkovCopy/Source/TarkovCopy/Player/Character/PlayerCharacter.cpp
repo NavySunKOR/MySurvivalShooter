@@ -379,7 +379,7 @@ void APlayerCharacter::FireWeapon()
 
 	//액션이 가능한지?
 	bool isActionable = IsActionable();
-	if (isActionable)
+	if (!isActionable)
 	{
 		return;
 	}

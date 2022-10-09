@@ -6,6 +6,8 @@
 #include "GameFramework/GameMode.h"
 #include "TarkovCopyGameModeBase.generated.h"
 
+#define TABLE_CONTEXT TEXT("GENERAL")
+
 /**
  * 
  */
@@ -15,7 +17,15 @@ class UItemInfo;
 class ABaseGun;
 class AInteractableObject;
 class AFPPlayerController;
+class UDataTable;
 
+UENUM()
+enum class ETableType : uint8
+{
+	NONE = 0,
+	WEAPON
+}
+;
 
 UENUM()
 enum class AntiAlliasingOptionType : uint8
@@ -49,6 +59,8 @@ private:
 
 
 protected:
+	UPROPERTY(EditAnywhere, Category = "Weapons")
+	UDataTable* WeaeponTable;
 	virtual void BeginPlay() override;
 
 public:
@@ -57,6 +69,8 @@ public:
 	UPROPERTY(EditAnywhere)
 	USoundBase* escapedSound;
 
+	template<typename T>
+	T* GetTableData(ETableType pTableType, int32 pKey);
 
 	UPROPERTY()
 	AFPPlayerController* playerController;
@@ -80,3 +94,4 @@ public:
 
 
 };
+

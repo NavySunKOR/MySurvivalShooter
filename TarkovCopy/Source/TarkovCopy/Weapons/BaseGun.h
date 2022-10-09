@@ -11,6 +11,7 @@ class APlayerCharacter;
 class AAICharacter;
 class UItemWeapon;
 
+
 UCLASS()
 class TARKOVCOPY_API ABaseGun : public APawn
 {
@@ -79,9 +80,11 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Sound")
 	USoundBase* tacticalReloadSound;
 
-public:
+	UPROPERTY(EditAnywhere, Category = "EditableStatus")
+	int32 WeaponCode;
 	UPROPERTY(EditAnywhere, Category = "EditableStatus")
 	TSubclassOf<UItemWeapon> weaponInfoForThirdPerson;
+public:
 	UPROPERTY(EditAnywhere, Category = "EditableStatus")
 	float rpm;
 	UPROPERTY(EditAnywhere, Category = "EditableStatus")

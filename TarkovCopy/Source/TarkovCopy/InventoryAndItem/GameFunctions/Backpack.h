@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "TarkovCopy/InventoryAndItem/ItemInfos/ItemInfo.h" // ItemType 때문에 여기다가 넣음
 #include "UObject/NoExportTypes.h"
+#include <tuple>
 #include "Backpack.generated.h"
 
 class UInventory;

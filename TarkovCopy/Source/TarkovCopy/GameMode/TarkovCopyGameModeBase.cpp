@@ -9,6 +9,7 @@
 #include "TarkovCopy/Utils/JsonSaveAndLoader.h"
 #include <Kismet/GameplayStatics.h>
 #include <Blueprint/UserWidget.h>
+#include <DataTableUtils.h>
 #include <TimerManager.h>
 #include <EngineUtils.h>
 
@@ -72,6 +73,16 @@ void ATarkovCopyGameModeBase::ExfilCompleted()
 	GetWorld()->GetTimerManager().SetTimer(timer, this, &ATarkovCopyGameModeBase::ReturnToMainMenu, 4.f);
 
 }
+template<typename T>
+T* ATarkovCopyGameModeBase::GetTableData(ETableType pTableType, int32 pKey)
+{
+	if (pTableType == ETableType::WEAPON)
+	{
+		return WeaeponTable->FindRow<T>(TABLE_CONTEXT, pKey);
+	}
+	return nullptr;
+}
+
 
 void ATarkovCopyGameModeBase::TryExfil()
 {
